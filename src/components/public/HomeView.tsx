@@ -7,6 +7,7 @@ import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { RainPreloader } from "@/components/public/RainPreloader";
 import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
 import { HeroSection } from "@/components/public/HeroSection";
+import { TuyuWorksCarousel } from "@/components/public/TuyuWorksCarousel";
 import { Footer } from "@/components/public/Footer";
 import { CertificateModal } from "@/components/public/CertificateModal";
 import { useLocale } from "@/components/providers/LocaleProvider";
@@ -70,9 +71,10 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
     ];
   }, [projects, experiences, certificates, feedTab, pick]);
 
-  const featuredWorks = useMemo(() => {
-    const f = projects.filter((p) => p.featured);
-    return f.length > 0 ? f : projects.slice(0, 3);
+  const carouselWorks = useMemo(() => {
+    const featured = projects.filter((p) => p.featured);
+    const rest = projects.filter((p) => !p.featured);
+    return [...featured, ...rest];
   }, [projects]);
 
   const moreHref =
@@ -269,47 +271,25 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
           </div>
         </section>
 
-        {/* 4. EXPOSED PARALLAX PINK WATERCOLOR BAND + WORKS SHOWCASE (Exact tuyu.moe #video_area trick!) */}
+        {/* 4. EXPOSED PARALLAX PINK WATERCOLOR BAND + FULL-BLEED WORKS CAROUSEL (Exact tuyu.moe #video_area) */}
         <section
           id="works"
-          className="relative mt-[170px] bg-[#e5dcfb] pt-10 pb-16 md:mt-[250px] md:pt-12 md:pb-20"
+          className="relative mt-[210px] bg-[#e5dcfb] pt-10 pb-16 md:mt-[340px] md:pt-12 md:pb-20"
         >
+          {/* Heading pulled upward inside the exposed fixed pink watercolor canvas, aligned to 1000px container */}
           <div className="mx-auto w-[90%] max-w-[1000px]">
-            {/* Heading pulled upward directly over the exposed fixed pink watercolor canvas! */}
-            <h2 className="-mt-[135px] mb-10 font-editorial text-[26px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:-mt-[190px] md:mb-14 md:text-[33px] md:tracking-[9px]">
+            <h2 className="-mt-[185px] mb-7 font-editorial text-[26px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:-mt-[318px] md:mb-12 md:text-[33px] md:tracking-[9px]">
               WORKS
             </h2>
+          </div>
 
-            {/* Horizontal scrollable / grid showcase matching tuyu.moe #video_area calm rhythm */}
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {featuredWorks.map((project) => (
-                <Link
-                  key={project.id}
-                  href={`/projects/${project.slug}`}
-                  className="group block transition-opacity duration-300 hover:opacity-80"
-                >
-                  <div className="aspect-[16/10] overflow-hidden bg-[#1e1738]">
-                    <img
-                      src={project.coverImage || "/assets/cover-platform.jpg"}
-                      alt={project.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                    />
-                  </div>
-                  <p className="mt-2.5 text-[13px] tracking-[1.4px] text-[#745bc7] md:text-[14px]">
-                    {project.title}
-                  </p>
-                  <p className="mt-0.5 font-mono text-[10px] tracking-[1px] text-[#5d5370] uppercase">
-                    {project.category} · {project.year}
-                  </p>
-                </Link>
-              ))}
-            </div>
+          {/* Full-bleed 100vw centered carousel straddling the pink watercolor / lavender boundary */}
+          <TuyuWorksCarousel projects={carouselWorks} />
 
-            <div className="mt-14 flex justify-center md:mt-16">
-              <Link href="/projects" className="tuyu-more-btn">
-                MORE
-              </Link>
-            </div>
+          <div className="mx-auto mt-10 flex w-[90%] max-w-[1000px] justify-center md:mt-14">
+            <Link href="/projects" className="tuyu-more-btn">
+              MORE
+            </Link>
           </div>
         </section>
       </main>
