@@ -121,7 +121,7 @@ export function MediaUploader({
             <span>
               {uploading
                 ? "Uploading to persistent storage..."
-                : "Drag & drop image here, or click to browse (JPG/PNG/WebP, max 8MB)"}
+                : "Drag & drop image here, or click to browse (JPG/PNG/WebP, max 25MB, original quality)"}
             </span>
           </button>
         )}

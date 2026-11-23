@@ -12,7 +12,7 @@ const ALLOWED_MIME_EXT: Record<string, string> = {
   "application/pdf": ".pdf",
 };
 
-const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8 MB
+const MAX_UPLOAD_BYTES = 25 * 1024 * 1024; // 25 MB (supports lossless HD artwork)
 
 export function getUploadDirectory(): string {
   const envDir = process.env.UPLOAD_DIR || "./data/uploads";
@@ -59,7 +59,7 @@ export async function saveUploadedFile(file: File): Promise<{
     );
   }
   if (file.size > MAX_UPLOAD_BYTES) {
-    throw new Error("File is too large. Maximum allowed size is 8 MB.");
+    throw new Error("File is too large. Maximum allowed size is 25 MB.");
   }
 
   const uploadDir = getUploadDirectory();

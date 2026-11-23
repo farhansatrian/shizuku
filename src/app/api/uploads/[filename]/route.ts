@@ -24,13 +24,24 @@ export async function GET(
     if (!info.isFile()) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+    const etag = `"${info.size}-${Math.floor(info.mtimeMs)}"`;
+    if (_req.headers.get("if-none-match") === etag) {
+      return new NextResponse(null, {
+        status: 304,
+        headers: {
+          ETag: etag,
+          "Cache-Control": "public, max-age=0, must-revalidate",
+        },
+      });
+    }
     const data = await readFile(fullPath);
     return new NextResponse(data, {
       status: 200,
       headers: {
         "Content-Type": getContentTypeFromFilename(filename),
         "Content-Length": String(data.length),
-        "Cache-Control": "public, max-age=31536000, immutable",
+        ETag: etag,
+        "Cache-Control": "public, max-age=0, must-revalidate",
       },
     });
   } catch {

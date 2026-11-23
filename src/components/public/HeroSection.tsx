@@ -57,22 +57,42 @@ export function HeroSection({ profile }: { profile: SerializedProfile }) {
         </div>
       )}
 
-      {/* Exact tuyu.moe Bottom-Left Floating Card (#top > a: left 3% desktop / 5% mobile, bottom 25px) */}
+      {/* Sleek Twilight Anime Special-Banner Card (matching tuyu.moe #top > a bottom-left slot) */}
       <Link
         href="/workspace"
-        className="group absolute bottom-[25px] left-[5%] z-10 block w-[232px] overflow-hidden rounded-xl border border-white/60 bg-white/90 px-4 py-3 text-[#14100e] backdrop-blur-md transition-opacity duration-300 hover:opacity-80 md:left-[3%] md:w-[280px] md:px-4 md:py-3.5"
+        className="group absolute bottom-[25px] left-[5%] z-10 block w-[216px] overflow-hidden rounded-lg border border-white/25 bg-[#17102e]/74 px-4 py-3.5 text-white shadow-[0_12px_36px_rgba(14,8,34,0.48)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[#f7a6dc]/75 hover:bg-[#1e153d]/82 md:left-[3%] md:w-[246px] md:px-[18px] md:py-4"
       >
-        <p className="font-mono text-[9px] tracking-[0.2em] text-[#745bc7] uppercase">
-          {profile.brandName} · {profile.brandKanji} {"// "}WORKSPACE
-        </p>
-        <p className="mt-1 truncate text-xs font-semibold text-[#14100e] md:text-sm">
-          {profile.fullName}
-        </p>
-        <div className="mt-1 flex items-center justify-between gap-2 text-[10px] text-[#5d5370] md:text-[11px]">
-          <span className="leading-snug">
-            {profile.currentOrg} · {pick("Daily Hub", "Pusat Harian")}
-          </span>
-          <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#745bc7] transition-transform group-hover:translate-x-0.5" />
+        {/* Subtle violet-to-sakura luminous diagonal wash */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#745bc7]/35 via-transparent to-[#f48fd0]/25 opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+        />
+        {/* Delicate ghosted Kanji watermark */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-1.5 -bottom-3 select-none font-editorial text-6xl leading-none text-white/[0.08]"
+        >
+          {profile.brandKanji}
+        </span>
+
+        <div className="relative z-10">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-mono text-[9px] tracking-[0.26em] text-[#f8b8e3] uppercase">
+              {profile.brandName} · {profile.brandKanji}
+            </span>
+            <UmbrellaMark className="h-3.5 w-3.5 text-[#f8b8e3]/90" />
+          </div>
+
+          <p className="mt-1.5 font-editorial text-[19px] font-medium leading-none tracking-[0.22em] text-white uppercase md:text-[21px]">
+            WORKSPACE
+          </p>
+
+          <div className="mt-3 flex items-center justify-between gap-2 border-t border-white/15 pt-2">
+            <span className="truncate font-mono text-[10px] tracking-[0.08em] text-[#e5dcfb]/90">
+              {pick("Daily Hub & Agents", "Pusat Harian & Agent")}
+            </span>
+            <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#f8b8e3] transition-transform duration-300 group-hover:translate-x-1" />
+          </div>
         </div>
       </Link>
     </section>
