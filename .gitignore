@@ -1,0 +1,33 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# Next.js
+/.next/
+/out/
+
+# Build & Testing
+/build
+/coverage
+
+# Environment & Secrets
+.env
+.env*.local
+.env.production
+
+# Local SQLite database & user uploads (persisted in Docker volume in prod)
+/data/*.db
+/data/*.db-journal
+/data/*.db-shm
+/data/*.db-wal
+/data/uploads/*
+!/data/uploads/.gitkeep
+
+# Logs & OS files
+*.log
+npm-debug.log*
+.DS_Store
+*.pem
+*.tsbuildinfo
+next-env.d.ts
