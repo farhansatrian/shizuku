@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Lock } from "lucide-react";
+import { Github, Linkedin, Lock, Mail } from "lucide-react";
 import {
   ThreeRaindropsMenu,
   UmbrellaMark,
@@ -23,8 +22,10 @@ export function CinematicHeader({
 }: CinematicHeaderProps) {
   const pathname = usePathname();
   const { locale, setLocale, pick } = useLocale();
-  const [scrolled, setScrolled] = useState(false);
+  const [overHero, setOverHero] = useState(transparentOnTop);
   const [openPath, setOpenPath] = useState<string | null>(null);
+  const [menuIconFailed, setMenuIconFailed] = useState(false);
+  const [closeIconFailed, setCloseIconFailed] = useState(false);
   const drawerOpen = openPath === pathname;
 
   const setDrawerOpen = (next: boolean | ((prev: boolean) => boolean)) => {
@@ -36,11 +37,22 @@ export function CinematicHeader({
   };
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    const onScroll = () => {
+      if (!transparentOnTop) {
+        setOverHero(false);
+        return;
+      }
+      // Match tuyu.moe .header_on: white over the 100vh hero, iris purple #745bc7 once past hero
+      setOverHero(window.scrollY < Math.max(window.innerHeight - 90, 260));
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [transparentOnTop]);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -56,14 +68,15 @@ export function CinematicHeader({
     };
   }, [drawerOpen]);
 
-  const isLightText = transparentOnTop && !scrolled && !drawerOpen;
+  const isHeroWhite = overHero && !drawerOpen;
 
   const navItems = [
-    { href: "/", code: "01", en: "TOP", id: "BERANDA" },
-    { href: "/workspace", code: "02", en: "WORKSPACE", id: "WORKSPACE" },
-    { href: "/projects", code: "03", en: "PROJECTS", id: "PROYEK" },
-    { href: "/about", code: "04", en: "ABOUT", id: "TENTANG" },
-    { href: "/certificates", code: "05", en: "CERTIFICATES", id: "SERTIFIKAT" },
+    { href: "/", en: "TOP", id: "BERANDA" },
+    { href: "/workspace", en: "WORKSPACE", id: "WORKSPACE" },
+    { href: "/projects", en: "PROJECTS", id: "PROYEK" },
+    { href: "/about", en: "ABOUT", id: "TENTANG" },
+    { href: "/certificates", en: "CERTIFICATES", id: "SERTIFIKAT" },
+    { href: "/admin", en: "ADMIN STUDIO", id: "ADMIN STUDIO" },
   ];
 
   const isItemActive = (href: string): boolean => {
@@ -74,249 +87,250 @@ export function CinematicHeader({
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
           drawerOpen
-            ? "bg-transparent text-[#14100e]"
-            : isLightText
-              ? "bg-transparent text-white"
-              : "border-b border-[#d4c6f4]/80 bg-[#e5dcfb]/88 text-[#14100e] backdrop-blur-md"
+            ? "bg-transparent text-[#745bc7]"
+            : isHeroWhite
+              ? "bg-gradient-to-b from-[#17112a]/60 via-[#17112a]/24 to-transparent text-white [text-shadow:0_1px_6px_rgba(20,16,14,0.45)]"
+              : "bg-[#e5dcfb]/85 text-[#745bc7] backdrop-blur-md"
         }`}
       >
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-18 sm:px-8">
-          {/* Ultra-minimal TUYU-style Brand Monogram */}
+        <div className="mx-auto flex h-[60px] w-full items-center justify-between px-[5%] md:h-[80px] md:px-[3%]">
+          {/* Left: TUYU-style airy tracked logo + mini umbrella */}
           <Link
             href="/"
             onClick={() => setDrawerOpen(false)}
-            className="group flex items-center gap-2 py-2 focus:outline-none"
+            className="group flex items-center gap-2 py-2 transition-opacity hover:opacity-75 focus:outline-none"
           >
-            <UmbrellaMark
-              className={`h-5 w-5 transition-transform duration-300 group-hover:-rotate-6 ${
-                isLightText ? "text-white" : "text-[#7650f3]"
-              }`}
-            />
-            <span className="font-editorial text-xl font-medium tracking-[0.2em] lowercase">
-              {profile.brandName}.
+            <span className="font-editorial text-xl font-medium tracking-[0.28em] uppercase md:text-2xl">
+              {profile.brandName}
             </span>
-            <span
-              className={`text-xs ${
-                isLightText ? "text-white/75" : "text-[#7650f3]"
-              }`}
-            >
-              {profile.brandKanji}
-            </span>
+            <UmbrellaMark className="h-5 w-5 md:h-6 md:w-6" />
           </Link>
 
-          {/* Right Controls: Clean Links (Desktop) + Flat EN | ID + 3-Raindrop Menu */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            <nav
-              aria-label="Primary"
-              className="hidden items-center gap-7 md:flex"
-            >
-              {navItems.slice(1).map((item) => {
-                const active = isItemActive(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`relative py-1 text-[11px] font-medium tracking-[0.2em] uppercase transition-colors ${
-                      isLightText
-                        ? active
-                          ? "text-white"
-                          : "text-white/80 hover:text-white"
-                        : active
-                          ? "text-[#7650f3]"
-                          : "text-[#14100e]/75 hover:text-[#7650f3]"
-                    }`}
-                  >
-                    {pick(item.en, item.id)}
-                    {active && (
-                      <span
-                        className={`absolute -bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full ${
-                          isLightText ? "bg-[#fad8e8]" : "bg-[#7650f3]"
+          {/* Right: Social icons (Desktop) + JP|EN style EN|ID + Exact 3-Raindrop PNG Button */}
+          <div className="flex items-center gap-4 md:gap-7">
+            {/* Hide center links & social bar while drawer is open (exact tuyu.moe clean drawer chrome) */}
+            {!drawerOpen && (
+              <>
+                <nav
+                  aria-label="Primary"
+                  className="hidden items-center gap-6 lg:flex"
+                >
+                  {navItems.slice(1, 5).map((item) => {
+                    const active = isItemActive(item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={`relative font-editorial text-[13px] tracking-[0.24em] uppercase transition-opacity hover:opacity-70 ${
+                          active ? "font-bold" : "font-normal opacity-95"
                         }`}
-                      />
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
+                      >
+                        {pick(item.en, item.id)}
+                        {active && (
+                          <span
+                            className={`absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full ${
+                              isHeroWhite ? "bg-white" : "bg-[#745bc7]"
+                            }`}
+                          />
+                        )}
+                      </Link>
+                    );
+                  })}
+                </nav>
 
-            {/* Minimalist TUYU-style EN | ID Toggle */}
+                <div className="hidden items-center gap-3.5 md:flex">
+                  {profile.githubUrl && (
+                    <a
+                      href={profile.githubUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="GitHub"
+                      className="transition-opacity hover:opacity-70"
+                    >
+                      <Github className="h-[18px] w-[18px]" />
+                    </a>
+                  )}
+                  {profile.linkedinUrl && (
+                    <a
+                      href={profile.linkedinUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="LinkedIn"
+                      className="transition-opacity hover:opacity-70"
+                    >
+                      <Linkedin className="h-[18px] w-[18px]" />
+                    </a>
+                  )}
+                  <a
+                    href={`mailto:${profile.email}`}
+                    aria-label="Email"
+                    className="transition-opacity hover:opacity-70"
+                  >
+                    <Mail className="h-[18px] w-[18px]" />
+                  </a>
+                </div>
+              </>
+            )}
+
+            {/* Exact tuyu.moe JP | EN typography style */}
             <div
-              className={`flex items-center gap-1.5 font-mono text-[11px] tracking-[0.16em] ${
-                isLightText ? "text-white/85" : "text-[#14100e]/70"
-              }`}
+              className="flex items-center gap-1.5 font-editorial text-[15px] font-bold tracking-[0.14em] md:text-[21px]"
               role="group"
               aria-label="Language switcher"
             >
               <button
                 type="button"
                 onClick={() => setLocale("en")}
-                className={`px-1 py-1.5 transition ${
-                  locale === "en"
-                    ? isLightText
-                      ? "font-semibold text-white underline underline-offset-4"
-                      : "font-semibold text-[#7650f3] underline underline-offset-4"
-                    : "opacity-60 hover:opacity-100"
+                className={`px-0.5 py-1 transition-opacity ${
+                  locale === "en" ? "opacity-100" : "opacity-65 hover:opacity-90"
                 }`}
               >
                 EN
               </button>
-              <span className="opacity-40">|</span>
+              <span className="font-normal opacity-75">|</span>
               <button
                 type="button"
                 onClick={() => setLocale("id")}
-                className={`px-1 py-1.5 transition ${
-                  locale === "id"
-                    ? isLightText
-                      ? "font-semibold text-white underline underline-offset-4"
-                      : "font-semibold text-[#7650f3] underline underline-offset-4"
-                    : "opacity-60 hover:opacity-100"
+                className={`px-0.5 py-1 transition-opacity ${
+                  locale === "id" ? "opacity-100" : "opacity-65 hover:opacity-90"
                 }`}
               >
                 ID
               </button>
             </div>
 
-            {/* Iconic TUYU 3-Raindrop Menu Trigger (44px touch-friendly target) */}
+            {/* Exact tuyu.moe 3-Raindrop PNG Button -> Close X PNG */}
             <button
               type="button"
               onClick={() => setDrawerOpen((v) => !v)}
               aria-label={drawerOpen ? "Close menu" : "Open menu"}
               aria-expanded={drawerOpen}
-              className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
-                drawerOpen
-                  ? "text-[#14100e] hover:bg-white/40"
-                  : isLightText
-                    ? "text-white hover:bg-white/10"
-                    : "text-[#7650f3] hover:bg-white/60"
-              }`}
+              className="flex h-11 w-11 items-center justify-center transition-opacity hover:opacity-75 md:h-12 md:w-12"
             >
-              <ThreeRaindropsMenu open={drawerOpen} />
+              {drawerOpen ? (
+                closeIconFailed ? (
+                  <ThreeRaindropsMenu open />
+                ) : (
+                  <img
+                    src="/api/uploads/tuyu-menu-close.png"
+                    alt=""
+                    onError={() => setCloseIconFailed(true)}
+                    className="h-7 w-7 object-contain md:h-9 md:w-9"
+                  />
+                )
+              ) : menuIconFailed ? (
+                <ThreeRaindropsMenu open={false} />
+              ) : (
+                <img
+                  src="/api/uploads/tuyu-menu-open.png"
+                  alt=""
+                  onError={() => setMenuIconFailed(true)}
+                  className={`h-[20px] w-auto object-contain transition-all duration-300 md:h-[30px] ${
+                    isHeroWhite ? "brightness-0 invert" : ""
+                  }`}
+                />
+              )}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Authentic TUYU Full-Screen Pink-Lavender Watercolor Overlay Drawer */}
-      <AnimatePresence>
-        {drawerOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.28 }}
-            className="fixed inset-0 z-40 flex overflow-y-auto"
-            style={{
-              background:
-                "linear-gradient(145deg, #fbd9ea 0%, #ede3fc 48%, #e5dcfb 100%)",
-            }}
+      {/* Authentic tuyu.moe Full-Screen Panning Pink Watercolor Drawer (.dropdown_nav) */}
+      <div
+        aria-hidden={!drawerOpen}
+        className={`fixed inset-0 z-40 overflow-hidden transition-opacity duration-300 ease-out ${
+          drawerOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="tuyu-watercolor-pan-pc absolute inset-0 hidden md:block" />
+        <div className="tuyu-watercolor-pan-sp absolute inset-0 md:hidden" />
+
+        {/* Giant vertical rotated white SHIZUKU wordmark pinned top-left (exact tuyu.moe .nav_bg) */}
+        <div
+          className="pointer-events-none absolute top-0 left-0 select-none overflow-hidden pt-24 pl-2 sm:pl-4 md:pt-28 md:pl-6"
+          aria-hidden="true"
+        >
+          <span
+            className="block font-editorial text-[5.2rem] font-normal leading-none tracking-[0.26em] text-white/80 uppercase sm:text-[7rem] md:text-[8.5rem]"
+            style={{ writingMode: "vertical-rl" }}
           >
-            {/* Giant vertical rotated white typography on the left (TUYU signature!) */}
-            <div
-              className="pointer-events-none hidden select-none items-center justify-center pl-10 md:flex lg:pl-16"
-              aria-hidden="true"
-            >
-              <span
-                className="font-editorial text-[8rem] font-normal leading-none tracking-[0.26em] text-white/75 uppercase lg:text-[10rem]"
-                style={{
-                  writingMode: "vertical-rl",
-                  transform: "rotate(180deg)",
-                }}
-              >
-                {profile.brandName}
-              </span>
-            </div>
+            {profile.brandName}
+          </span>
+        </div>
 
-            {/* Clean Navigation Column */}
-            <div className="mx-auto flex w-full max-w-3xl flex-col justify-between px-6 pt-24 pb-10 sm:px-12">
-              <nav
-                aria-label="Full menu"
-                className="my-auto flex flex-col gap-3 sm:gap-4"
-              >
-                {navItems.map((item, idx) => {
-                  const active = isItemActive(item.href);
-                  return (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, x: 14 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.04 * idx, duration: 0.25 }}
-                    >
-                      <Link
-                        href={item.href}
-                        onClick={() => setDrawerOpen(false)}
-                        className={`group flex items-baseline gap-5 py-1.5 transition-colors ${
-                          active
-                            ? "text-[#7650f3]"
-                            : "text-[#14100e] hover:text-[#7650f3]"
-                        }`}
-                      >
-                        <span className="font-mono text-xs text-[#7650f3]/75">
-                          {item.code}
-                        </span>
-                        <span className="font-editorial text-3xl font-normal tracking-[0.22em] uppercase sm:text-4xl">
-                          {pick(item.en, item.id)}
-                        </span>
-                        {active && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#7650f3]" />
-                        )}
-                      </Link>
-                    </motion.div>
-                  );
-                })}
-
-                <div className="raindrop-dotted my-4 max-w-xs" />
-
+        {/* Right-aligned wide-tracked iris-purple Menu Links (exact tuyu.moe ul.menu) */}
+        <div className="relative z-10 flex h-full w-full flex-col justify-end px-[5%] pb-10 md:px-[3%] md:pb-12">
+          <nav
+            aria-label="Full navigation"
+            className="mb-10 flex flex-col items-end gap-2.5 md:mb-14 md:gap-3"
+          >
+            {navItems.map((item, idx) => {
+              const active = isItemActive(item.href);
+              return (
                 <Link
-                  href="/admin"
+                  key={item.href}
+                  href={item.href}
+                  tabIndex={drawerOpen ? 0 : -1}
                   onClick={() => setDrawerOpen(false)}
-                  className="inline-flex w-fit items-center gap-2 py-1 font-mono text-xs tracking-[0.18em] text-[#5c526e] uppercase transition hover:text-[#7650f3]"
+                  style={{
+                    transitionDelay: drawerOpen ? `${idx * 35}ms` : "0ms",
+                  }}
+                  className={`inline-flex items-center gap-2.5 py-1 font-editorial text-[19px] tracking-[0.34em] uppercase transition-all duration-300 hover:text-[#d749d5] hover:opacity-75 sm:text-[23px] md:text-[26px] md:tracking-[0.42em] ${
+                    drawerOpen
+                      ? "translate-y-0 opacity-100"
+                      : "translate-y-6 opacity-0"
+                  } ${
+                    active ? "font-bold text-[#d749d5]" : "font-normal text-[#745bc7]"
+                  }`}
                 >
-                  <Lock className="h-3.5 w-3.5" />
-                  Admin Studio
+                  {item.href === "/admin" && <Lock className="h-4 w-4" />}
+                  <span>{pick(item.en, item.id)}</span>
                 </Link>
-              </nav>
+              );
+            })}
+          </nav>
 
-              {/* Calm Minimal Bottom Strip */}
-              <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#14100e]/10 pt-5 text-xs text-[#5c526e]">
-                <div className="flex flex-wrap items-center gap-5 font-mono">
-                  <a
-                    href={`mailto:${profile.email}`}
-                    className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
-                  >
-                    Email <ArrowUpRight className="h-3 w-3" />
-                  </a>
-                  {profile.linkedinUrl && (
-                    <a
-                      href={profile.linkedinUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
-                    >
-                      LinkedIn <ArrowUpRight className="h-3 w-3" />
-                    </a>
-                  )}
-                  {profile.githubUrl && (
-                    <a
-                      href={profile.githubUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
-                    >
-                      GitHub <ArrowUpRight className="h-3 w-3" />
-                    </a>
-                  )}
-                </div>
-
-                <span className="font-mono text-[11px]">
-                  {profile.fullName} · {profile.location}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          {/* Bottom-right iris purple SNS icons (exact tuyu.moe .d_nav_sns) */}
+          <div className="flex items-center justify-end gap-5 text-[#745bc7] md:gap-7">
+            <a
+              href={`mailto:${profile.email}`}
+              tabIndex={drawerOpen ? 0 : -1}
+              aria-label="Email"
+              className="transition hover:text-[#d749d5] hover:opacity-75"
+            >
+              <Mail className="h-6 w-6 md:h-7 md:w-7" />
+            </a>
+            {profile.linkedinUrl && (
+              <a
+                href={profile.linkedinUrl}
+                target="_blank"
+                rel="noreferrer"
+                tabIndex={drawerOpen ? 0 : -1}
+                aria-label="LinkedIn"
+                className="transition hover:text-[#d749d5] hover:opacity-75"
+              >
+                <Linkedin className="h-6 w-6 md:h-7 md:w-7" />
+              </a>
+            )}
+            {profile.githubUrl && (
+              <a
+                href={profile.githubUrl}
+                target="_blank"
+                rel="noreferrer"
+                tabIndex={drawerOpen ? 0 : -1}
+                aria-label="GitHub"
+                className="transition hover:text-[#d749d5] hover:opacity-75"
+              >
+                <Github className="h-6 w-6 md:h-7 md:w-7" />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
     </>
   );
 }

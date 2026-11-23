@@ -50,6 +50,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${jakarta.variable} ${cormorant.variable} ${jetbrains.variable} ${notoJp.variable}`}
     >
       <body className="min-h-screen antialiased selection:bg-[#7650f3]/20 selection:text-[#1e172b]">

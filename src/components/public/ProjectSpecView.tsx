@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Code2, Globe } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
+import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
 import { Footer } from "@/components/public/Footer";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import type { SerializedProfile, SerializedProject } from "@/lib/types";
@@ -25,13 +26,14 @@ export function ProjectSpecView({
     .filter(Boolean);
 
   return (
-    <div className="tuyu-subpage-canvas min-h-screen text-[#14100e]">
+    <div className="tuyu-subpage-canvas relative min-h-screen text-[#14100e]">
+      <TuyuRainLayer />
       <CinematicHeader profile={profile} />
 
-      <main className="mx-auto max-w-4xl px-5 pt-28 pb-24 sm:px-8 sm:pt-32">
+      <main className="relative z-10 mx-auto w-[90%] max-w-[960px] pt-28 pb-24 md:pt-36">
         <Link
           href="/projects"
-          className="inline-flex items-center gap-2 font-mono text-xs text-[#5c526e] transition hover:text-[#7650f3]"
+          className="inline-flex items-center gap-2 font-mono text-xs text-[#745bc7] transition hover:text-[#7650f3]"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           {pick("Back to Projects", "Kembali ke Proyek")}
@@ -39,18 +41,19 @@ export function ProjectSpecView({
 
         <div className="mt-6">
           <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
-            <span className="text-[#7650f3]">{project.category}</span>
-            <span className="text-[#9a8db8]">·</span>
-            <span className="text-[#5c526e]">{project.status}</span>
-            <span className="text-[#9a8db8]">·</span>
-            <span className="text-[#5c526e]">{project.year}</span>
+            <span className="rounded-[5px] bg-[#745bc7] px-2.5 py-0.5 text-white">
+              {project.category}
+            </span>
+            <span className="text-[#745bc7]">
+              {project.status} · {project.year}
+            </span>
           </div>
 
-          <h1 className="mt-3 font-editorial text-3xl font-medium tracking-[0.06em] text-[#14100e] sm:text-5xl">
+          <h1 className="mt-4 font-editorial text-3xl font-normal tracking-[0.08em] text-[#745bc7] sm:text-5xl">
             {project.title}
           </h1>
 
-          <p className="mt-3 text-sm leading-relaxed text-[#5c526e] sm:text-base">
+          <p className="mt-3 text-sm leading-relaxed text-[#5d5370] sm:text-base">
             {pick(project.summaryEn, project.summaryId)}
           </p>
 
@@ -61,7 +64,7 @@ export function ProjectSpecView({
                   href={project.liveUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-[40px] items-center gap-2 rounded-full bg-[#14100e] px-5 py-2 font-mono text-xs text-white transition hover:bg-[#7650f3]"
+                  className="inline-flex min-h-[38px] items-center gap-2 rounded-full bg-[#745bc7] px-5 py-2 font-mono text-xs text-white transition hover:bg-[#7650f3]"
                 >
                   <Globe className="h-3.5 w-3.5" />
                   {pick("Launch Site", "Buka Website")}
@@ -73,7 +76,7 @@ export function ProjectSpecView({
                   href={project.repoUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#d4c6f4] bg-white px-5 py-2 font-mono text-xs text-[#14100e] transition hover:border-[#7650f3] hover:text-[#7650f3]"
+                  className="inline-flex min-h-[38px] items-center gap-2 rounded-full border border-[#745bc7] bg-white/80 px-5 py-2 font-mono text-xs text-[#745bc7] transition hover:bg-[#745bc7] hover:text-white"
                 >
                   <Code2 className="h-3.5 w-3.5" />
                   {pick("Repository", "Kode Sumber")}

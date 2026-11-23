@@ -1,81 +1,97 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { UmbrellaMark } from "@/components/icons/RainMotifs";
 
-const PRELOADER_KEY = "shizuku_preloader_seen";
+// Persists across SPA navigations so returning to "/" does not replay the splash,
+// while a fresh load or browser refresh replays the calm tuyu.moe curtain cleanly.
+// Setting this only once fade-out begins keeps it 100% safe under React 19 Strict Mode.
+let splashPlayedInPageLoad = false;
 
 export function RainPreloader({
   brandName = "shizuku",
-  brandKanji = "雫",
 }: {
   brandName?: string;
   brandKanji?: string;
 }) {
-  const [visible, setVisible] = useState(false);
+  // Phases: active -> spinner-out -> overlay-out -> hidden
+  const [phase, setPhase] = useState<
+    "active" | "spinner-out" | "overlay-out" | "hidden"
+  >(() =>
+    typeof window !== "undefined" && splashPlayedInPageLoad
+      ? "hidden"
+      : "active"
+  );
+  const [imgFailed, setImgFailed] = useState(false);
 
   useEffect(() => {
-    let rafId = 0;
-    let hideTimer = 0;
-    try {
-      const seen = window.sessionStorage.getItem(PRELOADER_KEY);
-      if (seen) return;
-      window.sessionStorage.setItem(PRELOADER_KEY, "1");
-      rafId = window.requestAnimationFrame(() => {
-        setVisible(true);
-        hideTimer = window.setTimeout(() => setVisible(false), 950);
-      });
-    } catch {
-      return;
-    }
+    if (splashPlayedInPageLoad) return;
+
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const holdMs = prefersReduced ? 350 : 1200;
+    const umbrellaFadeMs = prefersReduced ? 150 : 850;
+    const curtainFadeMs = prefersReduced ? 150 : 460;
+
+    let t2 = 0;
+    let t3 = 0;
+
+    const t1 = window.setTimeout(() => {
+      splashPlayedInPageLoad = true;
+      setPhase("spinner-out");
+      t2 = window.setTimeout(() => {
+        setPhase("overlay-out");
+        t3 = window.setTimeout(() => {
+          setPhase("hidden");
+        }, curtainFadeMs);
+      }, umbrellaFadeMs);
+    }, holdMs);
+
     return () => {
-      window.cancelAnimationFrame(rafId);
-      window.clearTimeout(hideTimer);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+      window.clearTimeout(t3);
     };
   }, []);
 
+  if (phase === "hidden") return null;
+
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.45, ease: "easeOut" } }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden"
-          style={{
-            background:
-              "radial-gradient(circle at 25% 25%, #fde2ef 0%, #ebe1fc 52%, #ddd2fb 100%)",
-          }}
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.94 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col items-center gap-3 text-[#452f8c]"
-          >
-            <UmbrellaMark className="h-12 w-12" />
-            <div className="flex items-center gap-2 font-editorial text-2xl tracking-[0.28em] uppercase text-[#241842]">
-              <span>{brandName}</span>
-              <span className="text-lg text-[#7650f3]">{brandKanji}</span>
-            </div>
-            <div className="mt-1 flex items-center gap-2">
-              {[0, 1, 2].map((i) => (
-                <motion.span
-                  key={i}
-                  className="h-2 w-1.5 rounded-full bg-[#7650f3]/70"
-                  animate={{ y: [0, 6, 0], opacity: [0.35, 1, 0.35] }}
-                  transition={{
-                    duration: 0.75,
-                    repeat: Infinity,
-                    delay: i * 0.14,
-                    ease: "easeInOut",
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div
+      data-testid="tuyu-splash"
+      onClick={() => {
+        splashPlayedInPageLoad = true;
+        setPhase("hidden");
+      }}
+      role="presentation"
+      className={`fixed inset-0 z-[90] flex items-center justify-center transition-opacity duration-[450ms] ease-out ${
+        phase === "overlay-out" ? "pointer-events-none opacity-0" : "opacity-100"
+      }`}
+    >
+      {/* Desktop panning pink watercolor backdrop */}
+      <div className="tuyu-watercolor-pan-pc absolute inset-0 hidden md:block" />
+      {/* Mobile panning pale pink watercolor backdrop */}
+      <div className="tuyu-watercolor-pan-sp absolute inset-0 md:hidden" />
+
+      {/* Stationary centered watercolor umbrella (exact tuyu.moe calm aesthetic) */}
+      <div
+        className={`relative z-10 flex flex-col items-center justify-center transition-opacity duration-[800ms] ease-out ${
+          phase === "active" ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        {imgFailed ? (
+          <UmbrellaMark className="h-20 w-20 text-[#745bc7] md:h-24 md:w-24" />
+        ) : (
+          <img
+            src="/api/uploads/tuyu-umbrella.png"
+            alt={`${brandName} loading umbrella`}
+            onError={() => setImgFailed(true)}
+            className="w-[78px] max-w-[100px] select-none md:w-[100px]"
+          />
+        )}
+      </div>
+    </div>
   );
 }

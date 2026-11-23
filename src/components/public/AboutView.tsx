@@ -11,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
+import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
 import { Footer } from "@/components/public/Footer";
 import { RaindropIcon, UmbrellaMark } from "@/components/icons/RainMotifs";
 import { useLocale } from "@/components/providers/LocaleProvider";
@@ -32,20 +33,21 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
   }, [experiences, expFilter]);
 
   return (
-    <div className="tuyu-subpage-canvas min-h-screen text-[#14100e]">
+    <div className="tuyu-subpage-canvas relative min-h-screen text-[#14100e]">
+      <TuyuRainLayer />
       <CinematicHeader profile={profile} />
 
-      <main className="mx-auto max-w-5xl px-5 pt-28 pb-24 sm:px-8 sm:pt-32">
+      <main className="relative z-10 mx-auto w-[90%] max-w-[1000px] pt-28 pb-24 md:pt-36">
         {/* Clean Editorial Story + Optional Portrait */}
         <section className="grid gap-10 lg:grid-cols-12 lg:items-start">
           <div className="lg:col-span-8">
-            <p className="font-mono text-[11px] tracking-[0.22em] text-[#7650f3] uppercase">
+            <p className="font-mono text-[11px] tracking-[0.22em] text-[#745bc7] uppercase">
               PROFILE · {profile.location}
             </p>
-            <h1 className="mt-2 font-editorial text-4xl font-normal tracking-[0.14em] text-[#14100e] uppercase sm:text-5xl">
+            <h1 className="mt-2 font-editorial text-[28px] font-normal leading-tight tracking-[5px] text-[#745bc7] uppercase md:text-[38px] md:tracking-[7px]">
               {profile.fullName}
             </h1>
-            <p className="mt-2 font-mono text-xs text-[#5c526e]">
+            <p className="mt-2 font-mono text-xs text-[#5d5370]">
               {pick(profile.currentRoleEn, profile.currentRoleId)} —{" "}
               {profile.currentOrg}
             </p>
@@ -62,7 +64,7 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
                   href={profile.linkedinUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-[#14100e] px-5 py-2 font-mono text-xs text-white transition hover:bg-[#7650f3]"
+                  className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full bg-[#745bc7] px-5 py-2 font-mono text-xs text-white transition hover:bg-[#7650f3]"
                 >
                   LinkedIn <ArrowUpRight className="h-3.5 w-3.5" />
                 </a>
@@ -72,7 +74,7 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
                   href={profile.githubUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-[#d4c6f4] bg-white px-5 py-2 font-mono text-xs text-[#14100e] transition hover:border-[#7650f3] hover:text-[#7650f3]"
+                  className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full border border-[#745bc7] bg-white/80 px-5 py-2 font-mono text-xs text-[#745bc7] transition hover:bg-[#745bc7] hover:text-white"
                 >
                   GitHub <ArrowUpRight className="h-3.5 w-3.5" />
                 </a>
@@ -82,7 +84,7 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
                   href={profile.resumeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-[#d4c6f4] bg-white px-5 py-2 font-mono text-xs text-[#14100e] transition hover:border-[#7650f3] hover:text-[#7650f3]"
+                  className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full border border-[#745bc7] bg-white/80 px-5 py-2 font-mono text-xs text-[#745bc7] transition hover:bg-[#745bc7] hover:text-white"
                 >
                   {pick("Resume", "CV")} <ArrowUpRight className="h-3.5 w-3.5" />
                 </a>
@@ -136,30 +138,34 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
         <section id="experience" className="scroll-mt-24">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <h2 className="font-editorial text-3xl font-normal tracking-[0.2em] text-[#14100e] uppercase">
+              <h2 className="font-editorial text-[26px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[33px] md:tracking-[9px]">
                 {pick("EXPERIENCE", "PENGALAMAN")}
               </h2>
-              <p className="mt-1 text-xs text-[#5c526e]">
+              <p className="mt-2 text-xs text-[#5d5370]">
                 {pick("Career, banking technology & academic timeline", "Riwayat karier, teknologi perbankan & pendidikan")}
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-x-5 gap-y-2">
-              {["ALL", "WORK", "EDUCATION", "ORGANIZATION"].map((kind) => (
-                <button
+            <ul className="flex max-w-full flex-nowrap items-center overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {["ALL", "WORK", "EDUCATION", "ORGANIZATION"].map((kind, idx) => (
+                <li
                   key={kind}
-                  type="button"
-                  onClick={() => setExpFilter(kind)}
-                  className={`pb-1 font-mono text-xs tracking-[0.14em] uppercase transition ${
-                    expFilter === kind
-                      ? "border-b-2 border-[#7650f3] font-semibold text-[#7650f3]"
-                      : "border-b-2 border-transparent text-[#5c526e] hover:text-[#14100e]"
+                  className={`shrink-0 border-r border-[#745bc7] ${
+                    idx === 0 ? "border-l" : ""
                   }`}
                 >
-                  {kind}
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setExpFilter(kind)}
+                    className={`whitespace-nowrap px-2.5 py-0.5 font-editorial text-[11px] tracking-[1.5px] text-[#745bc7] uppercase transition hover:text-[#d749d5] md:px-4 md:text-[13px] ${
+                      expFilter === kind ? "font-bold" : "font-normal opacity-80"
+                    }`}
+                  >
+                    {kind}
+                  </button>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
           {filteredExperiences.length === 0 ? (
@@ -261,7 +267,7 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
           <section className="mt-14">
             <div className="raindrop-dotted mb-12 w-full" />
             <div className="flex flex-wrap items-end justify-between gap-3">
-              <h2 className="font-editorial text-3xl font-normal tracking-[0.2em] text-[#14100e] uppercase">
+              <h2 className="font-editorial text-[26px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[33px] md:tracking-[9px]">
                 {pick("TOOLKIT", "KEAHLIAN")}
               </h2>
               <Link

@@ -2,19 +2,18 @@
 
 :root {
   --tuyu-lavender: #e5dcfb;
-  --tuyu-lavender-soft: #f2ecfd;
-  --tuyu-blush: #fad8e8;
-  --tuyu-ink: #14100e;
-  --tuyu-muted: #5c526e;
+  --tuyu-lavender-soft: #efe9fd;
+  --tuyu-iris: #745bc7;
   --tuyu-violet: #7650f3;
-  --tuyu-violet-deep: #5c37da;
-  --tuyu-line: #d4c6f4;
-  --tuyu-hero-top: #171226;
-  --tuyu-hero-bottom: #2c2050;
+  --tuyu-magenta: #d749d5;
+  --tuyu-ink: #14100e;
+  --tuyu-muted: #5d5370;
+  --tuyu-rain: #2276a8;
+  --tuyu-line: rgba(116, 91, 199, 0.25);
 }
 
 @theme inline {
-  --font-sans: var(--font-jakarta), var(--font-jp), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jp), var(--font-jakarta), "Hiragino Kaku Gothic ProN", sans-serif;
   --font-display: var(--font-cormorant), var(--font-jp), Georgia, serif;
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
 }
@@ -27,44 +26,229 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--tuyu-lavender);
+  background-color: transparent;
   color: var(--tuyu-ink);
   overflow-x: hidden;
+  letter-spacing: 0.4px;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Authentic TUYU-style soft lavender canvas with restrained blush-pink edge mist */
-.tuyu-canvas {
-  background-color: var(--tuyu-lavender);
-  background-image:
-    radial-gradient(ellipse 65% 28% at 15% 0%, rgba(250, 216, 232, 0.72) 0%, transparent 72%),
-    radial-gradient(ellipse 60% 26% at 88% 100%, rgba(250, 216, 232, 0.7) 0%, transparent 72%);
+.font-editorial {
+  font-family: var(--font-display);
 }
 
-/* Subtle blush watercolor top/bottom wash for subpages */
+/* ============================================================================
+   Authentic tuyu.moe Fixed Watercolor Backdrop & Panning Keyframes
+   ============================================================================ */
+@keyframes tuyuGradientPan {
+  0% {
+    background-position: 0% 100%;
+  }
+  50% {
+    background-position: 100% 20%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
+}
+
+.tuyu-watercolor-pan-pc {
+  background-color: #fde8f5;
+  background-image:
+    url("/api/uploads/tuyu-watercolor-pc.jpg"),
+    linear-gradient(145deg, #fde3f3 0%, #ede2fc 52%, #e5dcfb 100%);
+  background-repeat: no-repeat;
+  background-size: 120% 120%, cover;
+  animation: tuyuGradientPan 20s ease infinite;
+}
+
+.tuyu-watercolor-pan-sp {
+  background-color: #fde8f5;
+  background-image:
+    url("/api/uploads/tuyu-watercolor-sp.jpg"),
+    linear-gradient(145deg, #fde3f3 0%, #ede2fc 52%, #e5dcfb 100%);
+  background-repeat: no-repeat;
+  background-size: 120% 120%, cover;
+  animation: tuyuGradientPan 20s ease infinite;
+}
+
+/* Fixed ambient watercolor layer revealed in parallax window gaps (like #section01_video-area) */
+.tuyu-fixed-watercolor {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-color: #fae3f3;
+  background-image:
+    url("/api/uploads/tuyu-watercolor-pc.jpg"),
+    linear-gradient(145deg, #fce0f1 0%, #eee4fc 55%, #e5dcfb 100%);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .tuyu-fixed-watercolor {
+    background-image:
+      url("/api/uploads/tuyu-watercolor-sp.jpg"),
+      linear-gradient(145deg, #fce0f1 0%, #eee4fc 55%, #e5dcfb 100%);
+  }
+}
+
+/* ============================================================================
+   Authentic tuyu.moe 20-Drop Pure CSS Vertical Rain Effect (.rains)
+   ============================================================================ */
+@keyframes tuyuRainAnim {
+  0% { transform: translate(0, 0); }
+  4% { transform: translate(0, 1600px); }
+  5% { transform: translate(200px, 0); }
+  9% { transform: translate(200px, 1600px); }
+  10% { transform: translate(-100px, 0); }
+  14% { transform: translate(-100px, 1600px); }
+  15% { transform: translate(-200px, 0); }
+  19% { transform: translate(-200px, 1600px); }
+  20% { transform: translate(100px, 0); }
+  24% { transform: translate(100px, 1600px); }
+  25% { transform: translate(-150px, 0); }
+  29% { transform: translate(-150px, 1600px); }
+  30% { transform: translate(-80px, 0); }
+  34% { transform: translate(-80px, 1600px); }
+  35% { transform: translate(150px, 0); }
+  39% { transform: translate(150px, 1600px); }
+  40% { transform: translate(-60px, 0); }
+  44% { transform: translate(-60px, 1600px); }
+  45% { transform: translate(90px, 0); }
+  49% { transform: translate(90px, 1600px); }
+  50% { transform: translate(60px, 0); }
+  54% { transform: translate(60px, 1600px); }
+  55% { transform: translate(-60px, 0); }
+  59% { transform: translate(-60px, 1600px); }
+  60% { transform: translate(-40px, 0); }
+  64% { transform: translate(-40px, 1600px); }
+  65% { transform: translate(40px, 0); }
+  69% { transform: translate(40px, 1600px); }
+  70% { transform: translate(-20px, 0); }
+  74% { transform: translate(-20px, 1600px); }
+  75% { transform: translate(-110px, 0); }
+  79% { transform: translate(-110px, 1600px); }
+  80% { transform: translate(20px, 0); }
+  84% { transform: translate(20px, 1600px); }
+  85% { transform: translate(-20px, 0); }
+  89% { transform: translate(-20px, 1600px); }
+  90% { transform: translate(50px, 0); }
+  94% { transform: translate(50px, 1600px); }
+  95% { transform: translate(0, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+.tuyu-rain-drop {
+  position: absolute;
+  width: 1px;
+  height: 60px;
+  background: var(--tuyu-rain);
+  opacity: 0.59;
+  animation-name: tuyuRainAnim;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tuyu-rain-drop,
+  .tuyu-watercolor-pan-pc,
+  .tuyu-watercolor-pan-sp {
+    animation: none;
+  }
+}
+
+/* ============================================================================
+   Authentic tuyu.moe Multi-Tone Raindrop Horizontal Line (line.png)
+   ============================================================================ */
+.tuyu-raindrop-line {
+  background-image: url("/api/uploads/tuyu-raindrop-line.png");
+  background-position: center bottom;
+  background-size: 520px 7px;
+  background-repeat: repeat-x;
+}
+
+@media (max-width: 767px) {
+  .tuyu-raindrop-line {
+    background-size: 360px 6px;
+    background-repeat: repeat-x;
+  }
+}
+
+/* Fallback / standalone raindrop divider strip */
+.raindrop-dotted {
+  height: 8px;
+  background-image: url("/api/uploads/tuyu-raindrop-line.png");
+  background-position: center;
+  background-size: 520px 7px;
+  background-repeat: repeat-x;
+}
+
+/* Exact tuyu.moe MORE outlined pill button */
+.tuyu-more-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 190px;
+  height: 37px;
+  border-radius: 20px;
+  border: 1px solid var(--tuyu-iris);
+  background: transparent;
+  color: var(--tuyu-iris);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: color 0.2s linear, opacity 0.2s linear, border-color 0.2s linear, background-color 0.2s linear;
+}
+
+.tuyu-more-btn:hover {
+  color: var(--tuyu-violet);
+  border-color: var(--tuyu-violet);
+  opacity: 0.72;
+}
+
+@media (max-width: 767px) {
+  .tuyu-more-btn {
+    width: 146px;
+    height: 33px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+}
+
+/* Vivid Magenta-Purple Watercolor Footer Band (footer.jpg) */
+.tuyu-footer-band {
+  background-color: #c86ce8;
+  background-image:
+    url("/api/uploads/tuyu-watercolor-band.jpg"),
+    linear-gradient(110deg, #ef85e8 0%, #c05ce6 52%, #745bc7 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Clean flat editorial surfaces on #e5dcfb */
 .tuyu-subpage-canvas {
-  background-color: var(--tuyu-lavender-soft);
-  background-image:
-    radial-gradient(ellipse 70% 24% at 12% 0%, rgba(250, 216, 232, 0.65) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 24% at 90% 100%, rgba(229, 220, 251, 0.9) 0%, transparent 70%);
+  background-color: var(--tuyu-lavender);
 }
 
-/* Calm, flat Japanese editorial surface (zero heavy shadows) */
 .tuyu-sheet {
-  background-color: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(118, 80, 243, 0.14);
-  transition:
-    background-color 0.22s ease,
-    border-color 0.22s ease,
-    transform 0.22s ease;
+  background-color: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(116, 91, 199, 0.2);
+  transition: background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
 }
 
 .tuyu-sheet-hover:hover {
-  background-color: rgba(255, 255, 255, 0.96);
-  border-color: rgba(118, 80, 243, 0.42);
+  background-color: rgba(255, 255, 255, 0.94);
+  border-color: var(--tuyu-iris);
 }
 
-/* Compatibility aliases used in Admin Studio */
+/* Admin Studio compatibility surfaces */
 .shizuku-watercolor-bg {
   background-color: var(--tuyu-lavender-soft);
   background-image:
@@ -73,8 +257,8 @@ body {
 }
 
 .pastel-glass {
-  background-color: rgba(255, 255, 255, 0.84);
-  border: 1px solid var(--tuyu-line);
+  background-color: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(116, 91, 199, 0.22);
 }
 
 .pastel-glass-hover {
@@ -83,82 +267,12 @@ body {
 
 .pastel-glass-hover:hover {
   background-color: #ffffff;
-  border-color: rgba(118, 80, 243, 0.45);
+  border-color: var(--tuyu-iris);
 }
 
 .twilight-card {
   background: linear-gradient(145deg, #1b1530 0%, #2d2152 100%);
   border: 1px solid rgba(229, 220, 251, 0.2);
-}
-
-/* Editorial serif heading utility */
-.font-editorial {
-  font-family: var(--font-display);
-}
-
-/* Iconic TUYU raindrop-dotted horizontal divider */
-.raindrop-dotted {
-  background-image: radial-gradient(
-    circle,
-    rgba(20, 16, 14, 0.24) 1.15px,
-    transparent 1.15px
-  );
-  background-size: 12px 4px;
-  background-repeat: repeat-x;
-  height: 4px;
-}
-
-/* Crisp TUYU white pill button ("MORE") */
-.tuyu-pill-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border-radius: 9999px;
-  background-color: #ffffff;
-  border: 1px solid rgba(118, 80, 243, 0.22);
-  color: var(--tuyu-ink);
-  font-family: var(--font-display);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease,
-    border-color 0.25s ease;
-}
-
-.tuyu-pill-btn:hover {
-  background-color: var(--tuyu-violet);
-  border-color: var(--tuyu-violet);
-  color: #ffffff;
-}
-
-/* Subtle falling raindrop animation in Hero */
-@keyframes rainFall {
-  0% {
-    transform: translate3d(0, -15vh, 0) rotate(12deg);
-    opacity: 0;
-  }
-  20% {
-    opacity: 0.45;
-  }
-  80% {
-    opacity: 0.35;
-  }
-  100% {
-    transform: translate3d(-10vw, 108vh, 0) rotate(12deg);
-    opacity: 0;
-  }
-}
-
-.rain-streak {
-  animation: rainFall var(--rain-dur, 5s) linear var(--rain-delay, 0s) infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rain-streak {
-    animation: none;
-  }
 }
 
 ::-webkit-scrollbar {
@@ -167,14 +281,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #ede6fc;
+  background: #ece4fc;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c7b6f2;
+  background: #bba8ec;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #7650f3;
+  background: #745bc7;
 }

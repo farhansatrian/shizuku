@@ -10,6 +10,7 @@ import {
   Settings,
 } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
+import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
 import { Footer } from "@/components/public/Footer";
 import { renderWorkspaceIcon } from "@/components/public/HomeView";
 import { useLocale } from "@/components/providers/LocaleProvider";
@@ -75,20 +76,21 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
   }, [workspaceApps, category, query]);
 
   return (
-    <div className="tuyu-subpage-canvas min-h-screen text-[#14100e]">
+    <div className="tuyu-subpage-canvas relative min-h-screen text-[#14100e]">
+      <TuyuRainLayer />
       <CinematicHeader profile={profile} />
 
-      <main className="mx-auto max-w-5xl px-5 pt-28 pb-24 sm:px-8 sm:pt-32">
-        {/* Quiet Editorial Header + Jakarta Clock */}
+      <main className="relative z-10 mx-auto w-[90%] max-w-[1000px] pt-28 pb-24 md:pt-36">
+        {/* Quiet TUYU Editorial Header + Jakarta Clock */}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
-            <p className="font-mono text-[11px] tracking-[0.22em] text-[#7650f3] uppercase">
+            <p className="font-mono text-[11px] tracking-[0.22em] text-[#745bc7] uppercase">
               {clockText || `${profile.brandName} · ${profile.location}`}
             </p>
-            <h1 className="mt-2 font-editorial text-4xl font-normal tracking-[0.22em] text-[#14100e] uppercase sm:text-5xl">
+            <h1 className="mt-2 font-editorial text-[28px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[36px] md:tracking-[9px]">
               WORKSPACE
             </h1>
-            <p className="mt-2 text-sm text-[#5c526e]">
+            <p className="mt-3 text-sm text-[#5d5370]">
               {pick(
                 "Daily-drive launcher for personal apps, shortcuts, and upcoming AI agents.",
                 "Pusat aplikasi harian, pintasan kerja, dan ruang AI agent mendatang."
@@ -98,53 +100,57 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
 
           <Link
             href="/admin"
-            className="inline-flex min-h-[40px] w-fit items-center gap-2 rounded-full border border-[#d4c6f4] bg-white px-4 py-2 font-mono text-[11px] tracking-[0.12em] text-[#14100e] uppercase transition hover:border-[#7650f3] hover:text-[#7650f3]"
+            className="inline-flex min-h-[38px] w-fit items-center gap-2 rounded-full border border-[#745bc7] bg-white/75 px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] text-[#745bc7] uppercase transition hover:bg-[#745bc7] hover:text-white"
           >
             <Settings className="h-3.5 w-3.5" />
             {pick("Customize Apps", "Atur Aplikasi")}
           </Link>
         </div>
 
-        {/* Clean Flat Filter Bar + Search */}
-        <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap gap-x-6 gap-y-2">
-            {categories.map((cat) => {
+        {/* Exact tuyu.moe Pipe-Separated Filter Tabs + Search */}
+        <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <ul className="flex max-w-full flex-nowrap items-center overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {categories.map((cat, idx) => {
               const active = category === cat;
               return (
-                <button
+                <li
                   key={cat}
-                  type="button"
-                  onClick={() => setCategory(cat)}
-                  className={`pb-1.5 font-mono text-xs tracking-[0.16em] uppercase transition ${
-                    active
-                      ? "border-b-2 border-[#7650f3] font-semibold text-[#7650f3]"
-                      : "border-b-2 border-transparent text-[#5c526e] hover:text-[#14100e]"
+                  className={`shrink-0 border-r border-[#745bc7] ${
+                    idx === 0 ? "border-l" : ""
                   }`}
                 >
-                  {cat}
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setCategory(cat)}
+                    className={`whitespace-nowrap px-2.5 py-0.5 font-editorial text-[11px] tracking-[1.5px] text-[#745bc7] uppercase transition hover:text-[#d749d5] md:px-4 md:text-[13px] md:tracking-[3px] ${
+                      active ? "font-bold" : "font-normal opacity-80"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                </li>
               );
             })}
-          </div>
+          </ul>
 
           <div className="relative w-full sm:w-60">
-            <Search className="pointer-events-none absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-[#7f719c]" />
+            <Search className="pointer-events-none absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-[#745bc7]" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={pick("Filter apps...", "Cari aplikasi...")}
-              className="w-full rounded-full border border-[#d4c6f4] bg-white/85 py-2 pr-4 pl-9 text-xs text-[#14100e] outline-none transition placeholder:text-[#8c7fab] focus:border-[#7650f3] focus:bg-white"
+              className="w-full rounded-full border border-[#745bc7]/40 bg-white/80 py-2 pr-4 pl-9 text-xs text-[#14100e] outline-none transition placeholder:text-[#7f719c] focus:border-[#745bc7] focus:bg-white"
             />
           </div>
         </div>
 
-        <div className="raindrop-dotted my-7 w-full" />
+        <div className="raindrop-dotted my-8 w-full" />
 
         {/* Launcher Grid */}
         {filtered.length === 0 ? (
           <div className="tuyu-sheet rounded-2xl p-10 text-center">
-            <p className="text-sm text-[#5c526e]">
+            <p className="text-sm text-[#5d5370]">
               {pick(
                 "No workspace apps match this filter. Add or edit them in /admin.",
                 "Belum ada aplikasi yang cocok. Tambah atau edit lewat /admin."
@@ -155,17 +161,17 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((app) => {
               const card = (
-                <div className="tuyu-sheet tuyu-sheet-hover group flex h-full min-h-[124px] flex-col justify-between rounded-2xl p-5">
+                <div className="tuyu-sheet tuyu-sheet-hover group flex h-full min-h-[124px] flex-col justify-between rounded-xl p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#e5dcfb]/80 text-[#7650f3] transition-colors group-hover:bg-[#7650f3] group-hover:text-white">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e5dcfb] text-[#745bc7] transition-colors group-hover:bg-[#745bc7] group-hover:text-white">
                         {renderWorkspaceIcon(app.icon, "h-4 w-4")}
                       </span>
                       <div>
                         <h2 className="text-sm font-semibold text-[#14100e] transition-colors group-hover:text-[#7650f3]">
                           {app.name}
                         </h2>
-                        <p className="font-mono text-[10px] tracking-[0.14em] text-[#7c6e9c] uppercase">
+                        <p className="font-mono text-[10px] tracking-[0.14em] text-[#745bc7] uppercase">
                           {app.category}
                         </p>
                       </div>
@@ -173,19 +179,19 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
 
                     <div className="flex items-center gap-1.5">
                       {app.badge && (
-                        <span className="rounded-full bg-[#f4effd] px-2 py-0.5 font-mono text-[9px] tracking-[0.14em] text-[#7650f3] uppercase">
+                        <span className="rounded-[5px] bg-[#745bc7] px-2 py-0.5 font-mono text-[9px] tracking-[0.12em] text-white uppercase">
                           {app.badge}
                         </span>
                       )}
                       {app.isExternal ? (
-                        <ArrowUpRight className="h-3.5 w-3.5 text-[#7650f3]/75 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        <ArrowUpRight className="h-3.5 w-3.5 text-[#745bc7] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       ) : (
-                        <ArrowRight className="h-3.5 w-3.5 text-[#7650f3]/75 transition-transform group-hover:translate-x-0.5" />
+                        <ArrowRight className="h-3.5 w-3.5 text-[#745bc7] transition-transform group-hover:translate-x-0.5" />
                       )}
                     </div>
                   </div>
 
-                  <p className="mt-3 text-xs leading-relaxed text-[#5c526e]">
+                  <p className="mt-3 text-xs leading-relaxed text-[#5d5370]">
                     {pick(app.descriptionEn, app.descriptionId)}
                   </p>
                 </div>
