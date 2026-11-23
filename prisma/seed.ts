@@ -6,6 +6,10 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("☔ Seeding shizuku (雫) database...");
 
+  // Enable SQLite WAL mode persistently on the database file
+  await prisma.$queryRawUnsafe("PRAGMA journal_mode = WAL;");
+  await prisma.$queryRawUnsafe("PRAGMA busy_timeout = 5000;");
+
   // 1. Ensure initial Admin user exists
   const adminUsername = (process.env.ADMIN_USERNAME || "farhan").trim();
   const adminEmail = (

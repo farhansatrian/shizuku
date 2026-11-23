@@ -1,0 +1,51 @@
+# =============================================================================
+# shizuku (雫) — Single-Container Production Stack (compose.prod.yaml)
+# =============================================================================
+# Dirancang khusus untuk VM ringan (~1 GB RAM / 2 vCPU / 10 GB Disk):
+# - HANYA 1 container (tanpa container PostgreSQL terpisah!)
+# - 1 volume persisten (shizuku_data -> /app/data) menyimpan SQLite DB & upload
+# - Prebuilt image dari GHCR (tidak pernah compile di VM)
+# - Update deploy cukup 1 perintah:
+#     docker compose -f compose.prod.yaml pull && docker compose -f compose.prod.yaml up -d
+# =============================================================================
+
+services:
+  shizuku:
+    image: ${SHIZUKU_IMAGE:-ghcr.io/farhansatrian/shizuku:latest}
+    container_name: shizuku-app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+      NODE_OPTIONS: "--max-old-space-size=256"
+      NEXT_TELEMETRY_DISABLED: "1"
+      DATABASE_URL: "file:/app/data/shizuku.db"
+      UPLOAD_DIR: "/app/data/uploads"
+      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in .env.production (min 32 chars)}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-farhan}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-farhansatria.07@gmail.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set initial ADMIN_PASSWORD in .env.production}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
+      RUN_DB_PUSH: ${RUN_DB_PUSH:-true}
+      RUN_SEED: ${RUN_SEED:-true}
+    ports:
+      - "${APP_BIND_IP:-0.0.0.0}:${APP_PORT:-3000}:3000"
+    volumes:
+      - shizuku_data:/app/data
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 384M
+        reservations:
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  shizuku_data:
+    name: shizuku_data

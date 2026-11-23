@@ -211,7 +211,7 @@ export function CinematicHeader({
             className="fixed inset-0 z-40 flex overflow-y-auto"
             style={{
               background:
-                "linear-gradient(135deg, rgba(251, 217, 234, 0.97) 0%, rgba(232, 222, 252, 0.98) 54%, rgba(219, 206, 252, 0.98) 100%)",
+                "linear-gradient(135deg, #fbd9ea 0%, #e8defc 54%, #dbcefc 100%)",
             }}
           >
             {/* Giant vertical rotated brand typography (TUYU signature!) */}

@@ -58,14 +58,14 @@ export function HeroSection({ profile }: { profile: SerializedProfile }) {
         <img
           src={profile.heroImage || "/assets/hero-rainy-anime.jpg"}
           alt={`${profile.brandName} rainy anime key visual`}
-          className="h-full w-full object-cover object-[72%_center] sm:object-center"
+          className="h-full w-full object-cover object-[78%_20%] sm:object-center"
         />
         {/* Gentle cinematic scrim on the left so white editorial text pops while character art on the right stays vivid */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(96deg, rgba(20, 15, 38, 0.86) 0%, rgba(24, 18, 44, 0.62) 44%, rgba(28, 21, 52, 0.16) 76%, rgba(28, 21, 52, 0.25) 100%)",
+              "linear-gradient(96deg, rgba(20, 15, 38, 0.9) 0%, rgba(24, 18, 44, 0.68) 46%, rgba(28, 21, 52, 0.2) 76%, rgba(28, 21, 52, 0.28) 100%)",
           }}
         />
         <div
@@ -186,12 +186,12 @@ export function HeroSection({ profile }: { profile: SerializedProfile }) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.45 }}
-          className="mt-14 inline-flex max-w-md items-center gap-3 rounded-2xl border border-white/20 bg-white/12 px-4 py-3 backdrop-blur-md sm:mt-16"
+          className="mt-12 flex w-full max-w-md items-center gap-3 overflow-hidden rounded-2xl border border-white/20 bg-white/12 px-4 py-3 backdrop-blur-md sm:mt-16"
         >
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#7650f3] to-[#ee84b5] text-white shadow-xs">
             <Sparkles className="h-4 w-4" />
           </span>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="font-mono text-[10px] tracking-[0.2em] text-[#fad8e8] uppercase">
               {pick("CURRENT STATION", "PERAN SAAT INI")}
             </p>

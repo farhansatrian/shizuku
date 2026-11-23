@@ -156,16 +156,16 @@ export function PastelOsWindow({
 
               {/* KPI Stats Grid */}
               {profile.stats.length > 0 && (
-                <div className="grid grid-cols-3 gap-3 pt-1">
+                <div className="grid grid-cols-3 gap-2.5 pt-1 sm:gap-3">
                   {profile.stats.map((stat, i) => (
                     <div
                       key={i}
-                      className="rounded-2xl border border-[#e5dcfb] bg-white/85 px-3.5 py-3 text-center transition hover:border-[#7650f3]/40"
+                      className="flex flex-col items-center justify-center rounded-2xl border border-[#e5dcfb] bg-white/85 px-2.5 py-3 text-center transition hover:border-[#7650f3]/40 sm:px-3.5"
                     >
-                      <p className="font-mono text-base font-semibold text-[#7650f3] sm:text-lg">
+                      <p className="whitespace-nowrap font-mono text-sm font-semibold text-[#7650f3] sm:text-lg">
                         {stat.value}
                       </p>
-                      <p className="mt-0.5 text-[11px] leading-tight text-[#62577a]">
+                      <p className="mt-0.5 text-[10px] leading-tight text-[#62577a] sm:text-[11px]">
                         {pick(stat.labelEn, stat.labelId)}
                       </p>
                     </div>

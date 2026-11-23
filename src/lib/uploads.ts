@@ -16,7 +16,9 @@ const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8 MB
 
 export function getUploadDirectory(): string {
   const envDir = process.env.UPLOAD_DIR || "./data/uploads";
-  return path.isAbsolute(envDir) ? envDir : path.resolve(process.cwd(), envDir);
+  return path.isAbsolute(envDir)
+    ? envDir
+    : path.resolve(/*turbopackIgnore: true*/ process.cwd(), envDir);
 }
 
 export function isSafeFilename(filename: string): boolean {
