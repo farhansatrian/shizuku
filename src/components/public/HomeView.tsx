@@ -72,7 +72,7 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
           {/* 2. Interactive Pastel OS Window + Bento Workspace */}
           <section
             id="overview"
-            className="mx-auto max-w-6xl px-5 pt-14 pb-20 sm:px-8 sm:pt-20"
+            className="mx-auto max-w-6xl scroll-mt-24 px-5 pt-14 pb-20 sm:px-8 sm:pt-20"
           >
             <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
               <div>
@@ -246,7 +246,7 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
           {/* 3. Featured Projects Showcase */}
           <section
             id="projects"
-            className="mx-auto max-w-6xl px-5 py-20 sm:px-8"
+            className="mx-auto max-w-6xl scroll-mt-24 px-5 py-20 sm:px-8"
           >
             <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
               <div>
@@ -351,7 +351,7 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
           {/* 4. Experience Timeline & Certificates Preview */}
           <section
             id="journey"
-            className="mx-auto max-w-6xl px-5 py-20 sm:px-8"
+            className="mx-auto max-w-6xl scroll-mt-24 px-5 py-20 sm:px-8"
           >
             <div className="grid gap-10 lg:grid-cols-12">
               {/* Left 7 cols: Experience & Education Highlights */}
@@ -447,7 +447,7 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
                     </h2>
                   </div>
                   <Link
-                    href="/about#certificates"
+                    href="/certificates"
                     className="font-mono text-xs text-[#7650f3] hover:underline"
                   >
                     {pick("View Vault →", "Lihat Semua →")}
@@ -493,7 +493,7 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
           {/* 5. Dreamy Contact CTA Card */}
           <section
             id="contact"
-            className="mx-auto max-w-6xl px-5 pb-24 sm:px-8"
+            className="mx-auto max-w-6xl scroll-mt-24 px-5 pb-24 sm:px-8"
           >
             <div className="twilight-card relative overflow-hidden rounded-[2rem] px-7 py-12 text-white sm:px-12 sm:py-16">
               <div

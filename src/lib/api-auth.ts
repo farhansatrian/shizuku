@@ -20,4 +20,5 @@ export function revalidatePublicSite() {
   revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath("/about");
+  revalidatePath("/certificates");
 }

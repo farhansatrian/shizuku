@@ -35,10 +35,6 @@ export function HeroSection({ profile }: { profile: SerializedProfile }) {
   const [roleIndex, setRoleIndex] = useState(0);
 
   useEffect(() => {
-    setRoleIndex(0);
-  }, [locale]);
-
-  useEffect(() => {
     if (roles.length <= 1) return;
     const id = window.setInterval(() => {
       setRoleIndex((prev) => (prev + 1) % roles.length);
@@ -113,7 +109,7 @@ export function HeroSection({ profile }: { profile: SerializedProfile }) {
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#ee84b5]" />
             </span>
             <span className="font-mono text-[11px] tracking-[0.18em] text-[#efe8ff] uppercase">
-              {profile.brandKanji} //{" "}
+              {profile.brandKanji} {"// "}
               {pick(profile.availabilityEn, profile.availabilityId)}
             </span>
           </motion.div>

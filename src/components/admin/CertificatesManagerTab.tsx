@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import {
+  ArrowDown,
+  ArrowUp,
   Award,
   Eye,
   EyeOff,
@@ -118,28 +120,65 @@ export function CertificatesManagerTab({
     c: SerializedCertificate,
     field: "featured" | "published"
   ) => {
-    const res = await fetch(`/api/admin/certificates/${c.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ [field]: !c[field] }),
-    });
-    if (res.ok) {
+    try {
+      const res = await fetch(`/api/admin/certificates/${c.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [field]: !c[field] }),
+      });
+      if (!res.ok) throw new Error();
       const json = await res.json();
       setCertificates((prev) =>
         prev.map((x) => (x.id === c.id ? json.certificate : x))
       );
       notify("Certificate updated");
+    } catch {
+      notify("Failed to update certificate", "err");
     }
   };
 
   const handleDelete = async (c: SerializedCertificate) => {
     if (!window.confirm(`Delete certificate "${c.titleEn}"?`)) return;
-    const res = await fetch(`/api/admin/certificates/${c.id}`, {
-      method: "DELETE",
-    });
-    if (res.ok) {
+    try {
+      const res = await fetch(`/api/admin/certificates/${c.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error();
       setCertificates((prev) => prev.filter((x) => x.id !== c.id));
       notify("Certificate deleted");
+    } catch {
+      notify("Failed to delete certificate", "err");
+    }
+  };
+
+  const moveOrder = async (index: number, dir: -1 | 1) => {
+    const target = index + dir;
+    if (target < 0 || target >= certificates.length) return;
+    const previous = certificates;
+    const list = [...certificates];
+    const [moved] = list.splice(index, 1);
+    list.splice(target, 0, moved);
+    const updated = list.map((item, i) => ({ ...item, sortOrder: i + 1 }));
+    setCertificates(updated);
+    try {
+      const changed = updated.filter(
+        (item) =>
+          previous.find((p) => p.id === item.id)?.sortOrder !== item.sortOrder
+      );
+      const responses = await Promise.all(
+        changed.map((item) =>
+          fetch(`/api/admin/certificates/${item.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sortOrder: item.sortOrder }),
+          })
+        )
+      );
+      if (responses.some((r) => !r.ok)) throw new Error();
+      notify("Certificate order updated");
+    } catch {
+      setCertificates(previous);
+      notify("Failed to reorder certificates", "err");
     }
   };
 
@@ -166,7 +205,7 @@ export function CertificatesManagerTab({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        {certificates.map((cert) => (
+        {certificates.map((cert, idx) => (
           <div
             key={cert.id}
             className="pastel-glass flex flex-col justify-between gap-4 rounded-3xl p-5"
@@ -195,6 +234,24 @@ export function CertificatesManagerTab({
             </div>
 
             <div className="flex items-center justify-end gap-1.5 border-t border-[#ece5fc] pt-3">
+              <button
+                type="button"
+                onClick={() => moveOrder(idx, -1)}
+                disabled={idx === 0}
+                title="Move earlier"
+                className="rounded-xl border border-[#dfd4f8] bg-white p-2 text-[#5f4f85] disabled:opacity-30"
+              >
+                <ArrowUp className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => moveOrder(idx, 1)}
+                disabled={idx === certificates.length - 1}
+                title="Move later"
+                className="rounded-xl border border-[#dfd4f8] bg-white p-2 text-[#5f4f85] disabled:opacity-30"
+              >
+                <ArrowDown className="h-3.5 w-3.5" />
+              </button>
               <button
                 type="button"
                 onClick={() => quickToggle(cert, "featured")}
@@ -382,6 +439,7 @@ export function CertificatesManagerTab({
                 label="Certificate Image (optional — uploaded persistently)"
                 value={editing.imageUrl}
                 onChange={(url) => setEditing({ ...editing, imageUrl: url })}
+                allowClear
               />
 
               <div className="flex flex-wrap gap-5 pt-1 text-xs text-[#4a3f66]">

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { ImagePlus, Loader2, Upload } from "lucide-react";
+import { ImagePlus, Loader2, Trash2, Upload } from "lucide-react";
 
 interface MediaUploaderProps {
   label: string;
@@ -9,6 +9,7 @@ interface MediaUploaderProps {
   onChange: (nextUrl: string) => void;
   presets?: { label: string; url: string }[];
   aspectClass?: string;
+  allowClear?: boolean;
 }
 
 export function MediaUploader({
@@ -17,6 +18,7 @@ export function MediaUploader({
   onChange,
   presets,
   aspectClass = "aspect-[16/9]",
+  allowClear = false,
 }: MediaUploaderProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -47,9 +49,21 @@ export function MediaUploader({
 
   return (
     <div className="space-y-2.5">
-      <label className="block font-mono text-[11px] font-medium tracking-wider text-[#5f4f85] uppercase">
-        {label}
-      </label>
+      <div className="flex items-center justify-between gap-2">
+        <label className="block font-mono text-[11px] font-medium tracking-wider text-[#5f4f85] uppercase">
+          {label}
+        </label>
+        {allowClear && value && (
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="inline-flex items-center gap-1 font-mono text-[10px] text-rose-600 hover:underline"
+          >
+            <Trash2 className="h-3 w-3" />
+            Remove
+          </button>
+        )}
+      </div>
 
       <div
         onDragOver={(e) => {
@@ -70,7 +84,9 @@ export function MediaUploader({
         }`}
       >
         {value ? (
-          <div className={`relative w-full overflow-hidden bg-[#1e1733] ${aspectClass}`}>
+          <div
+            className={`relative w-full overflow-hidden bg-[#1e1733] ${aspectClass}`}
+          >
             <img
               src={value}
               alt={label}

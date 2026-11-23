@@ -140,7 +140,7 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
         <div className="raindrop-dotted my-16 w-full" />
 
         {/* Experience & Education Timeline */}
-        <section id="experience">
+        <section id="experience" className="scroll-mt-24">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="font-mono text-xs tracking-[0.22em] text-[#7650f3] uppercase">
@@ -169,6 +169,22 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
             </div>
           </div>
 
+          {filteredExperiences.length === 0 ? (
+            <div className="pastel-glass rounded-3xl p-10 text-center">
+              <p className="font-editorial text-2xl text-[#1e172b]">
+                {pick(
+                  "No timeline entries in this category yet.",
+                  "Belum ada riwayat pada kategori ini."
+                )}
+              </p>
+              <p className="mt-1.5 text-sm text-[#62577a]">
+                {pick(
+                  "You can add entries anytime from the Admin Studio.",
+                  "Kamu bisa menambahkan riwayat kapan saja lewat Admin Studio."
+                )}
+              </p>
+            </div>
+          ) : (
           <div className="relative space-y-5 pl-6 before:absolute before:top-4 before:bottom-4 before:left-2 before:w-px before:bg-gradient-to-b before:from-[#7650f3] before:via-[#ee84b5] before:to-transparent">
             {filteredExperiences.map((exp) => {
               const bullets =
@@ -254,12 +270,13 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
               );
             })}
           </div>
+          )}
         </section>
 
         <div className="raindrop-dotted my-16 w-full" />
 
         {/* Certificates Vault */}
-        <section id="certificates">
+        <section id="certificates" className="scroll-mt-24">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="font-mono text-xs tracking-[0.22em] text-[#ee84b5] uppercase">

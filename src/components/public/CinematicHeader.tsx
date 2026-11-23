@@ -24,17 +24,42 @@ export function CinematicHeader({
   const pathname = usePathname();
   const { locale, setLocale, pick } = useLocale();
   const [scrolled, setScrolled] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [contactInView, setContactInView] = useState(false);
+  const [openPath, setOpenPath] = useState<string | null>(null);
+  const drawerOpen = openPath === pathname;
+
+  const setDrawerOpen = (next: boolean | ((prev: boolean) => boolean)) => {
+    setOpenPath((curr) => {
+      const currOpen = curr === pathname;
+      const target = typeof next === "function" ? next(currOpen) : next;
+      return target ? pathname : null;
+    });
+  };
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 44);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 44);
+      if (pathname === "/") {
+        const contactEl = document.getElementById("contact");
+        if (contactEl) {
+          const rect = contactEl.getBoundingClientRect();
+          setContactInView(
+            rect.top <= window.innerHeight * 0.55 && rect.bottom >= 120
+          );
+        } else {
+          setContactInView(false);
+        }
+      } else {
+        setContactInView(false);
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    setDrawerOpen(false);
+    window.addEventListener("hashchange", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("hashchange", onScroll);
+    };
   }, [pathname]);
 
   useEffect(() => {
@@ -42,7 +67,7 @@ export function CinematicHeader({
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDrawerOpen(false);
+      if (e.key === "Escape") setOpenPath(null);
     };
     window.addEventListener("keydown", onKey);
     return () => {
@@ -57,28 +82,55 @@ export function CinematicHeader({
     { href: "/", code: "01", en: "TOP", id: "BERANDA" },
     { href: "/projects", code: "02", en: "PROJECTS", id: "PROYEK" },
     { href: "/about", code: "03", en: "ABOUT", id: "TENTANG" },
-    {
-      href: "/about#certificates",
-      code: "04",
-      en: "CERTIFICATES",
-      id: "SERTIFIKAT",
-    },
+    { href: "/certificates", code: "04", en: "CERTIFICATES", id: "SERTIFIKAT" },
     { href: "/#contact", code: "05", en: "CONTACT", id: "KONTAK" },
   ];
+
+  const isItemActive = (href: string): boolean => {
+    if (href === "/") return pathname === "/" && !contactInView;
+    if (href === "/#contact") return pathname === "/" && contactInView;
+    if (href === "/projects")
+      return pathname === "/projects" || pathname.startsWith("/projects/");
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
+    setDrawerOpen(false);
+    if (href === "/#contact" && pathname === "/") {
+      e.preventDefault();
+      const el = document.getElementById("contact");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+        window.history.replaceState(null, "", "/#contact");
+        setContactInView(true);
+      }
+    } else if (href === "/" && pathname === "/") {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.history.replaceState(null, "", "/");
+      setContactInView(false);
+    }
+  };
 
   return (
     <>
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-          isLightText
-            ? "bg-transparent text-white"
-            : "border-b border-[#dfd4f8]/80 bg-white/75 text-[#1e172b] backdrop-blur-xl shadow-[0_8px_30px_-18px_rgba(118,80,243,0.18)]"
+          drawerOpen
+            ? "bg-transparent text-[#1e172b]"
+            : isLightText
+              ? "bg-transparent text-white"
+              : "border-b border-[#dfd4f8]/80 bg-white/78 text-[#1e172b] backdrop-blur-xl shadow-[0_8px_30px_-18px_rgba(118,80,243,0.18)]"
         }`}
       >
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:h-18 sm:px-8">
           {/* Brand Monogram */}
           <Link
             href="/"
+            onClick={(e) => handleNavClick(e, "/")}
             className="group flex items-center gap-2.5 focus:outline-none"
           >
             <span
@@ -111,14 +163,12 @@ export function CinematicHeader({
               className="hidden items-center gap-6 md:flex"
             >
               {navItems.slice(1, 5).map((item) => {
-                const active =
-                  item.href !== "/#contact" &&
-                  !item.href.includes("#") &&
-                  pathname.startsWith(item.href);
+                const active = isItemActive(item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
+                    onClick={(e) => handleNavClick(e, item.href)}
                     className={`relative text-xs font-medium tracking-[0.16em] uppercase transition-colors ${
                       isLightText
                         ? active
@@ -221,7 +271,10 @@ export function CinematicHeader({
             >
               <span
                 className="font-editorial text-[7.5rem] font-semibold leading-none tracking-[0.22em] text-white/65 uppercase lg:text-[9.5rem]"
-                style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+                style={{
+                  writingMode: "vertical-rl",
+                  transform: "rotate(180deg)",
+                }}
               >
                 {profile.brandName}
               </span>
@@ -234,27 +287,37 @@ export function CinematicHeader({
                   <p className="mb-1 font-mono text-xs tracking-[0.22em] text-[#7650f3] uppercase">
                     {pick("Navigation · 雫", "Navigasi · 雫")}
                   </p>
-                  {navItems.map((item, idx) => (
-                    <motion.div
-                      key={item.href}
-                      initial={{ opacity: 0, x: 18 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.05 * idx, duration: 0.3 }}
-                    >
-                      <Link
-                        href={item.href}
-                        onClick={() => setDrawerOpen(false)}
-                        className="group flex items-baseline gap-4 py-1 text-[#1e172b] transition-colors hover:text-[#7650f3]"
+                  {navItems.map((item, idx) => {
+                    const active = isItemActive(item.href);
+                    return (
+                      <motion.div
+                        key={item.href}
+                        initial={{ opacity: 0, x: 18 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.05 * idx, duration: 0.3 }}
                       >
-                        <span className="font-mono text-xs text-[#7650f3]/80">
-                          {item.code}
-                        </span>
-                        <span className="font-editorial text-3xl font-medium tracking-[0.18em] uppercase sm:text-4xl">
-                          {pick(item.en, item.id)}
-                        </span>
-                      </Link>
-                    </motion.div>
-                  ))}
+                        <Link
+                          href={item.href}
+                          onClick={(e) => handleNavClick(e, item.href)}
+                          className={`group flex items-baseline gap-4 py-1 transition-colors ${
+                            active
+                              ? "text-[#7650f3]"
+                              : "text-[#1e172b] hover:text-[#7650f3]"
+                          }`}
+                        >
+                          <span className="font-mono text-xs text-[#7650f3]/80">
+                            {item.code}
+                          </span>
+                          <span className="font-editorial text-3xl font-medium tracking-[0.18em] uppercase sm:text-4xl">
+                            {pick(item.en, item.id)}
+                          </span>
+                          {active && (
+                            <span className="ml-1 h-2 w-2 rounded-full bg-[#7650f3]" />
+                          )}
+                        </Link>
+                      </motion.div>
+                    );
+                  })}
                 </nav>
 
                 {/* Right Editorial Card inside Drawer */}
@@ -262,7 +325,7 @@ export function CinematicHeader({
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.35 }}
-                  className="rounded-3xl border border-white/80 bg-white/65 p-6 backdrop-blur-md"
+                  className="rounded-3xl border border-white/80 bg-white/70 p-6 backdrop-blur-md"
                 >
                   <div className="flex items-center gap-3.5">
                     <img

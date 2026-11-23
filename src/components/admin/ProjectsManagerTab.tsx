@@ -130,14 +130,43 @@ export function ProjectsManagerTab({
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editing) return;
+    if (!editing.roleEn.trim() || !editing.summaryEn.trim()) {
+      setLangTab("en");
+      notify(
+        "Please fill in Role (EN) and Short Summary (EN) before saving.",
+        "err"
+      );
+      return;
+    }
+
     setSaving(true);
     try {
+      const normalizedHighlights = editing.highlights
+        .filter(
+          (hl) =>
+            hl.titleEn.trim() ||
+            hl.titleId.trim() ||
+            hl.detailEn.trim() ||
+            hl.detailId.trim()
+        )
+        .map((hl, idx) => ({
+          code: hl.code.trim() || String(idx + 1).padStart(2, "0"),
+          titleEn: hl.titleEn.trim() || hl.titleId.trim(),
+          titleId: hl.titleId.trim() || hl.titleEn.trim(),
+          detailEn: hl.detailEn.trim() || hl.detailId.trim(),
+          detailId: hl.detailId.trim() || hl.detailEn.trim(),
+        }));
+
       const payload = {
         ...editing,
-        slug: editing.slug || slugify(editing.title),
-        summaryId: editing.summaryId || editing.summaryEn,
-        roleId: editing.roleId || editing.roleEn,
-        descriptionId: editing.descriptionId || editing.descriptionEn,
+        slug: slugify(editing.slug || editing.title),
+        highlights: normalizedHighlights,
+        summaryId: editing.summaryId.trim() || editing.summaryEn.trim(),
+        roleId: editing.roleId.trim() || editing.roleEn.trim(),
+        descriptionId:
+          editing.descriptionId.trim() || editing.descriptionEn.trim(),
+        impactMetricId:
+          editing.impactMetricId.trim() || editing.impactMetricEn.trim(),
       };
       const isUpdate = Boolean(editing.id);
       const url = isUpdate
@@ -209,6 +238,7 @@ export function ProjectsManagerTab({
   const moveOrder = async (index: number, direction: -1 | 1) => {
     const targetIdx = index + direction;
     if (targetIdx < 0 || targetIdx >= projects.length) return;
+    const previous = projects;
     const reordered = [...projects];
     const [moved] = reordered.splice(index, 1);
     reordered.splice(targetIdx, 0, moved);
@@ -217,16 +247,28 @@ export function ProjectsManagerTab({
       sortOrder: idx + 1,
     }));
     setProjects(updated);
-    await Promise.all(
-      [updated[index], updated[targetIdx]].map((item) =>
-        fetch(`/api/admin/projects/${item.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sortOrder: item.sortOrder }),
-        })
-      )
-    );
-    notify("Project order updated!");
+    try {
+      const changed = updated.filter(
+        (item) =>
+          previous.find((p) => p.id === item.id)?.sortOrder !== item.sortOrder
+      );
+      const responses = await Promise.all(
+        changed.map((item) =>
+          fetch(`/api/admin/projects/${item.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sortOrder: item.sortOrder }),
+          })
+        )
+      );
+      if (responses.some((r) => !r.ok)) {
+        throw new Error("Order sync failed");
+      }
+      notify("Project order updated!");
+    } catch {
+      setProjects(previous);
+      notify("Failed to reorder projects", "err");
+    }
   };
 
   const addTech = () => {
@@ -455,6 +497,14 @@ export function ProjectsManagerTab({
                     required
                     value={editing.slug}
                     onChange={(e) =>
+                      setEditing({
+                        ...editing,
+                        slug: e.target.value
+                          .toLowerCase()
+                          .replace(/[^a-z0-9-]/g, "-"),
+                      })
+                    }
+                    onBlur={(e) =>
                       setEditing({ ...editing, slug: slugify(e.target.value) })
                     }
                     className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 font-mono text-xs outline-none focus:border-[#7650f3]"
@@ -734,7 +784,7 @@ export function ProjectsManagerTab({
                           next[idx] = {
                             ...hl,
                             ...(langTab === "en"
-                              ? { titleEn: e.target.value, titleId: hl.titleId || e.target.value }
+                              ? { titleEn: e.target.value }
                               : { titleId: e.target.value }),
                           };
                           setEditing({ ...editing, highlights: next });
@@ -765,7 +815,7 @@ export function ProjectsManagerTab({
                         next[idx] = {
                           ...hl,
                           ...(langTab === "en"
-                            ? { detailEn: e.target.value, detailId: hl.detailId || e.target.value }
+                            ? { detailEn: e.target.value }
                             : { detailId: e.target.value }),
                         };
                         setEditing({ ...editing, highlights: next });

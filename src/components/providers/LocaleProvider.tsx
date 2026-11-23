@@ -6,7 +6,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
 } from "react";
 import type { Locale } from "@/lib/types";
 
@@ -20,31 +20,54 @@ interface LocaleContextValue {
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 const STORAGE_KEY = "shizuku_locale";
+const listeners = new Set<() => void>();
+
+function subscribe(callback: () => void) {
+  listeners.add(callback);
+  const onStorage = (e: StorageEvent) => {
+    if (e.key === STORAGE_KEY) callback();
+  };
+  window.addEventListener("storage", onStorage);
+  return () => {
+    listeners.delete(callback);
+    window.removeEventListener("storage", onStorage);
+  };
+}
+
+function getClientSnapshot(): Locale {
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY);
+    if (saved === "id" || saved === "en") return saved;
+  } catch {
+    // Ignore storage read errors
+  }
+  return "en";
+}
+
+function getServerSnapshot(): Locale {
+  return "en";
+}
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
   // Default language is strictly English ("en") as requested
-  const [locale, setLocaleState] = useState<Locale>("en");
+  const locale = useSyncExternalStore(
+    subscribe,
+    getClientSnapshot,
+    getServerSnapshot
+  );
 
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === "en" || saved === "id") {
-        setLocaleState(saved);
-        document.documentElement.lang = saved;
-      }
-    } catch {
-      // Ignore storage access errors
-    }
-  }, []);
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const setLocale = useCallback((next: Locale) => {
-    setLocaleState(next);
     try {
       window.localStorage.setItem(STORAGE_KEY, next);
       document.documentElement.lang = next;
     } catch {
       // Ignore storage errors
     }
+    listeners.forEach((cb) => cb());
   }, []);
 
   const toggleLocale = useCallback(() => {

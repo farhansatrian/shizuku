@@ -22,12 +22,29 @@ export function ProfileEditorTab({
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (
+      !form.headlineEn.trim() ||
+      !form.bioEn.trim() ||
+      !form.aboutStoryEn.trim() ||
+      !form.currentRoleEn.trim()
+    ) {
+      setLangTab("en");
+      notify("Please fill in required English (EN) profile fields.", "err");
+      return;
+    }
     setSaving(true);
     try {
+      const payload = {
+        ...form,
+        headlineId: form.headlineId.trim() || form.headlineEn.trim(),
+        bioId: form.bioId.trim() || form.bioEn.trim(),
+        aboutStoryId: form.aboutStoryId.trim() || form.aboutStoryEn.trim(),
+        currentRoleId: form.currentRoleId.trim() || form.currentRoleEn.trim(),
+      };
       const res = await fetch("/api/admin/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Failed to save profile");

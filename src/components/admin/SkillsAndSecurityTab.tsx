@@ -63,18 +63,21 @@ export function SkillsAndSecurityTab({
     const nextItems = group.items.includes(val)
       ? group.items
       : [...group.items, val];
-    const res = await fetch(`/api/admin/skills/${group.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items: nextItems }),
-    });
-    if (res.ok) {
+    try {
+      const res = await fetch(`/api/admin/skills/${group.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: nextItems }),
+      });
+      if (!res.ok) throw new Error();
       const json = await res.json();
       setSkillGroups((prev) =>
         prev.map((g) => (g.id === group.id ? json.skillGroup : g))
       );
       setChipDrafts((prev) => ({ ...prev, [group.id]: "" }));
       notify(`Added "${val}" to ${group.nameEn}`);
+    } catch {
+      notify("Failed to add skill", "err");
     }
   };
 
@@ -83,28 +86,34 @@ export function SkillsAndSecurityTab({
     skill: string
   ) => {
     const nextItems = group.items.filter((x) => x !== skill);
-    const res = await fetch(`/api/admin/skills/${group.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items: nextItems }),
-    });
-    if (res.ok) {
+    try {
+      const res = await fetch(`/api/admin/skills/${group.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: nextItems }),
+      });
+      if (!res.ok) throw new Error();
       const json = await res.json();
       setSkillGroups((prev) =>
         prev.map((g) => (g.id === group.id ? json.skillGroup : g))
       );
       notify(`Removed "${skill}"`);
+    } catch {
+      notify("Failed to remove skill", "err");
     }
   };
 
   const deleteGroup = async (group: SerializedSkillGroup) => {
     if (!window.confirm(`Delete skill group "${group.nameEn}"?`)) return;
-    const res = await fetch(`/api/admin/skills/${group.id}`, {
-      method: "DELETE",
-    });
-    if (res.ok) {
+    try {
+      const res = await fetch(`/api/admin/skills/${group.id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error();
       setSkillGroups((prev) => prev.filter((g) => g.id !== group.id));
       notify("Skill group deleted");
+    } catch {
+      notify("Failed to delete skill group", "err");
     }
   };
 

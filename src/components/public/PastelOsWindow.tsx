@@ -204,21 +204,36 @@ export function PastelOsWindow({
                 <p className="pl-4">
                   engineering:{" "}
                   <span className="text-[#9ae6c5]">
-                    &quot;Reliable Full-Stack &amp; Banking Systems&quot;
+                    &quot;
+                    {pick(
+                      "Reliable Full-Stack & Banking Systems",
+                      "Sistem Full-Stack & Perbankan Andal"
+                    )}
+                    &quot;
                   </span>
                   ,
                 </p>
                 <p className="pl-4">
                   business:{" "}
                   <span className="text-[#9ae6c5]">
-                    &quot;Process Clarity &amp; Measurable Impact&quot;
+                    &quot;
+                    {pick(
+                      "Process Clarity & Measurable Impact",
+                      "Kejelasan Proses & Dampak Terukur"
+                    )}
+                    &quot;
                   </span>
                   ,
                 </p>
                 <p className="pl-4">
                   ai:{" "}
                   <span className="text-[#9ae6c5]">
-                    &quot;Applied LLMs &amp; Practical Automation&quot;
+                    &quot;
+                    {pick(
+                      "Applied LLMs & Practical Automation",
+                      "LLM Terapan & Otomasi Praktis"
+                    )}
+                    &quot;
                   </span>
                   ,
                 </p>

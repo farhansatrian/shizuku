@@ -321,6 +321,7 @@ export function AdminStudioClient({
 
           {activeTab === "profile" && (
             <ProfileEditorTab
+              key={profile.updatedAt}
               profile={profile}
               onSaved={setProfile}
               notify={notify}

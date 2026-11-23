@@ -49,8 +49,15 @@ export async function PATCH(
     if (d.published !== undefined) data.published = d.published;
     if (d.sortOrder !== undefined) data.sortOrder = d.sortOrder;
 
+    const existing = await prisma.project.findUnique({
+      where: { id },
+      select: { slug: true },
+    });
     const updated = await prisma.project.update({ where: { id }, data });
     revalidatePublicSite();
+    if (existing?.slug && existing.slug !== updated.slug) {
+      revalidatePath(`/projects/${existing.slug}`);
+    }
     revalidatePath(`/projects/${updated.slug}`);
     return NextResponse.json({ ok: true, project: serializeProject(updated) });
   } catch {

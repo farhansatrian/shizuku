@@ -58,7 +58,7 @@ export function Footer({ profile }: { profile: SerializedProfile }) {
               </li>
               <li>
                 <Link
-                  href="/about#certificates"
+                  href="/certificates"
                   className="transition hover:text-[#7650f3]"
                 >
                   {pick("Certificates Vault", "Galeri Sertifikat")}

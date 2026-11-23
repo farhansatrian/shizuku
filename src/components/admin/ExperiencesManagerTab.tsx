@@ -95,13 +95,26 @@ export function ExperiencesManagerTab({
   const handleSave = async (ev: React.FormEvent) => {
     ev.preventDefault();
     if (!editing) return;
+    if (
+      !editing.roleEn.trim() ||
+      !editing.periodEn.trim() ||
+      !editing.summaryEn.trim()
+    ) {
+      setLangTab("en");
+      notify(
+        "Please fill in Role (EN), Period (EN), and Summary (EN) before saving.",
+        "err"
+      );
+      return;
+    }
+
     setSaving(true);
     try {
       const payload = {
         ...editing,
-        roleId: editing.roleId || editing.roleEn,
-        periodId: editing.periodId || editing.periodEn,
-        summaryId: editing.summaryId || editing.summaryEn,
+        roleId: editing.roleId.trim() || editing.roleEn.trim(),
+        periodId: editing.periodId.trim() || editing.periodEn.trim(),
+        summaryId: editing.summaryId.trim() || editing.summaryEn.trim(),
       };
       const isUpdate = Boolean(editing.id);
       const res = await fetch(
@@ -146,38 +159,52 @@ export function ExperiencesManagerTab({
   };
 
   const togglePublished = async (e: SerializedExperience) => {
-    const res = await fetch(`/api/admin/experiences/${e.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ published: !e.published }),
-    });
-    if (res.ok) {
+    try {
+      const res = await fetch(`/api/admin/experiences/${e.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ published: !e.published }),
+      });
+      if (!res.ok) throw new Error();
       const json = await res.json();
       setExperiences((prev) =>
         prev.map((x) => (x.id === e.id ? json.experience : x))
       );
       notify("Visibility updated");
+    } catch {
+      notify("Failed to update visibility", "err");
     }
   };
 
   const moveOrder = async (index: number, dir: -1 | 1) => {
     const target = index + dir;
     if (target < 0 || target >= experiences.length) return;
+    const previous = experiences;
     const list = [...experiences];
     const [moved] = list.splice(index, 1);
     list.splice(target, 0, moved);
     const updated = list.map((item, i) => ({ ...item, sortOrder: i + 1 }));
     setExperiences(updated);
-    await Promise.all(
-      [updated[index], updated[target]].map((item) =>
-        fetch(`/api/admin/experiences/${item.id}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sortOrder: item.sortOrder }),
-        })
-      )
-    );
-    notify("Timeline order updated");
+    try {
+      const changed = updated.filter(
+        (item) =>
+          previous.find((p) => p.id === item.id)?.sortOrder !== item.sortOrder
+      );
+      const responses = await Promise.all(
+        changed.map((item) =>
+          fetch(`/api/admin/experiences/${item.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sortOrder: item.sortOrder }),
+          })
+        )
+      );
+      if (responses.some((r) => !r.ok)) throw new Error();
+      notify("Timeline order updated");
+    } catch {
+      setExperiences(previous);
+      notify("Failed to reorder experiences", "err");
+    }
   };
 
   const addBullet = () => {

@@ -16,16 +16,23 @@ export function RainPreloader({
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    let rafId = 0;
+    let hideTimer = 0;
     try {
       const seen = window.sessionStorage.getItem(PRELOADER_KEY);
       if (seen) return;
-      setVisible(true);
       window.sessionStorage.setItem(PRELOADER_KEY, "1");
-      const timer = window.setTimeout(() => setVisible(false), 950);
-      return () => window.clearTimeout(timer);
+      rafId = window.requestAnimationFrame(() => {
+        setVisible(true);
+        hideTimer = window.setTimeout(() => setVisible(false), 950);
+      });
     } catch {
       return;
     }
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(hideTimer);
+    };
   }, []);
 
   return (
