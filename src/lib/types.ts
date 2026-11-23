@@ -53,6 +53,7 @@ export interface SerializedProfile {
   currentlyEn: string;
   currentlyId: string;
   heroImage: string;
+  heroImageMobile: string;
   avatarImage: string;
   email: string;
   linkedinUrl: string;
@@ -138,8 +139,25 @@ export interface SerializedSkillGroup {
   updatedAt: string;
 }
 
+export interface SerializedWorkspaceApp {
+  id: string;
+  name: string;
+  category: string;
+  descriptionEn: string;
+  descriptionId: string;
+  url: string;
+  icon: string;
+  badge: string;
+  isExternal: boolean;
+  published: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PortfolioPayload {
   profile: SerializedProfile;
+  workspaceApps: SerializedWorkspaceApp[];
   projects: SerializedProject[];
   experiences: SerializedExperience[];
   certificates: SerializedCertificate[];

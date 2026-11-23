@@ -2,7 +2,6 @@
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ArrowRight, Search } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { Footer } from "@/components/public/Footer";
@@ -37,29 +36,28 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
   }, [projects, selectedCategory, query]);
 
   return (
-    <div className="min-h-screen shizuku-watercolor-bg">
+    <div className="tuyu-subpage-canvas min-h-screen text-[#14100e]">
       <CinematicHeader profile={profile} />
 
-      <main className="mx-auto max-w-6xl px-5 pt-28 pb-24 sm:px-8 sm:pt-32">
-        {/* Editorial Header */}
+      <main className="mx-auto max-w-5xl px-5 pt-28 pb-24 sm:px-8 sm:pt-32">
         <div className="max-w-2xl">
-          <p className="font-mono text-xs tracking-[0.24em] text-[#7650f3] uppercase">
-            ARCHIVE // {pick("PROJECTS & SPECS · 作品", "PROYEK & SPESIFIKASI · 作品")}
+          <p className="font-mono text-[11px] tracking-[0.22em] text-[#7650f3] uppercase">
+            ARCHIVE · {projects.length} {pick("WORKS", "KARYA")}
           </p>
-          <h1 className="mt-3 font-editorial text-4xl font-semibold tracking-[0.06em] text-[#1e172b] sm:text-5xl">
-            {pick("Systems, Experiments & Works", "Sistem, Eksperimen & Karya")}
+          <h1 className="mt-2 font-editorial text-4xl font-normal tracking-[0.2em] text-[#14100e] uppercase sm:text-5xl">
+            PROJECTS
           </h1>
-          <p className="mt-3 text-base leading-relaxed text-[#5c5178]">
+          <p className="mt-2.5 text-sm leading-relaxed text-[#5c526e]">
             {pick(
-              "A curated index of software engineering platforms, banking IT architectures, and applied AI tools — each documented like an editorial technical datasheet.",
-              "Indeks pilihan dari platform software engineering, arsitektur IT perbankan, dan eksplorasi AI terapan — masing-masing terdokumentasi rapi."
+              "Banking technology systems, applied AI explorations, and self-hosted software — each with clean architectural specifications.",
+              "Sistem teknologi perbankan, eksplorasi AI terapan, dan perangkat lunak mandiri — masing-masing dilengkapi spesifikasi arsitektur."
             )}
           </p>
         </div>
 
-        {/* TUYU-Style Category Filter Tabs + Search */}
-        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap gap-2">
+        {/* Clean TUYU Flat Tabs + Search */}
+        <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
             {categories.map((cat) => {
               const active = selectedCategory === cat;
               return (
@@ -67,10 +65,10 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
                   key={cat}
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
-                  className={`rounded-full border px-4 py-1.5 font-mono text-xs tracking-[0.14em] uppercase transition ${
+                  className={`pb-1.5 font-mono text-xs tracking-[0.16em] uppercase transition ${
                     active
-                      ? "border-[#7650f3] bg-[#7650f3] text-white shadow-[0_8px_20px_-8px_rgba(118,80,243,0.65)]"
-                      : "border-[#dfd4f8] bg-white/80 text-[#534674] hover:border-[#7650f3]/50 hover:text-[#7650f3]"
+                      ? "border-b-2 border-[#7650f3] font-semibold text-[#7650f3]"
+                      : "border-b-2 border-transparent text-[#5c526e] hover:text-[#14100e]"
                   }`}
                 >
                   {cat}
@@ -79,74 +77,57 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
             })}
           </div>
 
-          <div className="relative w-full sm:w-64">
-            <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-[#8979ad]" />
+          <div className="relative w-full sm:w-60">
+            <Search className="pointer-events-none absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-[#7f719c]" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder={pick("Search projects or stack...", "Cari proyek atau tech...")}
-              className="w-full rounded-full border border-[#dfd4f8] bg-white/85 py-2 pr-4 pl-10 text-xs text-[#1e172b] outline-none transition placeholder:text-[#9689b8] focus:border-[#7650f3] focus:bg-white"
+              placeholder={pick("Search works...", "Cari proyek...")}
+              className="w-full rounded-full border border-[#d4c6f4] bg-white/85 py-2 pr-4 pl-9 text-xs text-[#14100e] outline-none transition placeholder:text-[#8c7fab] focus:border-[#7650f3] focus:bg-white"
             />
           </div>
         </div>
 
-        <div className="raindrop-dotted my-8 w-full" />
+        <div className="raindrop-dotted my-7 w-full" />
 
-        {/* Project Grid */}
         {filtered.length === 0 ? (
-          <div className="pastel-glass rounded-3xl p-12 text-center">
-            <p className="font-editorial text-2xl text-[#1e172b]">
+          <div className="tuyu-sheet rounded-2xl p-10 text-center">
+            <p className="text-sm text-[#5c526e]">
               {pick("No matching projects found.", "Belum ada proyek yang cocok.")}
-            </p>
-            <p className="mt-2 text-sm text-[#62577a]">
-              {pick(
-                "Try another filter or add new projects via /admin.",
-                "Coba filter lain atau tambahkan proyek baru melalui /admin."
-              )}
             </p>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((project, idx) => (
-              <motion.article
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {filtered.map((project) => (
+              <Link
                 key={project.id}
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: idx * 0.05 }}
-                className="pastel-glass pastel-glass-hover group flex flex-col overflow-hidden rounded-3xl"
+                href={`/projects/${project.slug}`}
+                className="tuyu-sheet tuyu-sheet-hover group flex flex-col overflow-hidden rounded-2xl"
               >
-                <Link
-                  href={`/projects/${project.slug}`}
-                  className="relative block aspect-[16/10] overflow-hidden bg-[#201838]"
-                >
-                  <img
-                    src={project.coverImage || "/assets/cover-platform.jpg"}
-                    alt={project.title}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#19132b]/55 via-transparent to-transparent" />
-                  <span className="absolute top-3.5 left-3.5 rounded-full border border-white/25 bg-[#1a132c]/65 px-3 py-1 font-mono text-[10px] tracking-[0.16em] text-white uppercase backdrop-blur-md">
-                    {project.category}
-                  </span>
-                  <span className="absolute top-3.5 right-3.5 rounded-full bg-white/85 px-2.5 py-0.5 font-mono text-[10px] font-medium text-[#5c39d6]">
-                    {project.status}
-                  </span>
-                  <span className="absolute right-3.5 bottom-3 font-mono text-[11px] text-white/90">
-                    {project.year}
-                  </span>
-                </Link>
+                {project.coverImage && (
+                  <div className="aspect-[16/9] overflow-hidden border-b border-[#e5dcfb] bg-[#211a38]">
+                    <img
+                      src={project.coverImage}
+                      alt={project.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                  </div>
+                )}
 
-                <div className="flex flex-1 flex-col p-6">
-                  <Link href={`/projects/${project.slug}`}>
-                    <h2 className="text-lg font-semibold text-[#1e172b] transition-colors group-hover:text-[#7650f3]">
-                      {project.title}
-                    </h2>
-                  </Link>
-                  <p className="mt-1 font-mono text-[11px] text-[#7b6ba0]">
-                    {pick(project.roleEn, project.roleId)}
-                  </p>
-                  <p className="mt-2.5 text-sm leading-relaxed text-[#5c5178]">
+                <div className="flex flex-1 flex-col p-5 sm:p-6">
+                  <div className="flex items-center justify-between gap-2 font-mono text-[10px] tracking-[0.14em] uppercase">
+                    <span className="text-[#7650f3]">{project.category}</span>
+                    <span className="text-[#6d6188]">
+                      {project.status} · {project.year}
+                    </span>
+                  </div>
+
+                  <h2 className="mt-2 text-lg font-semibold text-[#14100e] transition-colors group-hover:text-[#7650f3]">
+                    {project.title}
+                  </h2>
+
+                  <p className="mt-2 text-sm leading-relaxed text-[#5c526e]">
                     {pick(project.summaryEn, project.summaryId)}
                   </p>
 
@@ -154,7 +135,7 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
                     {project.techStack.slice(0, 5).map((tech) => (
                       <span
                         key={tech}
-                        className="rounded-full border border-[#e3d9fa] bg-white/90 px-2.5 py-0.5 font-mono text-[10px] text-[#514470]"
+                        className="rounded-full border border-[#e2d8f8] bg-white px-2.5 py-0.5 font-mono text-[10px] text-[#514470]"
                       >
                         {tech}
                       </span>
@@ -162,16 +143,13 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
                   </div>
 
                   <div className="mt-auto pt-5">
-                    <Link
-                      href={`/projects/${project.slug}`}
-                      className="inline-flex items-center gap-1.5 font-mono text-xs font-medium text-[#7650f3] transition group-hover:gap-2.5"
-                    >
-                      {pick("Open Spec Sheet", "Buka Datasheet Proyek")}
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
+                    <span className="inline-flex items-center gap-1.5 font-mono text-xs text-[#7650f3]">
+                      {pick("Open Spec Sheet", "Buka Spesifikasi")}
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
                   </div>
                 </div>
-              </motion.article>
+              </Link>
             ))}
           </div>
         )}

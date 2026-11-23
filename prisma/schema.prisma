@@ -19,35 +19,54 @@ model AdminUser {
 }
 
 model SiteProfile {
-  id             String   @id @default("main")
-  brandName      String   @default("shizuku")
-  brandKanji     String   @default("雫")
-  fullName       String
-  headlineEn     String
-  headlineId     String
-  rolesJson      String
-  bioEn          String
-  bioId          String
-  aboutStoryEn   String
-  aboutStoryId   String
-  location       String   @default("Jakarta, Indonesia")
-  currentRoleEn  String
-  currentRoleId  String
-  currentOrg     String
-  availabilityEn String
-  availabilityId String
-  currentlyEn    String
-  currentlyId    String
-  heroImage      String   @default("/assets/hero-rainy-anime.png")
-  avatarImage    String   @default("/assets/avatar-rainy.png")
-  email          String
-  linkedinUrl    String   @default("")
-  githubUrl      String   @default("")
-  instagramUrl   String   @default("")
-  resumeUrl      String   @default("")
-  statsJson      String
-  pillarsJson    String
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default("main")
+  brandName       String   @default("shizuku")
+  brandKanji      String   @default("雫")
+  fullName        String
+  headlineEn      String
+  headlineId      String
+  rolesJson       String
+  bioEn           String
+  bioId           String
+  aboutStoryEn    String
+  aboutStoryId    String
+  location        String   @default("Jakarta, Indonesia")
+  currentRoleEn   String
+  currentRoleId   String
+  currentOrg      String
+  availabilityEn  String
+  availabilityId  String
+  currentlyEn     String
+  currentlyId     String
+  heroImage       String   @default("")
+  heroImageMobile String   @default("")
+  avatarImage     String   @default("/assets/avatar-rainy.jpg")
+  email           String
+  linkedinUrl     String   @default("")
+  githubUrl       String   @default("")
+  instagramUrl    String   @default("")
+  resumeUrl       String   @default("")
+  statsJson       String
+  pillarsJson     String
+  updatedAt       DateTime @updatedAt
+}
+
+model WorkspaceApp {
+  id            String   @id @default(cuid())
+  name          String
+  category      String   @default("APP")
+  descriptionEn String
+  descriptionId String
+  url           String
+  icon          String   @default("sparkles")
+  badge         String   @default("")
+  isExternal    Boolean  @default(false)
+  published     Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([published, sortOrder])
 }
 
 model Project {
@@ -67,7 +86,7 @@ model Project {
   impactMetricEn String   @default("")
   impactMetricId String   @default("")
   techStackJson  String   @default("[]")
-  coverImage     String   @default("/assets/cover-platform.png")
+  coverImage     String   @default("/assets/cover-platform.jpg")
   liveUrl        String   @default("")
   repoUrl        String   @default("")
   featured       Boolean  @default(false)

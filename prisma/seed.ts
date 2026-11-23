@@ -81,8 +81,9 @@ async function main() {
           "Deep-diving into enterprise banking architecture, applied LLM workflows, and self-hosting clean web systems on lean Alpine VMs.",
         currentlyId:
           "Mendalami arsitektur perbankan skala enterprise, alur kerja LLM terapan, dan self-hosting sistem web ringan di Alpine VM.",
-        heroImage: "/assets/hero-rainy-anime.jpg",
-        avatarImage: "/assets/avatar-rainy.jpg",
+        heroImage: "",
+        heroImageMobile: "",
+        avatarImage: "",
         email: "farhansatria.07@gmail.com",
         linkedinUrl: "https://www.linkedin.com/in/farhansatrian/",
         githubUrl: "https://github.com/farhansatrian",
@@ -584,6 +585,100 @@ async function main() {
       ],
     });
     console.log("✓ Seeded 4 initial skill groups");
+  }
+
+  // 7. Seed Daily-Drive WorkspaceApps if empty
+  const appCount = await prisma.workspaceApp.count();
+  if (appCount === 0) {
+    await prisma.workspaceApp.createMany({
+      data: [
+        {
+          name: "Agent Workspace",
+          category: "AGENT",
+          descriptionEn:
+            "Planned daily AI agent hub, task runners, and personal automations.",
+          descriptionId:
+            "Rencana ruang kerja AI agent harian, otomasi tugas, dan asisten pribadi.",
+          url: "/workspace",
+          icon: "bot",
+          badge: "PLANNED",
+          isExternal: false,
+          published: true,
+          sortOrder: 1,
+        },
+        {
+          name: "KostKas",
+          category: "APP",
+          descriptionEn:
+            "Shared finance ledger, monthly dues, and expense tracking.",
+          descriptionId:
+            "Buku besar kas bersama, iuran bulanan, dan pencatatan pengeluaran.",
+          url: "https://github.com/farhansatrian/kostkas",
+          icon: "wallet",
+          badge: "APP",
+          isExternal: true,
+          published: true,
+          sortOrder: 2,
+        },
+        {
+          name: "Projects & Specs",
+          category: "INTERNAL",
+          descriptionEn:
+            "Selected banking IT, applied AI, and full-stack engineering works.",
+          descriptionId:
+            "Pilihan karya IT perbankan, AI terapan, dan software engineering.",
+          url: "/projects",
+          icon: "folder",
+          badge: "WORKS",
+          isExternal: false,
+          published: true,
+          sortOrder: 3,
+        },
+        {
+          name: "Profile & Journey",
+          category: "INTERNAL",
+          descriptionEn:
+            "About Farhan Satria Nugraha, ODP IT BNI journey, and toolkit.",
+          descriptionId:
+            "Tentang Farhan Satria Nugraha, perjalanan ODP IT BNI, dan keahlian.",
+          url: "/about",
+          icon: "user",
+          badge: "INFO",
+          isExternal: false,
+          published: true,
+          sortOrder: 4,
+        },
+        {
+          name: "Certificates Vault",
+          category: "INTERNAL",
+          descriptionEn:
+            "Verified certifications, awards, and credential archive.",
+          descriptionId:
+            "Arsip sertifikasi, penghargaan, dan kredensial terverifikasi.",
+          url: "/certificates",
+          icon: "award",
+          badge: "VAULT",
+          isExternal: false,
+          published: true,
+          sortOrder: 5,
+        },
+        {
+          name: "Admin Studio",
+          category: "INTERNAL",
+          descriptionEn:
+            "Manage hero artwork, daily workspace apps, projects, and profile.",
+          descriptionId:
+            "Kelola ilustrasi hero, aplikasi harian, proyek, dan profil live.",
+          url: "/admin",
+          icon: "settings",
+          badge: "CMS",
+          isExternal: false,
+          published: true,
+          sortOrder: 6,
+        },
+      ],
+    });
+    console.log("✓ Seeded 6 initial WorkspaceApps");
   }
 
   console.log("✨ shizuku (雫) seed complete!");

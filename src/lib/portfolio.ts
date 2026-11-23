@@ -12,6 +12,7 @@ import type {
   SerializedProfile,
   SerializedProject,
   SerializedSkillGroup,
+  SerializedWorkspaceApp,
 } from "./types";
 import type {
   Certificate,
@@ -19,6 +20,7 @@ import type {
   Project,
   SiteProfile,
   SkillGroup,
+  WorkspaceApp,
 } from "@prisma/client";
 
 function safeParseJson<T>(raw: string | null | undefined, fallback: T): T {
@@ -52,6 +54,7 @@ export function serializeProfile(row: SiteProfile): SerializedProfile {
     currentlyEn: row.currentlyEn,
     currentlyId: row.currentlyId,
     heroImage: row.heroImage,
+    heroImageMobile: row.heroImageMobile,
     avatarImage: row.avatarImage,
     email: row.email,
     linkedinUrl: row.linkedinUrl,
@@ -60,6 +63,26 @@ export function serializeProfile(row: SiteProfile): SerializedProfile {
     resumeUrl: row.resumeUrl,
     stats: safeParseJson<ProfileStat[]>(row.statsJson, []),
     pillars: safeParseJson<ProfilePillar[]>(row.pillarsJson, []),
+    updatedAt: row.updatedAt.toISOString(),
+  };
+}
+
+export function serializeWorkspaceApp(
+  row: WorkspaceApp
+): SerializedWorkspaceApp {
+  return {
+    id: row.id,
+    name: row.name,
+    category: row.category,
+    descriptionEn: row.descriptionEn,
+    descriptionId: row.descriptionId,
+    url: row.url,
+    icon: row.icon,
+    badge: row.badge,
+    isExternal: row.isExternal,
+    published: row.published,
+    sortOrder: row.sortOrder,
+    createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
   };
 }
@@ -172,12 +195,13 @@ const FALLBACK_PROFILE: SerializedProfile = {
   currentRoleEn: "Officer Development Program (ODP) — IT",
   currentRoleId: "Officer Development Program (ODP) — IT",
   currentOrg: "PT Bank Negara Indonesia (Persero) Tbk",
-  availabilityEn: "Open for Tech & AI Discussions",
-  availabilityId: "Terbuka untuk Diskusi Tech & AI",
+  availabilityEn: "Personal Digital Hub",
+  availabilityId: "Ruang Digital Pribadi",
   currentlyEn: "Exploring enterprise banking architecture and applied AI.",
   currentlyId: "Mendalami arsitektur perbankan dan AI terapan.",
-  heroImage: "/assets/hero-rainy-anime.jpg",
-  avatarImage: "/assets/avatar-rainy.jpg",
+  heroImage: "",
+  heroImageMobile: "",
+  avatarImage: "",
   email: "farhansatria.07@gmail.com",
   linkedinUrl: "https://www.linkedin.com/in/farhansatrian/",
   githubUrl: "https://github.com/farhansatrian",
@@ -189,28 +213,39 @@ const FALLBACK_PROFILE: SerializedProfile = {
 };
 
 export async function getPublicPortfolio(): Promise<PortfolioPayload> {
-  const [profileRow, projects, experiences, certificates, skillGroups] =
-    await Promise.all([
-      prisma.siteProfile.findUnique({ where: { id: "main" } }),
-      prisma.project.findMany({
-        where: { published: true },
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      }),
-      prisma.experience.findMany({
-        where: { published: true },
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      }),
-      prisma.certificate.findMany({
-        where: { published: true },
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      }),
-      prisma.skillGroup.findMany({
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
-      }),
-    ]);
+  const [
+    profileRow,
+    workspaceApps,
+    projects,
+    experiences,
+    certificates,
+    skillGroups,
+  ] = await Promise.all([
+    prisma.siteProfile.findUnique({ where: { id: "main" } }),
+    prisma.workspaceApp.findMany({
+      where: { published: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    }),
+    prisma.project.findMany({
+      where: { published: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.experience.findMany({
+      where: { published: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.certificate.findMany({
+      where: { published: true },
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.skillGroup.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    }),
+  ]);
 
   return {
     profile: profileRow ? serializeProfile(profileRow) : FALLBACK_PROFILE,
+    workspaceApps: workspaceApps.map(serializeWorkspaceApp),
     projects: projects.map(serializeProject),
     experiences: experiences.map(serializeExperience),
     certificates: certificates.map(serializeCertificate),
@@ -219,25 +254,35 @@ export async function getPublicPortfolio(): Promise<PortfolioPayload> {
 }
 
 export async function getAdminPortfolio(): Promise<PortfolioPayload> {
-  const [profileRow, projects, experiences, certificates, skillGroups] =
-    await Promise.all([
-      prisma.siteProfile.findUnique({ where: { id: "main" } }),
-      prisma.project.findMany({
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      }),
-      prisma.experience.findMany({
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      }),
-      prisma.certificate.findMany({
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
-      }),
-      prisma.skillGroup.findMany({
-        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
-      }),
-    ]);
+  const [
+    profileRow,
+    workspaceApps,
+    projects,
+    experiences,
+    certificates,
+    skillGroups,
+  ] = await Promise.all([
+    prisma.siteProfile.findUnique({ where: { id: "main" } }),
+    prisma.workspaceApp.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    }),
+    prisma.project.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.experience.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.certificate.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    }),
+    prisma.skillGroup.findMany({
+      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    }),
+  ]);
 
   return {
     profile: profileRow ? serializeProfile(profileRow) : FALLBACK_PROFILE,
+    workspaceApps: workspaceApps.map(serializeWorkspaceApp),
     projects: projects.map(serializeProject),
     experiences: experiences.map(serializeExperience),
     certificates: certificates.map(serializeCertificate),
@@ -245,9 +290,7 @@ export async function getAdminPortfolio(): Promise<PortfolioPayload> {
   };
 }
 
-export async function getPublicProjectBySlug(
-  slug: string
-): Promise<{
+export async function getPublicProjectBySlug(slug: string): Promise<{
   profile: SerializedProfile;
   project: SerializedProject | null;
   related: SerializedProject[];

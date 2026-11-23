@@ -390,26 +390,40 @@ export function ProfileEditorTab({
         {/* Right 5 cols: Media & Socials */}
         <div className="space-y-6 lg:col-span-5">
           <div className="pastel-glass space-y-5 rounded-3xl p-6">
-            <p className="font-mono text-[11px] font-semibold tracking-[0.18em] text-[#7650f3] uppercase">
-              Artwork & Avatar
-            </p>
+            <div>
+              <p className="font-mono text-[11px] font-semibold tracking-[0.18em] text-[#7650f3] uppercase">
+                Hero Artwork & Avatar
+              </p>
+              <p className="mt-1 text-[11px] leading-relaxed text-[#645882]">
+                Drop your high-res official TUYU / Omutatsu artwork here. Files
+                are saved in persistent storage (ignored by GitHub). Leave blank
+                to show the minimal twilight rain canvas.
+              </p>
+            </div>
             <MediaUploader
-              label="Hero Key Visual (16:9)"
+              label="Desktop Hero Visual (16:9 / 4K HD)"
               value={form.heroImage}
               onChange={(url) => setForm({ ...form, heroImage: url })}
+              allowClear
               presets={[
-                { label: "Rainy Anime Hero", url: "/assets/hero-rainy-anime.jpg" },
+                { label: "Minimal Twilight (Empty)", url: "" },
+                { label: "Rainy Window Scene", url: "/assets/cover-platform.jpg" },
                 { label: "Twilight Skyline", url: "/assets/cover-banking.jpg" },
               ]}
             />
             <MediaUploader
-              label="Profile Avatar (1:1)"
+              label="Mobile Hero Visual (9:16 Portrait — optional)"
+              value={form.heroImageMobile}
+              onChange={(url) => setForm({ ...form, heroImageMobile: url })}
+              aspectClass="aspect-[9/14] max-w-[180px]"
+              allowClear
+            />
+            <MediaUploader
+              label="Profile Avatar (1:1 — optional)"
               value={form.avatarImage}
               onChange={(url) => setForm({ ...form, avatarImage: url })}
-              aspectClass="aspect-square max-w-[180px]"
-              presets={[
-                { label: "Rainy Anime Avatar", url: "/assets/avatar-rainy.jpg" },
-              ]}
+              aspectClass="aspect-square max-w-[160px]"
+              allowClear
             />
           </div>
 
@@ -473,7 +487,7 @@ export function ProfileEditorTab({
             {form.stats.map((st, idx) => (
               <div
                 key={idx}
-                className="grid grid-cols-[90px_1fr_1fr_auto] items-center gap-2 rounded-2xl border border-[#e7dffb] bg-white/80 p-3"
+                className="grid grid-cols-1 items-center gap-2 rounded-2xl border border-[#e7dffb] bg-white/80 p-3 sm:grid-cols-[90px_1fr_1fr_auto]"
               >
                 <input
                   type="text"

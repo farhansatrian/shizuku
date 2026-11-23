@@ -2,17 +2,9 @@
 
 import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowUpRight,
-  Code2,
-  Globe,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Code2, Globe } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { Footer } from "@/components/public/Footer";
-import { RaindropIcon } from "@/components/icons/RainMotifs";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import type { SerializedProfile, SerializedProject } from "@/lib/types";
 
@@ -33,132 +25,118 @@ export function ProjectSpecView({
     .filter(Boolean);
 
   return (
-    <div className="min-h-screen shizuku-watercolor-bg">
+    <div className="tuyu-subpage-canvas min-h-screen text-[#14100e]">
       <CinematicHeader profile={profile} />
 
-      <main className="mx-auto max-w-5xl px-5 pt-28 pb-24 sm:px-8 sm:pt-32">
+      <main className="mx-auto max-w-4xl px-5 pt-28 pb-24 sm:px-8 sm:pt-32">
         <Link
           href="/projects"
-          className="inline-flex items-center gap-2 font-mono text-xs text-[#6a5c8d] transition hover:text-[#7650f3]"
+          className="inline-flex items-center gap-2 font-mono text-xs text-[#5c526e] transition hover:text-[#7650f3]"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          {pick("Back to Projects Archive", "Kembali ke Arsip Proyek")}
+          {pick("Back to Projects", "Kembali ke Proyek")}
         </Link>
 
-        {/* Editorial Spec Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mt-6"
-        >
-          <div className="flex flex-wrap items-center gap-2.5">
-            <span className="rounded-full bg-[#7650f3] px-3.5 py-1 font-mono text-[10px] tracking-[0.18em] text-white uppercase">
-              {project.category}
-            </span>
-            <span className="rounded-full border border-[#dfd4f8] bg-white/85 px-3 py-1 font-mono text-[10px] tracking-[0.16em] text-[#5c39d6] uppercase">
-              {project.status}
-            </span>
-            <span className="font-mono text-xs text-[#6a5c8d]">
-              {project.year}
-            </span>
+        <div className="mt-6">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] tracking-[0.16em] uppercase">
+            <span className="text-[#7650f3]">{project.category}</span>
+            <span className="text-[#9a8db8]">·</span>
+            <span className="text-[#5c526e]">{project.status}</span>
+            <span className="text-[#9a8db8]">·</span>
+            <span className="text-[#5c526e]">{project.year}</span>
           </div>
 
-          <h1 className="mt-4 font-editorial text-4xl font-semibold tracking-[0.04em] text-[#1e172b] sm:text-5xl">
+          <h1 className="mt-3 font-editorial text-3xl font-medium tracking-[0.06em] text-[#14100e] sm:text-5xl">
             {project.title}
           </h1>
 
-          <p className="mt-3 max-w-3xl text-base leading-relaxed text-[#544872] sm:text-lg">
+          <p className="mt-3 text-sm leading-relaxed text-[#5c526e] sm:text-base">
             {pick(project.summaryEn, project.summaryId)}
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            {project.liveUrl && (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-[#7650f3] px-5 py-2.5 text-xs font-medium text-white shadow-[0_10px_24px_-10px_rgba(118,80,243,0.7)] transition hover:bg-[#5e38dc]"
-              >
-                <Globe className="h-3.5 w-3.5" />
-                {pick("Launch Live Site", "Buka Website Live")}
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </a>
-            )}
-            {project.repoUrl && (
-              <a
-                href={project.repoUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-[#dfd4f8] bg-white/85 px-5 py-2.5 text-xs font-medium text-[#2c214a] transition hover:border-[#7650f3] hover:text-[#7650f3]"
-              >
-                <Code2 className="h-3.5 w-3.5" />
-                {pick("Source Repository", "Kode Sumber GitHub")}
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </a>
-            )}
-          </div>
-        </motion.div>
+          {(project.liveUrl || project.repoUrl) && (
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-[40px] items-center gap-2 rounded-full bg-[#14100e] px-5 py-2 font-mono text-xs text-white transition hover:bg-[#7650f3]"
+                >
+                  <Globe className="h-3.5 w-3.5" />
+                  {pick("Launch Site", "Buka Website")}
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              )}
+              {project.repoUrl && (
+                <a
+                  href={project.repoUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#d4c6f4] bg-white px-5 py-2 font-mono text-xs text-[#14100e] transition hover:border-[#7650f3] hover:text-[#7650f3]"
+                >
+                  <Code2 className="h-3.5 w-3.5" />
+                  {pick("Repository", "Kode Sumber")}
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              )}
+            </div>
+          )}
+        </div>
 
-        {/* Framed Editorial Cover Art */}
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.08 }}
-          className="pastel-glass mt-8 overflow-hidden rounded-[2rem] p-2.5 sm:p-3"
-        >
-          <div className="aspect-[16/9] overflow-hidden rounded-[1.5rem] bg-[#1e1733]">
-            <img
-              src={project.coverImage || "/assets/cover-platform.jpg"}
-              alt={project.title}
-              className="h-full w-full object-cover"
-            />
+        {project.coverImage && (
+          <div className="tuyu-sheet mt-8 overflow-hidden rounded-2xl p-2">
+            <div className="aspect-[16/9] overflow-hidden rounded-xl bg-[#211a38]">
+              <img
+                src={project.coverImage}
+                alt={project.title}
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
-        </motion.div>
+        )}
 
-        {/* System Specifications Datasheet + Overview */}
-        <div className="mt-10 grid gap-8 lg:grid-cols-12">
-          {/* Left 5 cols: System Specifications Card */}
-          <div className="pastel-glass h-fit rounded-3xl p-6 lg:col-span-5">
-            <p className="font-mono text-[11px] font-semibold tracking-[0.2em] text-[#7650f3] uppercase">
+        <div className="mt-8 grid gap-6 lg:grid-cols-12">
+          <div className="tuyu-sheet h-fit rounded-2xl p-5 sm:p-6 lg:col-span-5">
+            <p className="font-mono text-[11px] font-semibold tracking-[0.18em] text-[#7650f3] uppercase">
               {pick("SYSTEM SPECIFICATIONS", "SPESIFIKASI SISTEM")}
             </p>
-            <dl className="mt-4 divide-y divide-[#ece5fc] text-sm">
-              <div className="py-3">
-                <dt className="font-mono text-[10px] tracking-wider text-[#7e709f] uppercase">
+            <dl className="mt-4 divide-y divide-[#e8dffb] text-sm">
+              <div className="py-2.5">
+                <dt className="font-mono text-[10px] tracking-wider text-[#6d6188] uppercase">
                   {pick("Role", "Peran")}
                 </dt>
-                <dd className="mt-0.5 font-medium text-[#1e172b]">
+                <dd className="mt-0.5 text-[#14100e]">
                   {pick(project.roleEn, project.roleId)}
                 </dd>
               </div>
-              <div className="py-3">
-                <dt className="font-mono text-[10px] tracking-wider text-[#7e709f] uppercase">
-                  {pick("Status / Year", "Status / Tahun")}
+              <div className="py-2.5">
+                <dt className="font-mono text-[10px] tracking-wider text-[#6d6188] uppercase">
+                  {pick("Status", "Status")}
                 </dt>
-                <dd className="mt-0.5 font-mono text-xs text-[#1e172b]">
+                <dd className="mt-0.5 font-mono text-xs text-[#14100e]">
                   {project.status} · {project.year}
                 </dd>
               </div>
               {pick(project.impactMetricEn, project.impactMetricId) && (
-                <div className="py-3">
-                  <dt className="font-mono text-[10px] tracking-wider text-[#7e709f] uppercase">
-                    {pick("Key Impact", "Dampak Utama")}
+                <div className="py-2.5">
+                  <dt className="font-mono text-[10px] tracking-wider text-[#6d6188] uppercase">
+                    {pick("Impact", "Dampak")}
                   </dt>
-                  <dd className="mt-0.5 font-medium text-[#6b44eb]">
+                  <dd className="mt-0.5 text-xs font-medium text-[#7650f3]">
                     {pick(project.impactMetricEn, project.impactMetricId)}
                   </dd>
                 </div>
               )}
               <div className="pt-3">
-                <dt className="font-mono text-[10px] tracking-wider text-[#7e709f] uppercase">
-                  {pick("Core Technologies", "Teknologi Inti")}
+                <dt className="font-mono text-[10px] tracking-wider text-[#6d6188] uppercase">
+                  {pick("Stack", "Teknologi")}
                 </dt>
                 <dd className="mt-2 flex flex-wrap gap-1.5">
                   {project.techStack.map((tech) => (
                     <span
                       key={tech}
-                      className="rounded-full border border-[#e3d9fa] bg-[#f7f3ff] px-2.5 py-0.5 font-mono text-[11px] text-[#3d315c]"
+                      className="rounded-full border border-[#dfd4f8] bg-white px-2.5 py-0.5 font-mono text-[10px] text-[#3c3159]"
                     >
                       {tech}
                     </span>
@@ -168,12 +146,11 @@ export function ProjectSpecView({
             </dl>
           </div>
 
-          {/* Right 7 cols: Narrative & Context */}
-          <div className="pastel-glass rounded-3xl p-6 sm:p-8 lg:col-span-7">
-            <p className="font-mono text-[11px] font-semibold tracking-[0.2em] text-[#ee84b5] uppercase">
-              {pick("PROJECT OVERVIEW", "GAMBARAN PROYEK")}
+          <div className="tuyu-sheet rounded-2xl p-5 sm:p-6 lg:col-span-7">
+            <p className="font-mono text-[11px] font-semibold tracking-[0.18em] text-[#7650f3] uppercase">
+              {pick("OVERVIEW", "GAMBARAN")}
             </p>
-            <div className="mt-4 space-y-4 text-sm leading-relaxed text-[#463b63] sm:text-base">
+            <div className="mt-4 space-y-4 text-sm leading-relaxed text-[#3d334c] sm:text-[15px]">
               {paragraphs.length > 0 ? (
                 paragraphs.map((p, i) => <p key={i}>{p}</p>)
               ) : (
@@ -183,28 +160,21 @@ export function ProjectSpecView({
           </div>
         </div>
 
-        {/* Numbered Architecture Highlights (Supercomfy depth x TUYU beauty) */}
         {project.highlights.length > 0 && (
-          <section className="mt-12">
-            <p className="font-mono text-xs tracking-[0.22em] text-[#7650f3] uppercase">
+          <section className="mt-10">
+            <p className="font-mono text-[11px] font-semibold tracking-[0.2em] text-[#7650f3] uppercase">
               {pick("ARCHITECTURE HIGHLIGHTS", "SOROTAN ARSITEKTUR")}
             </p>
-            <div className="mt-5 grid gap-5 md:grid-cols-2">
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
               {project.highlights.map((hl) => (
-                <div
-                  key={hl.code}
-                  className="pastel-glass rounded-3xl p-6"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-semibold tracking-[0.2em] text-[#7650f3]">
-                      {hl.code} /
-                    </span>
-                    <RaindropIcon className="h-4 w-4 text-[#ee84b5]" />
-                  </div>
-                  <h3 className="mt-3 text-base font-semibold text-[#1e172b]">
+                <div key={hl.code} className="tuyu-sheet rounded-2xl p-5">
+                  <span className="font-mono text-xs font-semibold text-[#7650f3]">
+                    {hl.code} /
+                  </span>
+                  <h2 className="mt-2 text-sm font-semibold text-[#14100e]">
                     {pick(hl.titleEn, hl.titleId)}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[#5c5178]">
+                  </h2>
+                  <p className="mt-1.5 text-xs leading-relaxed text-[#5c526e] sm:text-sm">
                     {pick(hl.detailEn, hl.detailId)}
                   </p>
                 </div>
@@ -213,40 +183,35 @@ export function ProjectSpecView({
           </section>
         )}
 
-        {/* Related Works */}
         {related.length > 0 && (
-          <section className="mt-16">
-            <div className="raindrop-dotted mb-10 w-full" />
-            <div className="mb-6 flex items-end justify-between">
-              <h2 className="font-editorial text-2xl font-semibold text-[#1e172b] sm:text-3xl">
-                {pick("More Works in shizuku", "Karya Lain di shizuku")}
+          <section className="mt-14">
+            <div className="raindrop-dotted mb-8 w-full" />
+            <div className="flex items-end justify-between">
+              <h2 className="font-editorial text-2xl font-normal tracking-[0.16em] text-[#14100e] uppercase">
+                {pick("MORE WORKS", "KARYA LAIN")}
               </h2>
               <Link
                 href="/projects"
                 className="font-mono text-xs text-[#7650f3] hover:underline"
               >
-                {pick("View All →", "Semua →")}
+                {pick("All →", "Semua →")}
               </Link>
             </div>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-5 grid gap-4 sm:grid-cols-3">
               {related.map((item) => (
                 <Link
                   key={item.id}
                   href={`/projects/${item.slug}`}
-                  className="pastel-glass pastel-glass-hover group rounded-3xl p-5"
+                  className="tuyu-sheet tuyu-sheet-hover group rounded-2xl p-4"
                 >
-                  <span className="font-mono text-[10px] tracking-[0.16em] text-[#7650f3] uppercase">
+                  <span className="font-mono text-[10px] text-[#7650f3] uppercase">
                     {item.category} · {item.year}
                   </span>
-                  <h3 className="mt-2 text-base font-semibold text-[#1e172b] transition-colors group-hover:text-[#7650f3]">
+                  <h3 className="mt-1.5 text-sm font-semibold text-[#14100e] group-hover:text-[#7650f3]">
                     {item.title}
                   </h3>
-                  <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-[#62577a]">
-                    {pick(item.summaryEn, item.summaryId)}
-                  </p>
-                  <span className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] text-[#7650f3]">
-                    {pick("Read Spec", "Baca Spec")}{" "}
-                    <ArrowRight className="h-3 w-3" />
+                  <span className="mt-2.5 inline-flex items-center gap-1 font-mono text-[11px] text-[#5c526e] group-hover:text-[#7650f3]">
+                    {pick("Read", "Baca")} <ArrowRight className="h-3 w-3" />
                   </span>
                 </Link>
               ))}

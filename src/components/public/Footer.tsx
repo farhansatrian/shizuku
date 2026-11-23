@@ -12,125 +12,70 @@ export function Footer({ profile }: { profile: SerializedProfile }) {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-[#dfd4f8] bg-white/60 backdrop-blur-md">
-      <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
-        <div className="grid gap-8 md:grid-cols-[1.4fr_1fr_1fr]">
-          <div>
-            <Link href="/" className="inline-flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#dfd4f8] bg-[#f4effd] text-[#7650f3]">
-                <UmbrellaMark className="h-5 w-5" />
-              </span>
-              <span className="font-editorial text-xl font-semibold tracking-[0.16em] text-[#1e172b] lowercase">
-                {profile.brandName}.
-              </span>
-              <span className="text-xs text-[#7650f3]">{profile.brandKanji}</span>
+    <footer className="border-t border-[#d4c6f4] bg-[#f4effd]">
+      <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
+        <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
+          <Link href="/" className="inline-flex items-center gap-2">
+            <UmbrellaMark className="h-4 w-4 text-[#7650f3]" />
+            <span className="font-editorial text-lg font-medium tracking-[0.2em] text-[#14100e] lowercase">
+              {profile.brandName}.
+            </span>
+            <span className="text-xs text-[#7650f3]">{profile.brandKanji}</span>
+          </Link>
+
+          <nav
+            aria-label="Footer"
+            className="flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] tracking-[0.14em] text-[#5c526e] uppercase"
+          >
+            <Link href="/workspace" className="transition hover:text-[#7650f3]">
+              Workspace
             </Link>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-[#62577a]">
-              {pick(
-                "A calm, rainy-day digital hub for software engineering, banking systems, and applied AI.",
-                "Ruang digital bernuansa hujan untuk rekayasa perangkat lunak, sistem perbankan, dan AI terapan."
-              )}
-            </p>
-          </div>
-
-          <div>
-            <p className="font-mono text-[11px] font-medium tracking-[0.2em] text-[#7650f3] uppercase">
-              {pick("Pages", "Halaman")}
-            </p>
-            <ul className="mt-3 space-y-2 text-sm text-[#4f4469]">
-              <li>
-                <Link href="/" className="transition hover:text-[#7650f3]">
-                  {pick("Home", "Beranda")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/projects"
-                  className="transition hover:text-[#7650f3]"
-                >
-                  {pick("Projects & Specs", "Proyek & Spesifikasi")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="transition hover:text-[#7650f3]">
-                  {pick("About & Journey", "Tentang & Karier")}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/certificates"
-                  className="transition hover:text-[#7650f3]"
-                >
-                  {pick("Certificates Vault", "Galeri Sertifikat")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <p className="font-mono text-[11px] font-medium tracking-[0.2em] text-[#7650f3] uppercase">
-              {pick("Connect", "Terhubung")}
-            </p>
-            <ul className="mt-3 space-y-2 text-sm text-[#4f4469]">
-              <li>
-                <a
-                  href={`mailto:${profile.email}`}
-                  className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
-                >
-                  {profile.email} <ArrowUpRight className="h-3.5 w-3.5" />
-                </a>
-              </li>
-              {profile.linkedinUrl && (
-                <li>
-                  <a
-                    href={profile.linkedinUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
-                  >
-                    LinkedIn <ArrowUpRight className="h-3.5 w-3.5" />
-                  </a>
-                </li>
-              )}
-              {profile.githubUrl && (
-                <li>
-                  <a
-                    href={profile.githubUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
-                  >
-                    GitHub <ArrowUpRight className="h-3.5 w-3.5" />
-                  </a>
-                </li>
-              )}
-              {profile.instagramUrl && (
-                <li>
-                  <a
-                    href={profile.instagramUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
-                  >
-                    Instagram <ArrowUpRight className="h-3.5 w-3.5" />
-                  </a>
-                </li>
-              )}
-            </ul>
-          </div>
+            <Link href="/projects" className="transition hover:text-[#7650f3]">
+              {pick("Projects", "Proyek")}
+            </Link>
+            <Link href="/about" className="transition hover:text-[#7650f3]">
+              {pick("About", "Tentang")}
+            </Link>
+            <Link
+              href="/certificates"
+              className="transition hover:text-[#7650f3]"
+            >
+              {pick("Certificates", "Sertifikat")}
+            </Link>
+            {profile.linkedinUrl && (
+              <a
+                href={profile.linkedinUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-0.5 transition hover:text-[#7650f3]"
+              >
+                LinkedIn <ArrowUpRight className="h-3 w-3" />
+              </a>
+            )}
+            {profile.githubUrl && (
+              <a
+                href={profile.githubUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-0.5 transition hover:text-[#7650f3]"
+              >
+                GitHub <ArrowUpRight className="h-3 w-3" />
+              </a>
+            )}
+          </nav>
         </div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#e8dffa] pt-6 text-xs text-[#70648d]">
-          <p className="font-mono">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-[#e0d4f8] pt-5 font-mono text-[11px] text-[#6d6188]">
+          <span>
             © {year} {profile.fullName} · {profile.brandName} (
             {profile.brandKanji})
-          </p>
+          </span>
           <Link
             href="/admin"
-            className="inline-flex items-center gap-1.5 rounded-full border border-[#dfd4f8] bg-white/80 px-3 py-1 font-mono text-[11px] text-[#62577a] transition hover:border-[#7650f3] hover:text-[#7650f3]"
+            className="inline-flex items-center gap-1.5 transition hover:text-[#7650f3]"
           >
             <Lock className="h-3 w-3" />
-            Admin CMS
+            Admin Studio
           </Link>
         </div>
       </div>

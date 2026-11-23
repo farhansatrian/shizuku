@@ -147,8 +147,7 @@ export function SkillsAndSecurityTab({
             Skills & Marquee Toolkit
           </h2>
           <p className="text-xs text-[#645882]">
-            Directly feeds the Pastel OS Window &ldquo;Tech Stack&rdquo; tab,
-            Home skill marquee, and About toolkit.
+            Manage the skill categories shown in the About page toolkit.
           </p>
         </div>
 

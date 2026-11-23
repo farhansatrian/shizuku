@@ -18,6 +18,7 @@ export async function requireAdminApi(): Promise<
 export function revalidatePublicSite() {
   revalidatePath("/", "layout");
   revalidatePath("/");
+  revalidatePath("/workspace");
   revalidatePath("/projects");
   revalidatePath("/about");
   revalidatePath("/certificates");

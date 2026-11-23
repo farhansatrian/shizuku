@@ -34,8 +34,9 @@ export const profileUpdateSchema = z.object({
   availabilityId: z.string().trim().max(160).default(""),
   currentlyEn: z.string().trim().default(""),
   currentlyId: z.string().trim().default(""),
-  heroImage: z.string().trim().min(1),
-  avatarImage: z.string().trim().min(1),
+  heroImage: z.string().trim().default(""),
+  heroImageMobile: z.string().trim().default(""),
+  avatarImage: z.string().trim().default(""),
   email: z.string().trim().email(),
   linkedinUrl: z.string().trim().default(""),
   githubUrl: z.string().trim().default(""),
@@ -145,5 +146,18 @@ export const skillGroupInputSchema = z.object({
   nameEn: z.string().trim().min(1).max(100),
   nameId: z.string().trim().min(1).max(100),
   items: z.array(z.string().trim().min(1)).default([]),
+  sortOrder: z.number().int().default(0),
+});
+
+export const workspaceAppInputSchema = z.object({
+  name: z.string().trim().min(1).max(80),
+  category: z.enum(["INTERNAL", "APP", "AGENT", "BOOKMARK"]).default("APP"),
+  descriptionEn: z.string().trim().min(1).max(200),
+  descriptionId: z.string().trim().default(""),
+  url: z.string().trim().min(1).max(400),
+  icon: z.string().trim().default("sparkles"),
+  badge: z.string().trim().max(24).default(""),
+  isExternal: z.boolean().default(false),
+  published: z.boolean().default(true),
   sortOrder: z.number().int().default(0),
 });

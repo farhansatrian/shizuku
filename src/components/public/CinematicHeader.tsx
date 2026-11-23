@@ -24,7 +24,6 @@ export function CinematicHeader({
   const pathname = usePathname();
   const { locale, setLocale, pick } = useLocale();
   const [scrolled, setScrolled] = useState(false);
-  const [contactInView, setContactInView] = useState(false);
   const [openPath, setOpenPath] = useState<string | null>(null);
   const drawerOpen = openPath === pathname;
 
@@ -37,30 +36,11 @@ export function CinematicHeader({
   };
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 44);
-      if (pathname === "/") {
-        const contactEl = document.getElementById("contact");
-        if (contactEl) {
-          const rect = contactEl.getBoundingClientRect();
-          setContactInView(
-            rect.top <= window.innerHeight * 0.55 && rect.bottom >= 120
-          );
-        } else {
-          setContactInView(false);
-        }
-      } else {
-        setContactInView(false);
-      }
-    };
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("hashchange", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("hashchange", onScroll);
-    };
-  }, [pathname]);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -80,109 +60,78 @@ export function CinematicHeader({
 
   const navItems = [
     { href: "/", code: "01", en: "TOP", id: "BERANDA" },
-    { href: "/projects", code: "02", en: "PROJECTS", id: "PROYEK" },
-    { href: "/about", code: "03", en: "ABOUT", id: "TENTANG" },
-    { href: "/certificates", code: "04", en: "CERTIFICATES", id: "SERTIFIKAT" },
-    { href: "/#contact", code: "05", en: "CONTACT", id: "KONTAK" },
+    { href: "/workspace", code: "02", en: "WORKSPACE", id: "WORKSPACE" },
+    { href: "/projects", code: "03", en: "PROJECTS", id: "PROYEK" },
+    { href: "/about", code: "04", en: "ABOUT", id: "TENTANG" },
+    { href: "/certificates", code: "05", en: "CERTIFICATES", id: "SERTIFIKAT" },
   ];
 
   const isItemActive = (href: string): boolean => {
-    if (href === "/") return pathname === "/" && !contactInView;
-    if (href === "/#contact") return pathname === "/" && contactInView;
-    if (href === "/projects")
-      return pathname === "/projects" || pathname.startsWith("/projects/");
+    if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
-  };
-
-  const handleNavClick = (
-    e: React.MouseEvent<HTMLAnchorElement>,
-    href: string
-  ) => {
-    setDrawerOpen(false);
-    if (href === "/#contact" && pathname === "/") {
-      e.preventDefault();
-      const el = document.getElementById("contact");
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-        window.history.replaceState(null, "", "/#contact");
-        setContactInView(true);
-      }
-    } else if (href === "/" && pathname === "/") {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      window.history.replaceState(null, "", "/");
-      setContactInView(false);
-    }
   };
 
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
           drawerOpen
-            ? "bg-transparent text-[#1e172b]"
+            ? "bg-transparent text-[#14100e]"
             : isLightText
               ? "bg-transparent text-white"
-              : "border-b border-[#dfd4f8]/80 bg-white/78 text-[#1e172b] backdrop-blur-xl shadow-[0_8px_30px_-18px_rgba(118,80,243,0.18)]"
+              : "border-b border-[#d4c6f4]/80 bg-[#e5dcfb]/88 text-[#14100e] backdrop-blur-md"
         }`}
       >
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:h-18 sm:px-8">
-          {/* Brand Monogram */}
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:h-18 sm:px-8">
+          {/* Ultra-minimal TUYU-style Brand Monogram */}
           <Link
             href="/"
-            onClick={(e) => handleNavClick(e, "/")}
-            className="group flex items-center gap-2.5 focus:outline-none"
+            onClick={() => setDrawerOpen(false)}
+            className="group flex items-center gap-2 py-2 focus:outline-none"
           >
+            <UmbrellaMark
+              className={`h-5 w-5 transition-transform duration-300 group-hover:-rotate-6 ${
+                isLightText ? "text-white" : "text-[#7650f3]"
+              }`}
+            />
+            <span className="font-editorial text-xl font-medium tracking-[0.2em] lowercase">
+              {profile.brandName}.
+            </span>
             <span
-              className={`flex h-9 w-9 items-center justify-center rounded-xl border transition-all duration-300 ${
-                isLightText
-                  ? "border-white/25 bg-white/10 text-white group-hover:bg-white/20"
-                  : "border-[#dfd4f8] bg-[#f4effd] text-[#7650f3] group-hover:border-[#7650f3]/40"
+              className={`text-xs ${
+                isLightText ? "text-white/75" : "text-[#7650f3]"
               }`}
             >
-              <UmbrellaMark className="h-5 w-5" />
+              {profile.brandKanji}
             </span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-editorial text-xl font-semibold tracking-[0.16em] lowercase">
-                {profile.brandName}.
-              </span>
-              <span
-                className={`text-xs ${
-                  isLightText ? "text-[#e5dcfb]/85" : "text-[#7650f3]"
-                }`}
-              >
-                {profile.brandKanji}
-              </span>
-            </div>
           </Link>
 
-          {/* Desktop Navigation + Locale Switcher + 3-Raindrop Trigger */}
-          <div className="flex items-center gap-3 sm:gap-5">
+          {/* Right Controls: Clean Links (Desktop) + Flat EN | ID + 3-Raindrop Menu */}
+          <div className="flex items-center gap-4 sm:gap-6">
             <nav
               aria-label="Primary"
-              className="hidden items-center gap-6 md:flex"
+              className="hidden items-center gap-7 md:flex"
             >
-              {navItems.slice(1, 5).map((item) => {
+              {navItems.slice(1).map((item) => {
                 const active = isItemActive(item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={(e) => handleNavClick(e, item.href)}
-                    className={`relative text-xs font-medium tracking-[0.16em] uppercase transition-colors ${
+                    className={`relative py-1 text-[11px] font-medium tracking-[0.2em] uppercase transition-colors ${
                       isLightText
                         ? active
                           ? "text-white"
                           : "text-white/80 hover:text-white"
                         : active
                           ? "text-[#7650f3]"
-                          : "text-[#4a3f66] hover:text-[#7650f3]"
+                          : "text-[#14100e]/75 hover:text-[#7650f3]"
                     }`}
                   >
                     {pick(item.en, item.id)}
                     {active && (
                       <span
-                        className={`absolute -bottom-1.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full ${
+                        className={`absolute -bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full ${
                           isLightText ? "bg-[#fad8e8]" : "bg-[#7650f3]"
                         }`}
                       />
@@ -192,12 +141,10 @@ export function CinematicHeader({
               })}
             </nav>
 
-            {/* EN | ID Switcher (inspired by tuyu.moe's JP | EN) */}
+            {/* Minimalist TUYU-style EN | ID Toggle */}
             <div
-              className={`flex items-center rounded-full border p-0.5 font-mono text-[11px] tracking-wider ${
-                isLightText
-                  ? "border-white/25 bg-white/10 text-white"
-                  : "border-[#dfd4f8] bg-[#f4effd]/80 text-[#4a3f66]"
+              className={`flex items-center gap-1.5 font-mono text-[11px] tracking-[0.16em] ${
+                isLightText ? "text-white/85" : "text-[#14100e]/70"
               }`}
               role="group"
               aria-label="Language switcher"
@@ -205,43 +152,44 @@ export function CinematicHeader({
               <button
                 type="button"
                 onClick={() => setLocale("en")}
-                className={`rounded-full px-2.5 py-1 transition-all ${
+                className={`px-1 py-1.5 transition ${
                   locale === "en"
                     ? isLightText
-                      ? "bg-white text-[#231942] font-semibold"
-                      : "bg-[#7650f3] text-white font-semibold shadow-xs"
-                    : "opacity-70 hover:opacity-100"
+                      ? "font-semibold text-white underline underline-offset-4"
+                      : "font-semibold text-[#7650f3] underline underline-offset-4"
+                    : "opacity-60 hover:opacity-100"
                 }`}
               >
                 EN
               </button>
+              <span className="opacity-40">|</span>
               <button
                 type="button"
                 onClick={() => setLocale("id")}
-                className={`rounded-full px-2.5 py-1 transition-all ${
+                className={`px-1 py-1.5 transition ${
                   locale === "id"
                     ? isLightText
-                      ? "bg-white text-[#231942] font-semibold"
-                      : "bg-[#7650f3] text-white font-semibold shadow-xs"
-                    : "opacity-70 hover:opacity-100"
+                      ? "font-semibold text-white underline underline-offset-4"
+                      : "font-semibold text-[#7650f3] underline underline-offset-4"
+                    : "opacity-60 hover:opacity-100"
                 }`}
               >
                 ID
               </button>
             </div>
 
-            {/* Iconic 3-Raindrop Drawer Trigger */}
+            {/* Iconic TUYU 3-Raindrop Menu Trigger (44px touch-friendly target) */}
             <button
               type="button"
               onClick={() => setDrawerOpen((v) => !v)}
               aria-label={drawerOpen ? "Close menu" : "Open menu"}
               aria-expanded={drawerOpen}
-              className={`flex h-10 w-10 items-center justify-center rounded-full border transition-all duration-300 ${
+              className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
                 drawerOpen
-                  ? "border-[#7650f3]/30 bg-white/90 text-[#231942]"
+                  ? "text-[#14100e] hover:bg-white/40"
                   : isLightText
-                    ? "border-white/25 bg-white/10 text-white hover:bg-white/20"
-                    : "border-[#dfd4f8] bg-white/80 text-[#7650f3] hover:border-[#7650f3]/50"
+                    ? "text-white hover:bg-white/10"
+                    : "text-[#7650f3] hover:bg-white/60"
               }`}
             >
               <ThreeRaindropsMenu open={drawerOpen} />
@@ -250,27 +198,27 @@ export function CinematicHeader({
         </div>
       </header>
 
-      {/* TUYU-Inspired Full-Screen Pastel Watercolor Menu Drawer */}
+      {/* Authentic TUYU Full-Screen Pink-Lavender Watercolor Overlay Drawer */}
       <AnimatePresence>
         {drawerOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.28 }}
             className="fixed inset-0 z-40 flex overflow-y-auto"
             style={{
               background:
-                "linear-gradient(135deg, #fbd9ea 0%, #e8defc 54%, #dbcefc 100%)",
+                "linear-gradient(145deg, #fbd9ea 0%, #ede3fc 48%, #e5dcfb 100%)",
             }}
           >
-            {/* Giant vertical rotated brand typography (TUYU signature!) */}
+            {/* Giant vertical rotated white typography on the left (TUYU signature!) */}
             <div
-              className="pointer-events-none hidden select-none items-center justify-center pl-8 md:flex lg:pl-14"
+              className="pointer-events-none hidden select-none items-center justify-center pl-10 md:flex lg:pl-16"
               aria-hidden="true"
             >
               <span
-                className="font-editorial text-[7.5rem] font-semibold leading-none tracking-[0.22em] text-white/65 uppercase lg:text-[9.5rem]"
+                className="font-editorial text-[8rem] font-normal leading-none tracking-[0.26em] text-white/75 uppercase lg:text-[10rem]"
                 style={{
                   writingMode: "vertical-rl",
                   transform: "rotate(180deg)",
@@ -280,115 +228,90 @@ export function CinematicHeader({
               </span>
             </div>
 
-            {/* Drawer Main Content */}
-            <div className="mx-auto flex w-full max-w-4xl flex-col justify-between px-7 pt-24 pb-10 sm:px-12">
-              <div className="my-auto grid gap-10 md:grid-cols-[1.3fr_0.9fr] md:items-center">
-                <nav aria-label="Full menu" className="flex flex-col gap-4">
-                  <p className="mb-1 font-mono text-xs tracking-[0.22em] text-[#7650f3] uppercase">
-                    {pick("Navigation · 雫", "Navigasi · 雫")}
-                  </p>
-                  {navItems.map((item, idx) => {
-                    const active = isItemActive(item.href);
-                    return (
-                      <motion.div
-                        key={item.href}
-                        initial={{ opacity: 0, x: 18 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.05 * idx, duration: 0.3 }}
-                      >
-                        <Link
-                          href={item.href}
-                          onClick={(e) => handleNavClick(e, item.href)}
-                          className={`group flex items-baseline gap-4 py-1 transition-colors ${
-                            active
-                              ? "text-[#7650f3]"
-                              : "text-[#1e172b] hover:text-[#7650f3]"
-                          }`}
-                        >
-                          <span className="font-mono text-xs text-[#7650f3]/80">
-                            {item.code}
-                          </span>
-                          <span className="font-editorial text-3xl font-medium tracking-[0.18em] uppercase sm:text-4xl">
-                            {pick(item.en, item.id)}
-                          </span>
-                          {active && (
-                            <span className="ml-1 h-2 w-2 rounded-full bg-[#7650f3]" />
-                          )}
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
-                </nav>
-
-                {/* Right Editorial Card inside Drawer */}
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2, duration: 0.35 }}
-                  className="rounded-3xl border border-white/80 bg-white/70 p-6 backdrop-blur-md"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <img
-                      src={profile.avatarImage}
-                      alt={profile.fullName}
-                      className="h-14 w-14 rounded-2xl border border-white object-cover shadow-xs"
-                    />
-                    <div>
-                      <p className="font-semibold text-[#1e172b]">
-                        {profile.fullName}
-                      </p>
-                      <p className="font-mono text-xs text-[#62577a]">
-                        {profile.location}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="mt-4 text-sm leading-relaxed text-[#4f4469]">
-                    {pick(profile.currentlyEn, profile.currentlyId)}
-                  </p>
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {profile.linkedinUrl && (
-                      <a
-                        href={profile.linkedinUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full border border-[#dfd4f8] bg-white px-3.5 py-1.5 text-xs font-medium text-[#2d214e] transition hover:border-[#7650f3] hover:text-[#7650f3]"
-                      >
-                        LinkedIn <ArrowUpRight className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                    {profile.githubUrl && (
-                      <a
-                        href={profile.githubUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 rounded-full border border-[#dfd4f8] bg-white px-3.5 py-1.5 text-xs font-medium text-[#2d214e] transition hover:border-[#7650f3] hover:text-[#7650f3]"
-                      >
-                        GitHub <ArrowUpRight className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                    <a
-                      href={`mailto:${profile.email}`}
-                      className="inline-flex items-center gap-1 rounded-full border border-[#dfd4f8] bg-white px-3.5 py-1.5 text-xs font-medium text-[#2d214e] transition hover:border-[#7650f3] hover:text-[#7650f3]"
+            {/* Clean Navigation Column */}
+            <div className="mx-auto flex w-full max-w-3xl flex-col justify-between px-6 pt-24 pb-10 sm:px-12">
+              <nav
+                aria-label="Full menu"
+                className="my-auto flex flex-col gap-3 sm:gap-4"
+              >
+                {navItems.map((item, idx) => {
+                  const active = isItemActive(item.href);
+                  return (
+                    <motion.div
+                      key={item.href}
+                      initial={{ opacity: 0, x: 14 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.04 * idx, duration: 0.25 }}
                     >
-                      Email <ArrowUpRight className="h-3.5 w-3.5" />
-                    </a>
-                  </div>
-                </motion.div>
-              </div>
+                      <Link
+                        href={item.href}
+                        onClick={() => setDrawerOpen(false)}
+                        className={`group flex items-baseline gap-5 py-1.5 transition-colors ${
+                          active
+                            ? "text-[#7650f3]"
+                            : "text-[#14100e] hover:text-[#7650f3]"
+                        }`}
+                      >
+                        <span className="font-mono text-xs text-[#7650f3]/75">
+                          {item.code}
+                        </span>
+                        <span className="font-editorial text-3xl font-normal tracking-[0.22em] uppercase sm:text-4xl">
+                          {pick(item.en, item.id)}
+                        </span>
+                        {active && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#7650f3]" />
+                        )}
+                      </Link>
+                    </motion.div>
+                  );
+                })}
 
-              <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#7650f3]/15 pt-5 text-xs text-[#5d4f7c]">
-                <span className="font-mono">
-                  {profile.brandName} ({profile.brandKanji}) ·{" "}
-                  {pick("Rainy Cozy Digital Hub", "Ruang Digital Pribadi")}
-                </span>
+                <div className="raindrop-dotted my-4 max-w-xs" />
+
                 <Link
                   href="/admin"
                   onClick={() => setDrawerOpen(false)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/70 bg-white/60 px-3 py-1 font-mono text-[11px] text-[#5d4f7c] transition hover:border-[#7650f3] hover:text-[#7650f3]"
+                  className="inline-flex w-fit items-center gap-2 py-1 font-mono text-xs tracking-[0.18em] text-[#5c526e] uppercase transition hover:text-[#7650f3]"
                 >
-                  <Lock className="h-3 w-3" />
+                  <Lock className="h-3.5 w-3.5" />
                   Admin Studio
                 </Link>
+              </nav>
+
+              {/* Calm Minimal Bottom Strip */}
+              <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-[#14100e]/10 pt-5 text-xs text-[#5c526e]">
+                <div className="flex flex-wrap items-center gap-5 font-mono">
+                  <a
+                    href={`mailto:${profile.email}`}
+                    className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
+                  >
+                    Email <ArrowUpRight className="h-3 w-3" />
+                  </a>
+                  {profile.linkedinUrl && (
+                    <a
+                      href={profile.linkedinUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
+                    >
+                      LinkedIn <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  )}
+                  {profile.githubUrl && (
+                    <a
+                      href={profile.githubUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 transition hover:text-[#7650f3]"
+                    >
+                      GitHub <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+
+                <span className="font-mono text-[11px]">
+                  {profile.fullName} · {profile.location}
+                </span>
               </div>
             </div>
           </motion.div>
