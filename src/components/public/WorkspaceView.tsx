@@ -5,14 +5,12 @@ import Link from "next/link";
 import {
   ArrowRight,
   ArrowUpRight,
-  Bot,
   Search,
   Settings,
 } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
 import { Footer } from "@/components/public/Footer";
-import { renderWorkspaceIcon } from "@/components/public/HomeView";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import type { PortfolioPayload } from "@/lib/types";
 
@@ -100,14 +98,14 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
 
           <Link
             href="/admin"
-            className="inline-flex min-h-[38px] w-fit items-center gap-2 rounded-full border border-[#745bc7] bg-white/75 px-4 py-1.5 font-mono text-[11px] tracking-[0.14em] text-[#745bc7] uppercase transition hover:bg-[#745bc7] hover:text-white"
+            className="inline-flex min-h-[36px] w-fit items-center gap-2 rounded-full border border-[#745bc7] bg-transparent px-4 py-1.5 font-editorial text-[12px] font-bold tracking-[0.2em] text-[#745bc7] uppercase transition hover:border-[#7650f3] hover:text-[#7650f3] hover:opacity-75"
           >
             <Settings className="h-3.5 w-3.5" />
-            {pick("Customize Apps", "Atur Aplikasi")}
+            {pick("Customize", "Atur")}
           </Link>
         </div>
 
-        {/* Exact tuyu.moe Pipe-Separated Filter Tabs + Search */}
+        {/* Exact tuyu.moe Pipe-Separated Filter Tabs + Minimal Underline Search */}
         <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <ul className="flex max-w-full flex-nowrap items-center overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {categories.map((cat, idx) => {
@@ -133,23 +131,21 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
             })}
           </ul>
 
-          <div className="relative w-full sm:w-60">
-            <Search className="pointer-events-none absolute top-1/2 left-3.5 h-3.5 w-3.5 -translate-y-1/2 text-[#745bc7]" />
+          <div className="relative w-full sm:w-56">
+            <Search className="pointer-events-none absolute top-1/2 left-1 h-3.5 w-3.5 -translate-y-1/2 text-[#745bc7]" />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={pick("Filter apps...", "Cari aplikasi...")}
-              className="w-full rounded-full border border-[#745bc7]/40 bg-white/80 py-2 pr-4 pl-9 text-xs text-[#14100e] outline-none transition placeholder:text-[#7f719c] focus:border-[#745bc7] focus:bg-white"
+              className="w-full border-b border-[#745bc7]/55 bg-transparent py-1.5 pr-2 pl-7 text-xs text-[#14100e] outline-none transition placeholder:text-[#745bc7]/65 focus:border-[#7650f3]"
             />
           </div>
         </div>
 
-        <div className="raindrop-dotted my-8 w-full" />
-
-        {/* Launcher Grid */}
+        {/* Pure Boxless tuyu.moe Editorial Directory */}
         {filtered.length === 0 ? (
-          <div className="tuyu-sheet rounded-2xl p-10 text-center">
+          <div className="tuyu-raindrop-line mt-10 py-10 text-center">
             <p className="text-sm text-[#5d5370]">
               {pick(
                 "No workspace apps match this filter. Add or edit them in /admin.",
@@ -158,96 +154,75 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((app) => {
-              const card = (
-                <div className="tuyu-sheet tuyu-sheet-hover group flex h-full min-h-[124px] flex-col justify-between rounded-xl p-5">
-                  <div className="flex items-start justify-between gap-3">
+          <ul className="mt-8 grid grid-cols-1 gap-x-14 md:mt-10 md:grid-cols-2">
+            {filtered.map((app, index) => {
+              const num = String(index + 1).padStart(2, "0");
+              const rowInner = (
+                <div className="group py-5 transition-opacity duration-300 hover:opacity-70 md:py-6">
+                  <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e5dcfb] text-[#745bc7] transition-colors group-hover:bg-[#745bc7] group-hover:text-white">
-                        {renderWorkspaceIcon(app.icon, "h-4 w-4")}
+                      <span className="font-mono text-[12px] tracking-[2.5px] text-[#745bc7] md:text-[13px]">
+                        {num}
                       </span>
-                      <div>
-                        <h2 className="text-sm font-semibold text-[#14100e] transition-colors group-hover:text-[#7650f3]">
-                          {app.name}
-                        </h2>
-                        <p className="font-mono text-[10px] tracking-[0.14em] text-[#745bc7] uppercase">
-                          {app.category}
-                        </p>
-                      </div>
+                      <span className="inline-block rounded-[5px] bg-[#745bc7] px-2.5 py-[2px] font-mono text-[10px] tracking-[0.8px] text-white uppercase">
+                        {app.badge || app.category}
+                      </span>
                     </div>
-
-                    <div className="flex items-center gap-1.5">
-                      {app.badge && (
-                        <span className="rounded-[5px] bg-[#745bc7] px-2 py-0.5 font-mono text-[9px] tracking-[0.12em] text-white uppercase">
-                          {app.badge}
-                        </span>
-                      )}
-                      {app.isExternal ? (
-                        <ArrowUpRight className="h-3.5 w-3.5 text-[#745bc7] transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                      ) : (
-                        <ArrowRight className="h-3.5 w-3.5 text-[#745bc7] transition-transform group-hover:translate-x-0.5" />
-                      )}
-                    </div>
+                    {app.isExternal ? (
+                      <ArrowUpRight className="h-4 w-4 shrink-0 text-[#745bc7] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    ) : (
+                      <ArrowRight className="h-4 w-4 shrink-0 text-[#745bc7] transition-transform duration-300 group-hover:translate-x-1" />
+                    )}
                   </div>
 
-                  <p className="mt-3 text-xs leading-relaxed text-[#5d5370]">
+                  <h2 className="mt-2.5 text-[18px] font-normal tracking-[0.03em] text-[#14100e] transition-colors duration-300 group-hover:text-[#7650f3] md:text-[20px]">
+                    {app.name}
+                  </h2>
+
+                  <p className="mt-1.5 text-[12px] leading-relaxed text-[#5d5370] md:text-[13px]">
                     {pick(app.descriptionEn, app.descriptionId)}
                   </p>
                 </div>
               );
 
-              return app.isExternal ? (
-                <a
-                  key={app.id}
-                  href={app.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block focus:outline-none"
-                >
-                  {card}
-                </a>
-              ) : (
-                <Link
-                  key={app.id}
-                  href={app.url}
-                  className="block focus:outline-none"
-                >
-                  {card}
-                </Link>
+              return (
+                <li key={app.id} className="tuyu-raindrop-line pb-2">
+                  {app.isExternal ? (
+                    <a
+                      href={app.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block focus:outline-none"
+                    >
+                      {rowInner}
+                    </a>
+                  ) : (
+                    <Link href={app.url} className="block focus:outline-none">
+                      {rowInner}
+                    </Link>
+                  )}
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
 
-        {/* Future Agent Workspace Architectural Slot */}
-        <section className="mt-14">
-          <div className="raindrop-dotted mb-10 w-full" />
-          <div className="tuyu-sheet rounded-2xl p-6 sm:p-8">
-            <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
-              <div className="flex items-start gap-4">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#e5dcfb] text-[#7650f3]">
-                  <Bot className="h-5 w-5" />
-                </span>
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h2 className="text-base font-semibold text-[#14100e]">
-                      {pick("Agent Workspace", "Agent Workspace")}
-                    </h2>
-                    <span className="rounded-full border border-[#d4c6f4] bg-white px-2.5 py-0.5 font-mono text-[10px] tracking-[0.14em] text-[#7650f3] uppercase">
-                      {pick("NEXT PHASE", "TAHAP BERIKUTNYA")}
-                    </span>
-                  </div>
-                  <p className="mt-1.5 max-w-2xl text-xs leading-relaxed text-[#5c526e] sm:text-sm">
-                    {pick(
-                      "This space is architected to host personal AI agents, daily workflow runners, and private automations under the same shizuku shell and auth session.",
-                      "Ruang ini disiapkan untuk menampung AI agent pribadi, otomasi tugas harian, dan asisten kerja di dalam shell serta sesi autentikasi shizuku yang sama."
-                    )}
-                  </p>
-                </div>
-              </div>
-            </div>
+        {/* Quiet Boxless Architectural Note for Future Agent Workspace */}
+        <section className="mt-16 border-l-2 border-[#745bc7] pl-5 md:mt-20 md:pl-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="font-mono text-[11px] tracking-[2.5px] text-[#745bc7] uppercase">
+              AGENT WORKSPACE
+            </span>
+            <span className="inline-block rounded-[5px] bg-[#745bc7] px-2.5 py-[2px] font-mono text-[10px] tracking-[0.8px] text-white uppercase">
+              {pick("NEXT PHASE", "TAHAP BERIKUTNYA")}
+            </span>
           </div>
+          <p className="mt-2.5 max-w-2xl text-[13px] leading-relaxed text-[#5d5370] md:text-[14px]">
+            {pick(
+              "Architected to host personal AI agents, daily workflow runners, and private automations under the same shizuku shell and auth session.",
+              "Disiapkan untuk menampung AI agent pribadi, otomasi tugas harian, dan asisten kerja di dalam shell serta sesi autentikasi shizuku yang sama."
+            )}
+          </p>
         </section>
       </main>
 

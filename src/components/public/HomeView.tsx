@@ -2,20 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Award,
-  Bot,
-  Code2,
-  FolderKanban,
-  Globe,
-  Settings,
-  Sparkles,
-  Terminal,
-  User,
-  Wallet,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { RainPreloader } from "@/components/public/RainPreloader";
 import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
@@ -35,31 +22,6 @@ interface FeedRow {
   title: string;
   href?: string;
   certificate?: SerializedCertificate;
-}
-
-export function renderWorkspaceIcon(icon: string, className = "h-4 w-4") {
-  switch (icon) {
-    case "bot":
-      return <Bot className={className} />;
-    case "wallet":
-      return <Wallet className={className} />;
-    case "folder":
-      return <FolderKanban className={className} />;
-    case "award":
-      return <Award className={className} />;
-    case "user":
-      return <User className={className} />;
-    case "settings":
-      return <Settings className={className} />;
-    case "globe":
-      return <Globe className={className} />;
-    case "code":
-      return <Code2 className={className} />;
-    case "terminal":
-      return <Terminal className={className} />;
-    default:
-      return <Sparkles className={className} />;
-  }
 }
 
 export function HomeView({ data }: { data: PortfolioPayload }) {
@@ -140,74 +102,74 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
         {/* 1. #top — Pure Full-Bleed 100svh Key Visual */}
         <HeroSection profile={profile} />
 
-        {/* 2. #workspace — Calm Daily-Drive Launcher on Exact #e5dcfb Lavender */}
+        {/* 2. #workspace — Pure Boxless tuyu.moe Editorial Directory on #e5dcfb Lavender */}
         <section
           id="workspace"
-          className="scroll-mt-16 bg-[#e5dcfb] pt-12 pb-10 md:pt-16 md:pb-14"
+          className="scroll-mt-16 bg-[#e5dcfb] pt-14 pb-12 md:pt-20 md:pb-16"
         >
           <div className="mx-auto w-[90%] max-w-[1000px]">
-            <div className="flex items-end justify-between gap-4">
-              <h2 className="font-editorial text-[26px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[33px] md:tracking-[9px]">
-                WORKSPACE
-              </h2>
-              <Link
-                href="/workspace"
-                className="font-editorial text-xs tracking-[0.22em] text-[#745bc7] uppercase transition hover:text-[#7650f3] hover:opacity-70 md:text-sm"
-              >
-                {pick("OPEN →", "BUKA →")}
-              </Link>
-            </div>
+            <h2 className="font-editorial text-[26px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[33px] md:tracking-[9px]">
+              WORKSPACE
+            </h2>
 
-            <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2 md:mt-10 lg:grid-cols-3">
-              {workspaceApps.map((app) => {
-                const card = (
-                  <div className="tuyu-sheet tuyu-sheet-hover group flex h-full min-h-[104px] flex-col justify-between rounded-xl px-4 py-4">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e5dcfb] text-[#745bc7] transition-colors group-hover:bg-[#745bc7] group-hover:text-white">
-                          {renderWorkspaceIcon(app.icon, "h-3.5 w-3.5")}
+            <ul className="mt-8 grid grid-cols-1 gap-x-14 md:mt-12 md:grid-cols-2">
+              {workspaceApps.map((app, index) => {
+                const num = String(index + 1).padStart(2, "0");
+                const rowInner = (
+                  <div className="group py-5 transition-opacity duration-300 hover:opacity-70 md:py-6">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-[12px] tracking-[2.5px] text-[#745bc7] md:text-[13px]">
+                          {num}
                         </span>
-                        <h3 className="text-[13px] font-semibold tracking-wide text-[#14100e] transition-colors group-hover:text-[#7650f3]">
-                          {app.name}
-                        </h3>
-                      </div>
-
-                      <div className="flex items-center gap-1.5">
                         {app.badge && (
-                          <span className="rounded-[4px] bg-[#745bc7] px-1.5 py-0.5 font-mono text-[9px] tracking-[0.1em] text-white uppercase">
+                          <span className="inline-block rounded-[5px] bg-[#745bc7] px-2.5 py-[2px] font-mono text-[10px] tracking-[0.8px] text-white uppercase">
                             {app.badge}
                           </span>
                         )}
-                        {app.isExternal ? (
-                          <ArrowUpRight className="h-3.5 w-3.5 text-[#745bc7]" />
-                        ) : (
-                          <ArrowRight className="h-3.5 w-3.5 text-[#745bc7]" />
-                        )}
                       </div>
+                      {app.isExternal ? (
+                        <ArrowUpRight className="h-4 w-4 shrink-0 text-[#745bc7] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      ) : (
+                        <ArrowRight className="h-4 w-4 shrink-0 text-[#745bc7] transition-transform duration-300 group-hover:translate-x-1" />
+                      )}
                     </div>
 
-                    <p className="mt-2.5 text-xs leading-relaxed text-[#5d5370]">
+                    <h3 className="mt-2.5 text-[17px] font-normal tracking-[0.03em] text-[#14100e] transition-colors duration-300 group-hover:text-[#7650f3] md:text-[19px]">
+                      {app.name}
+                    </h3>
+
+                    <p className="mt-1.5 text-[12px] leading-relaxed text-[#5d5370] md:text-[13px]">
                       {pick(app.descriptionEn, app.descriptionId)}
                     </p>
                   </div>
                 );
 
-                return app.isExternal ? (
-                  <a
-                    key={app.id}
-                    href={app.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block"
-                  >
-                    {card}
-                  </a>
-                ) : (
-                  <Link key={app.id} href={app.url} className="block">
-                    {card}
-                  </Link>
+                return (
+                  <li key={app.id} className="tuyu-raindrop-line pb-2">
+                    {app.isExternal ? (
+                      <a
+                        href={app.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block focus:outline-none"
+                      >
+                        {rowInner}
+                      </a>
+                    ) : (
+                      <Link href={app.url} className="block focus:outline-none">
+                        {rowInner}
+                      </Link>
+                    )}
+                  </li>
                 );
               })}
+            </ul>
+
+            <div className="mt-12 flex justify-center md:mt-16">
+              <Link href="/workspace" className="tuyu-more-btn">
+                MORE
+              </Link>
             </div>
           </div>
         </section>

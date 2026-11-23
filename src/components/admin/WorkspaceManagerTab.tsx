@@ -4,17 +4,51 @@ import React, { useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
+  Award,
+  Bot,
+  Code2,
   Eye,
   EyeOff,
   ExternalLink,
+  FolderKanban,
+  Globe,
   Loader2,
   Pencil,
   Plus,
+  Settings,
+  Sparkles,
+  Terminal,
   Trash2,
+  User,
+  Wallet,
   X,
 } from "lucide-react";
-import { renderWorkspaceIcon } from "@/components/public/HomeView";
 import type { SerializedWorkspaceApp } from "@/lib/types";
+
+function renderWorkspaceIcon(icon: string, className = "h-4 w-4") {
+  switch (icon) {
+    case "bot":
+      return <Bot className={className} />;
+    case "wallet":
+      return <Wallet className={className} />;
+    case "folder":
+      return <FolderKanban className={className} />;
+    case "award":
+      return <Award className={className} />;
+    case "user":
+      return <User className={className} />;
+    case "settings":
+      return <Settings className={className} />;
+    case "globe":
+      return <Globe className={className} />;
+    case "code":
+      return <Code2 className={className} />;
+    case "terminal":
+      return <Terminal className={className} />;
+    default:
+      return <Sparkles className={className} />;
+  }
+}
 
 interface WorkspaceDraft {
   id?: string;
