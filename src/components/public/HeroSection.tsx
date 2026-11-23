@@ -31,14 +31,14 @@ export function HeroSection({ profile }: { profile: SerializedProfile }) {
               <img
                 src={profile.heroImage || profile.heroImageMobile}
                 alt={`${profile.brandName} desktop hero`}
-                className="hidden h-full w-full object-cover object-[center_46%] md:block"
+                className="hidden h-full w-full object-cover object-center md:block"
               />
             </>
           ) : (
             <img
               src={profile.heroImage}
               alt={`${profile.brandName} hero`}
-              className="h-full w-full object-cover object-[center_46%]"
+              className="h-full w-full object-cover object-center"
             />
           )}
         </div>
