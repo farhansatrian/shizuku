@@ -34,17 +34,11 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
         {/* 1. #top — Pure Full-Bleed 100svh Key Visual */}
         <HeroSection profile={profile} />
 
-        {/* 2. Minimalist Gallery Showcase on Parallax Pink Watercolor + #e5dcfb Lavender Split */}
+        {/* 2. Minimalist Gallery Showcase on Full Parallax Pink Watercolor Backdrop */}
         <section
           id="gallery"
           className="relative scroll-mt-16 pt-20 pb-24 md:pt-28 md:pb-32"
         >
-          {/* Lower #e5dcfb lavender half — leaves upper half open to reveal fixed parallax pink watercolor */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-[54%] bottom-0 bg-[#e5dcfb] md:top-[52%]"
-          />
-
           <div className="relative z-10 mx-auto w-[90%] max-w-[920px]">
             <nav
               aria-label="Gallery navigation"
