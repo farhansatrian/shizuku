@@ -37,7 +37,7 @@ const notoJp = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: "shizuku (雫) — Farhan Satria Nugraha",
+  title: "shizuku (雫)",
   description:
     "Personal digital hub & portfolio of Farhan Satria Nugraha — Software Engineer, ODP IT Banking Systems, and Applied AI Enthusiast.",
 };
