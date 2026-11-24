@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Lock } from "lucide-react";
 import {
   ThreeRaindropsMenu,
   UmbrellaMark,
@@ -115,6 +116,7 @@ export function CinematicHeader({
     { href: "/workspace", en: "WORK", id: "WORK" },
     { href: "/projects", en: "PROJECT", id: "PROYEK" },
     { href: "/about", en: "ABOUT", id: "TENTANG" },
+    { href: "/admin", en: "ADMIN STUDIO", id: "ADMIN STUDIO" },
   ];
 
   const isItemActive = (href: string): boolean => {
@@ -333,6 +335,7 @@ export function CinematicHeader({
                     active ? "font-bold text-[#d749d5]" : "font-normal text-[#745bc7]"
                   }`}
                 >
+                  {item.href === "/admin" && <Lock className="h-4 w-4" />}
                   <span>{pick(item.en, item.id)}</span>
                 </Link>
               );
