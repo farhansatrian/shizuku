@@ -15,7 +15,10 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
   const { pick } = useLocale();
 
   return (
-    <div className="relative min-h-screen bg-[#e5dcfb] text-[#14100e]">
+    <div className="relative min-h-screen text-[#14100e]">
+      {/* Fixed ambient pink watercolor layer (exact tuyu.moe parallax backdrop z-index: -2) */}
+      <div className="tuyu-fixed-watercolor" aria-hidden="true" />
+
       {/* Authentic 20-drop pure CSS vertical #2276a8 rain falling across splash & page */}
       <TuyuRainLayer overSplash />
 
@@ -31,12 +34,18 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
         {/* 1. #top — Pure Full-Bleed 100svh Key Visual */}
         <HeroSection profile={profile} />
 
-        {/* 2. Minimalist Gallery Showcase (HOME / WORK / PROJECT / ABOUT + Monochrome Diptych) */}
+        {/* 2. Minimalist Gallery Showcase on Parallax Pink Watercolor + #e5dcfb Lavender Split */}
         <section
           id="gallery"
-          className="scroll-mt-16 bg-[#e5dcfb] pt-20 pb-24 md:pt-28 md:pb-32"
+          className="relative scroll-mt-16 pt-20 pb-24 md:pt-28 md:pb-32"
         >
-          <div className="mx-auto w-[90%] max-w-[920px]">
+          {/* Lower #e5dcfb lavender half — leaves upper half open to reveal fixed parallax pink watercolor */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-[54%] bottom-0 bg-[#e5dcfb] md:top-[52%]"
+          />
+
+          <div className="relative z-10 mx-auto w-[90%] max-w-[920px]">
             <nav
               aria-label="Gallery navigation"
               className="flex items-center justify-center gap-7 sm:gap-11 md:gap-14"
