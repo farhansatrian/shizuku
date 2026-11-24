@@ -225,26 +225,6 @@ body {
   }
 }
 
-/* Exact tuyu.moe Centered Edge-to-Edge Works Carousel Sizing */
-.tuyu-carousel-viewport {
-  --slide-w: 80vw;
-  --slide-gap: 16px;
-}
-
-@media (min-width: 640px) {
-  .tuyu-carousel-viewport {
-    --slide-w: 62vw;
-    --slide-gap: 24px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .tuyu-carousel-viewport {
-    --slide-w: min(46vw, 680px);
-    --slide-gap: 32px;
-  }
-}
-
 /* Vivid Magenta-Purple Watercolor Footer Band (footer.jpg) */
 .tuyu-footer-band {
   background-color: #c86ce8;
