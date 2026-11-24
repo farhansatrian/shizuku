@@ -151,3 +151,44 @@ model SkillGroup {
 
   @@index([sortOrder])
 }
+
+// ============================================================================
+// SHIZUKU ECOSYSTEM (Isolated from Portfolio CMS models)
+// 1 shared identity (`EcosystemUser`) for SHIZUKU, SHIKAS & upcoming apps
+// ============================================================================
+
+model EcosystemUser {
+  id             String              @id @default(cuid())
+  email          String              @unique
+  displayName    String
+  passwordHash   String
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  shikasEntries  ShikasTransaction[]
+  shikasSettings ShikasSettings?
+}
+
+model ShikasTransaction {
+  id         String
+  userId     String
+  user       EcosystemUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       String
+  date       String
+  amountIdr  Int
+  categoryId String
+  note       String
+  merchant   String?
+  createdAt  String
+
+  @@id([userId, id])
+  @@index([userId, date])
+}
+
+model ShikasSettings {
+  userId      String        @id
+  user        EcosystemUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locale      String        @default("en")
+  privacyMode Boolean       @default(false)
+  rainEnabled Boolean       @default(true)
+  updatedAt   DateTime      @updatedAt
+}

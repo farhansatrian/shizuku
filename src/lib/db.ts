@@ -13,12 +13,16 @@ function createClient(): PrismaClient {
 
 // Recreate cached dev client automatically if Prisma schema added new models
 const existing = globalForPrisma.prisma;
+const rec = existing as unknown as Record<string, unknown> | undefined;
 const hasAllDelegates =
-  existing !== undefined &&
-  typeof (existing as unknown as Record<string, unknown>).workspaceApp ===
-    "object";
+  rec !== undefined &&
+  typeof rec.workspaceApp === "object" &&
+  typeof rec.ecosystemUser === "object" &&
+  typeof rec.shikasTransaction === "object" &&
+  typeof rec.shikasSettings === "object";
 
-export const prisma = hasAllDelegates ? existing : createClient();
+export const prisma: PrismaClient =
+  hasAllDelegates && existing ? existing : createClient();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
