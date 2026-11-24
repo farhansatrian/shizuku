@@ -50,10 +50,31 @@ export function Footer({ profile }: { profile: SerializedProfile }) {
           </Link>
         </nav>
 
-        <p className="font-mono text-[10px] tracking-[3px] text-white/90 md:text-[11px] md:tracking-[4px]">
-          ©{year} {profile.brandName.toUpperCase()} ({profile.brandKanji}) ·{" "}
-          {profile.fullName}
-        </p>
+        <div className="space-y-1.5">
+          <p className="font-mono text-[10px] tracking-[3px] text-white/95 md:text-[11px] md:tracking-[4px]">
+            ©{year} {profile.brandName.toUpperCase()} ({profile.brandKanji})
+          </p>
+          <p className="font-mono text-[9px] tracking-[2px] text-white/75 md:text-[10px]">
+            {pick("Special thanks & inspiration:", "Special thanks & inspirasi:")}{" "}
+            <a
+              href="https://tuyu.moe/en/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-white/45 underline-offset-4 transition hover:text-white hover:decoration-white"
+            >
+              TUYU
+            </a>{" "}
+            &amp;{" "}
+            <a
+              href="https://www.omo-cat.com/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline decoration-white/45 underline-offset-4 transition hover:text-white hover:decoration-white"
+            >
+              OMOCAT
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );
