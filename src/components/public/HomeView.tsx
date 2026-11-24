@@ -2,7 +2,6 @@
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { RainPreloader } from "@/components/public/RainPreloader";
 import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
@@ -26,7 +25,7 @@ interface FeedRow {
 }
 
 export function HomeView({ data }: { data: PortfolioPayload }) {
-  const { profile, workspaceApps, projects, experiences, certificates } = data;
+  const { profile, projects, experiences, certificates } = data;
   const { pick } = useLocale();
   const [feedTab, setFeedTab] = useState<FeedTab>("ALL");
   const [selectedCert, setSelectedCert] =
@@ -104,74 +103,42 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
         {/* 1. #top — Pure Full-Bleed 100svh Key Visual */}
         <HeroSection profile={profile} />
 
-        {/* 2. #workspace — Pure Boxless tuyu.moe Editorial Directory on #e5dcfb Lavender */}
+        {/* 2. Minimalist Japanese Gallery Showcase (HOME / PROJECT / ABOUT + Monochrome Diptych) */}
         <section
-          id="workspace"
-          className="scroll-mt-16 bg-[#e5dcfb] pt-14 pb-12 md:pt-20 md:pb-16"
+          id="gallery"
+          className="scroll-mt-16 bg-[#e5dcfb] pt-16 pb-16 md:pt-24 md:pb-24"
         >
-          <div className="mx-auto w-[90%] max-w-[1000px]">
-            <h2 className="font-editorial text-[26px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[33px] md:tracking-[9px]">
-              WORKSPACE
-            </h2>
-
-            <ul className="mt-8 grid grid-cols-1 gap-x-14 md:mt-12 md:grid-cols-2">
-              {workspaceApps.map((app, index) => {
-                const num = String(index + 1).padStart(2, "0");
-                const rowInner = (
-                  <div className="group py-5 transition-opacity duration-300 hover:opacity-70 md:py-6">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-[12px] tracking-[2.5px] text-[#745bc7] md:text-[13px]">
-                          {num}
-                        </span>
-                        {app.badge && (
-                          <span className="inline-block rounded-[5px] bg-[#745bc7] px-2.5 py-[2px] font-mono text-[10px] tracking-[0.8px] text-white uppercase">
-                            {app.badge}
-                          </span>
-                        )}
-                      </div>
-                      {app.isExternal ? (
-                        <ArrowUpRight className="h-4 w-4 shrink-0 text-[#745bc7] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                      ) : (
-                        <ArrowRight className="h-4 w-4 shrink-0 text-[#745bc7] transition-transform duration-300 group-hover:translate-x-1" />
-                      )}
-                    </div>
-
-                    <h3 className="mt-2.5 text-[17px] font-normal tracking-[0.03em] text-[#14100e] transition-colors duration-300 group-hover:text-[#7650f3] md:text-[19px]">
-                      {app.name}
-                    </h3>
-
-                    <p className="mt-1.5 text-[12px] leading-relaxed text-[#5d5370] md:text-[13px]">
-                      {pick(app.descriptionEn, app.descriptionId)}
-                    </p>
-                  </div>
-                );
-
-                return (
-                  <li key={app.id} className="tuyu-raindrop-line pb-2">
-                    {app.isExternal ? (
-                      <a
-                        href={app.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block focus:outline-none"
-                      >
-                        {rowInner}
-                      </a>
-                    ) : (
-                      <Link href={app.url} className="block focus:outline-none">
-                        {rowInner}
-                      </Link>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-
-            <div className="mt-12 flex justify-center md:mt-16">
-              <Link href="/workspace" className="tuyu-more-btn">
-                MORE
+          <div className="mx-auto w-[90%] max-w-[920px]">
+            <nav
+              aria-label="Gallery navigation"
+              className="flex items-center justify-center gap-8 sm:gap-12 md:gap-14"
+            >
+              <a
+                href="#top"
+                className="border-b-[1.5px] border-[#14100e] pb-1.5 text-[13px] font-medium tracking-[0.22em] text-[#14100e] uppercase transition hover:border-[#745bc7] hover:text-[#745bc7] sm:text-[15px]"
+              >
+                {pick("HOME", "BERANDA")}
+              </a>
+              <Link
+                href="/projects"
+                className="border-b-[1.5px] border-transparent pb-1.5 text-[13px] font-normal tracking-[0.22em] text-[#14100e]/85 uppercase transition hover:border-[#745bc7] hover:text-[#745bc7] sm:text-[15px]"
+              >
+                {pick("PROJECT", "PROYEK")}
               </Link>
+              <Link
+                href="/about"
+                className="border-b-[1.5px] border-transparent pb-1.5 text-[13px] font-normal tracking-[0.22em] text-[#14100e]/85 uppercase transition hover:border-[#745bc7] hover:text-[#745bc7] sm:text-[15px]"
+              >
+                {pick("ABOUT", "TENTANG")}
+              </Link>
+            </nav>
+
+            <div className="mx-auto mt-10 w-full max-w-[840px] md:mt-14">
+              <img
+                src="/assets/IMG_20210913_0002.webp"
+                alt={`${profile.brandName} monochrome artwork`}
+                className="block h-auto w-full select-none shadow-[0_18px_48px_rgba(32,20,64,0.08)]"
+              />
             </div>
           </div>
         </section>
