@@ -295,20 +295,14 @@ body {
   border: 1px solid rgba(229, 220, 251, 0.2);
 }
 
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+/* Invisible page scrollbar (exact full-bleed edge-to-edge tuyu.moe feel) */
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-::-webkit-scrollbar-track {
-  background: #ece4fc;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #bba8ec;
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #745bc7;
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
