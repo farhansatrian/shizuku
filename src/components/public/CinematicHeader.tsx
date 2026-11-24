@@ -3,12 +3,13 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Lock } from "lucide-react";
+import { Lock, User } from "lucide-react";
 import {
   ThreeRaindropsMenu,
   UmbrellaMark,
 } from "@/components/icons/RainMotifs";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { useEcosystemAuth } from "@/components/providers/EcosystemAuthProvider";
 import type { SerializedProfile } from "@/lib/types";
 
 interface CinematicHeaderProps {
@@ -63,6 +64,7 @@ export function CinematicHeader({
 }: CinematicHeaderProps) {
   const pathname = usePathname();
   const { locale, setLocale, pick } = useLocale();
+  const { user: ecoUser } = useEcosystemAuth();
   const [overHero, setOverHero] = useState(transparentOnTop);
   const [openPath, setOpenPath] = useState<string | null>(null);
   const [menuIconFailed, setMenuIconFailed] = useState(false);
@@ -116,6 +118,11 @@ export function CinematicHeader({
     { href: "/workspace", en: "WORK", id: "WORK" },
     { href: "/projects", en: "PROJECT", id: "PROYEK" },
     { href: "/about", en: "ABOUT", id: "TENTANG" },
+    {
+      href: "/account",
+      en: ecoUser ? "ACCOUNT" : "SHIZUKU ID",
+      id: ecoUser ? "AKUN" : "SHIZUKU ID",
+    },
     { href: "/admin", en: "ADMIN STUDIO", id: "ADMIN STUDIO" },
   ];
 
@@ -335,6 +342,7 @@ export function CinematicHeader({
                     active ? "font-bold text-[#d749d5]" : "font-normal text-[#745bc7]"
                   }`}
                 >
+                  {item.href === "/account" && <User className="h-4 w-4" />}
                   {item.href === "/admin" && <Lock className="h-4 w-4" />}
                   <span>{pick(item.en, item.id)}</span>
                 </Link>

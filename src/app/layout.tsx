@@ -7,6 +7,7 @@ import {
   Plus_Jakarta_Sans,
 } from "next/font/google";
 import { LocaleProvider } from "@/components/providers/LocaleProvider";
+import { EcosystemAuthProvider } from "@/components/providers/EcosystemAuthProvider";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -62,7 +63,9 @@ export default function RootLayout({
       className={`${jakarta.variable} ${cormorant.variable} ${jetbrains.variable} ${notoJp.variable} ${barlowCondensed.variable}`}
     >
       <body className="min-h-screen antialiased selection:bg-[#7650f3]/20 selection:text-[#1e172b]">
-        <LocaleProvider>{children}</LocaleProvider>
+        <LocaleProvider>
+          <EcosystemAuthProvider>{children}</EcosystemAuthProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

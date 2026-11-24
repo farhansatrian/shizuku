@@ -7,16 +7,19 @@ import {
   ArrowUpRight,
   Search,
   Settings,
+  User,
 } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
 import { Footer } from "@/components/public/Footer";
 import { useLocale } from "@/components/providers/LocaleProvider";
+import { useEcosystemAuth } from "@/components/providers/EcosystemAuthProvider";
 import type { PortfolioPayload } from "@/lib/types";
 
 export function WorkspaceView({ data }: { data: PortfolioPayload }) {
   const { profile, workspaceApps } = data;
   const { locale, pick } = useLocale();
+  const { user: ecoUser } = useEcosystemAuth();
   const [category, setCategory] = useState<string>("ALL");
   const [query, setQuery] = useState("");
   const [clockText, setClockText] = useState("");
@@ -96,13 +99,24 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
             </p>
           </div>
 
-          <Link
-            href="/admin"
-            className="inline-flex min-h-[36px] w-fit items-center gap-2 rounded-full border border-[#745bc7] bg-transparent px-4 py-1.5 font-editorial text-[12px] font-bold tracking-[0.2em] text-[#745bc7] uppercase transition hover:border-[#7650f3] hover:text-[#7650f3] hover:opacity-75"
-          >
-            <Settings className="h-3.5 w-3.5" />
-            {pick("Customize", "Atur")}
-          </Link>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Link
+              href={ecoUser ? "/account" : "/account?redirect=/workspace"}
+              className="inline-flex min-h-[36px] w-fit items-center gap-2 rounded-full border border-[#745bc7] bg-[#745bc7] px-4 py-1.5 font-editorial text-[12px] font-bold tracking-[0.18em] text-white uppercase transition hover:bg-[#7650f3]"
+            >
+              <User className="h-3.5 w-3.5" />
+              <span className="max-w-[140px] truncate">
+                {ecoUser ? ecoUser.displayName : pick("SHIZUKU ID", "SHIZUKU ID")}
+              </span>
+            </Link>
+            <Link
+              href="/admin"
+              className="inline-flex min-h-[36px] w-fit items-center gap-2 rounded-full border border-[#745bc7] bg-transparent px-4 py-1.5 font-editorial text-[12px] font-bold tracking-[0.2em] text-[#745bc7] uppercase transition hover:border-[#7650f3] hover:text-[#7650f3] hover:opacity-75"
+            >
+              <Settings className="h-3.5 w-3.5" />
+              {pick("Customize", "Atur")}
+            </Link>
+          </div>
         </div>
 
         {/* Exact tuyu.moe Pipe-Separated Filter Tabs + Minimal Underline Search */}
