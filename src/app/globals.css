@@ -294,15 +294,3 @@ body {
   background: linear-gradient(145deg, #1b1530 0%, #2d2152 100%);
   border: 1px solid rgba(229, 220, 251, 0.2);
 }
-
-/* Invisible page scrollbar (exact full-bleed edge-to-edge tuyu.moe feel) */
-html,
-body {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-  display: none;
-}
