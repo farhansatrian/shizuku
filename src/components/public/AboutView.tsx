@@ -1,308 +1,300 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Briefcase,
-  GraduationCap,
-  MapPin,
-  Users,
-} from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
 import { Footer } from "@/components/public/Footer";
-import { RaindropIcon, UmbrellaMark } from "@/components/icons/RainMotifs";
+import { CertificateModal } from "@/components/public/CertificateModal";
+import { UmbrellaMark } from "@/components/icons/RainMotifs";
 import { useLocale } from "@/components/providers/LocaleProvider";
-import type { PortfolioPayload } from "@/lib/types";
+import type { PortfolioPayload, SerializedCertificate } from "@/lib/types";
+
+function Pipe() {
+  return (
+    <span className="mx-2 font-normal text-[#14100e]/35 select-none">|</span>
+  );
+}
 
 export function AboutView({ data }: { data: PortfolioPayload }) {
   const { profile, experiences, certificates, skillGroups } = data;
   const { locale, pick } = useLocale();
-  const [expFilter, setExpFilter] = useState<string>("ALL");
+  const [selectedCert, setSelectedCert] =
+    useState<SerializedCertificate | null>(null);
 
   const storyParagraphs = pick(profile.aboutStoryEn, profile.aboutStoryId)
     .split(/\n+/)
     .map((s) => s.trim())
     .filter(Boolean);
 
-  const filteredExperiences = useMemo(() => {
-    if (expFilter === "ALL") return experiences;
-    return experiences.filter((e) => e.kind === expFilter);
-  }, [experiences, expFilter]);
-
   return (
     <div className="tuyu-subpage-canvas relative min-h-screen text-[#14100e]">
       <TuyuRainLayer />
       <CinematicHeader profile={profile} />
 
-      <main className="relative z-10 mx-auto w-[90%] max-w-[1000px] pt-28 pb-24 md:pt-36">
-        {/* Clean Editorial Story + Optional Portrait */}
-        <section className="grid gap-10 lg:grid-cols-12 lg:items-start">
-          <div className="lg:col-span-8">
-            <p className="font-mono text-[11px] tracking-[0.22em] text-[#745bc7] uppercase">
-              PROFILE · {profile.location}
-            </p>
-            <h1 className="mt-2 font-editorial text-[28px] font-normal leading-tight tracking-[5px] text-[#745bc7] uppercase md:text-[38px] md:tracking-[7px]">
-              {profile.fullName}
-            </h1>
-            <p className="mt-2 font-mono text-xs text-[#5d5370]">
-              {pick(profile.currentRoleEn, profile.currentRoleId)} —{" "}
-              {profile.currentOrg}
-            </p>
+      <main className="font-condensed relative z-10 mx-auto w-[90%] max-w-[760px] pt-28 pb-28 md:pt-36 md:pb-32">
+        {/* Minimal Centered Gallery Navigation (HOME / WORK / PROJECT / ABOUT) */}
+        <nav
+          aria-label="Section navigation"
+          className="flex items-center justify-center gap-7 sm:gap-11 md:gap-14"
+        >
+          <Link
+            href="/"
+            className="pb-1 text-[17px] font-normal tracking-[0.14em] text-[#14100e] uppercase transition hover:text-[#745bc7] sm:text-[19px]"
+          >
+            {pick("HOME", "BERANDA")}
+          </Link>
+          <Link
+            href="/workspace"
+            className="pb-1 text-[17px] font-normal tracking-[0.14em] text-[#14100e] uppercase transition hover:text-[#745bc7] sm:text-[19px]"
+          >
+            WORK
+          </Link>
+          <Link
+            href="/projects"
+            className="pb-1 text-[17px] font-normal tracking-[0.14em] text-[#14100e] uppercase transition hover:text-[#745bc7] sm:text-[19px]"
+          >
+            {pick("PROJECT", "PROYEK")}
+          </Link>
+          <span className="border-b-[1.5px] border-[#14100e] pb-1 text-[17px] font-medium tracking-[0.14em] text-[#14100e] uppercase sm:text-[19px]">
+            {pick("ABOUT", "TENTANG")}
+          </span>
+        </nav>
 
-            <div className="mt-7 space-y-4 text-sm leading-relaxed text-[#3a3147] sm:text-[15px]">
-              {storyParagraphs.map((para, i) => (
-                <p key={i}>{para}</p>
-              ))}
-            </div>
+        {/* Centered Square Portrait + Centered Minimal Bio */}
+        <section className="mt-12 flex flex-col items-center text-center md:mt-16">
+          <div className="h-[220px] w-[220px] overflow-hidden sm:h-[260px] sm:w-[260px]">
+            {profile.avatarImage?.trim() ? (
+              <img
+                src={profile.avatarImage}
+                alt={profile.fullName}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div
+                className="flex h-full w-full flex-col items-center justify-center"
+                style={{
+                  background:
+                    "linear-gradient(145deg, #fbd9ea 0%, #dcd0f9 100%)",
+                }}
+              >
+                <UmbrellaMark className="h-12 w-12 text-[#745bc7]" />
+                <p className="mt-3 font-editorial text-2xl tracking-[0.26em] text-[#14100e] lowercase">
+                  {profile.brandName}.
+                </p>
+                <p className="mt-1 font-mono text-[11px] tracking-[0.2em] text-[#745bc7]">
+                  {profile.brandKanji}
+                </p>
+              </div>
+            )}
+          </div>
 
-            <div className="mt-7 flex flex-wrap gap-2.5">
-              {profile.linkedinUrl && (
+          <p className="mt-9 max-w-[540px] text-[19px] leading-relaxed tracking-[0.03em] text-[#14100e] sm:text-[21px]">
+            <span className="font-semibold">{profile.fullName}</span>{" "}
+            {pick("—", "—")} {pick(profile.currentRoleEn, profile.currentRoleId)}
+            , {profile.currentOrg}.
+          </p>
+
+          <div className="mt-6 max-w-[540px] space-y-5 text-[18px] leading-[1.85] tracking-[0.02em] text-[#14100e]/90 sm:text-[19px]">
+            {storyParagraphs.map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
+
+          {/* Quiet Pipe-Separated External Links */}
+          <div className="mt-7 flex flex-wrap items-center justify-center text-[16px] tracking-[0.08em] text-[#14100e]/85 uppercase sm:text-[17px]">
+            {profile.linkedinUrl && (
+              <a
+                href={profile.linkedinUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="transition hover:text-[#745bc7]"
+              >
+                LinkedIn
+              </a>
+            )}
+            {profile.linkedinUrl && profile.githubUrl && <Pipe />}
+            {profile.githubUrl && (
+              <a
+                href={profile.githubUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="transition hover:text-[#745bc7]"
+              >
+                GitHub
+              </a>
+            )}
+            {profile.instagramUrl && (
+              <>
+                <Pipe />
                 <a
-                  href={profile.linkedinUrl}
+                  href={profile.instagramUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full bg-[#745bc7] px-5 py-2 font-mono text-xs text-white transition hover:bg-[#7650f3]"
+                  className="transition hover:text-[#745bc7]"
                 >
-                  LinkedIn <ArrowUpRight className="h-3.5 w-3.5" />
+                  Instagram
                 </a>
-              )}
-              {profile.githubUrl && (
+              </>
+            )}
+            {profile.youtubeUrl && (
+              <>
+                <Pipe />
                 <a
-                  href={profile.githubUrl}
+                  href={profile.youtubeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full border border-[#745bc7] bg-white/80 px-5 py-2 font-mono text-xs text-[#745bc7] transition hover:bg-[#745bc7] hover:text-white"
+                  className="transition hover:text-[#745bc7]"
                 >
-                  GitHub <ArrowUpRight className="h-3.5 w-3.5" />
+                  YouTube
                 </a>
-              )}
-              {profile.resumeUrl && (
+              </>
+            )}
+            {profile.resumeUrl && (
+              <>
+                <Pipe />
                 <a
                   href={profile.resumeUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full border border-[#745bc7] bg-white/80 px-5 py-2 font-mono text-xs text-[#745bc7] transition hover:bg-[#745bc7] hover:text-white"
+                  className="transition hover:text-[#745bc7]"
                 >
-                  {pick("Resume", "CV")} <ArrowUpRight className="h-3.5 w-3.5" />
+                  {pick("Resume", "CV")}
                 </a>
-              )}
-            </div>
-          </div>
-
-          {/* Right Quiet Frame (Uses custom uploaded avatar if set, otherwise clean umbrella emblem) */}
-          <div className="lg:col-span-4">
-            <div className="tuyu-sheet overflow-hidden rounded-2xl p-4">
-              {profile.avatarImage?.trim() ? (
-                <div className="aspect-square overflow-hidden rounded-xl bg-[#e5dcfb]">
-                  <img
-                    src={profile.avatarImage}
-                    alt={profile.fullName}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ) : (
-                <div
-                  className="flex aspect-square flex-col items-center justify-center rounded-xl text-center"
-                  style={{
-                    background:
-                      "linear-gradient(145deg, #fbd9ea 0%, #e5dcfb 100%)",
-                  }}
-                >
-                  <UmbrellaMark className="h-12 w-12 text-[#7650f3]" />
-                  <p className="mt-3 font-editorial text-2xl tracking-[0.22em] text-[#14100e] lowercase">
-                    {profile.brandName}.
-                  </p>
-                  <p className="mt-1 font-mono text-[10px] tracking-[0.2em] text-[#5c526e]">
-                    {profile.brandKanji}
-                  </p>
-                </div>
-              )}
-
-              <div className="mt-4 flex items-center justify-between px-1 font-mono text-[11px] text-[#5c526e]">
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5 text-[#7650f3]" />
-                  {profile.location}
-                </span>
-                <span>{certificates.length} certs</span>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </section>
 
-        <div className="raindrop-dotted my-14 w-full" />
+        {/* Minimalist Pipe-Separated CV Lists (OMOCAT Style) */}
+        <div className="mx-auto mt-20 max-w-[680px] space-y-12 md:mt-24 md:space-y-14">
+          {/* Experience & Education */}
+          <section id="experience" className="scroll-mt-24 space-y-9">
+            {experiences.map((exp) => {
+              const bullets =
+                locale === "id" && exp.bullets.id.length > 0
+                  ? exp.bullets.id
+                  : exp.bullets.en;
 
-        {/* Experience & Education Timeline */}
-        <section id="experience" className="scroll-mt-24">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div>
-              <h2 className="font-editorial text-[26px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[33px] md:tracking-[9px]">
-                {pick("EXPERIENCE", "PENGALAMAN")}
-              </h2>
-              <p className="mt-2 text-xs text-[#5d5370]">
-                {pick("Career, banking technology & academic timeline", "Riwayat karier, teknologi perbankan & pendidikan")}
-              </p>
-            </div>
+              return (
+                <article key={exp.id}>
+                  <h2 className="text-[19px] font-semibold tracking-[0.06em] text-[#14100e] uppercase sm:text-[21px]">
+                    <span>{exp.kind}</span>
+                    <Pipe />
+                    <span>{exp.organization}</span>
+                    <Pipe />
+                    <span>{pick(exp.periodEn, exp.periodId)}</span>
+                  </h2>
 
-            <ul className="flex max-w-full flex-nowrap items-center overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {["ALL", "WORK", "EDUCATION", "ORGANIZATION"].map((kind, idx) => (
-                <li
-                  key={kind}
-                  className={`shrink-0 border-r border-[#745bc7] ${
-                    idx === 0 ? "border-l" : ""
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setExpFilter(kind)}
-                    className={`whitespace-nowrap px-2.5 py-0.5 font-editorial text-[11px] tracking-[1.5px] text-[#745bc7] uppercase transition hover:text-[#d749d5] md:px-4 md:text-[13px] ${
-                      expFilter === kind ? "font-bold" : "font-normal opacity-80"
-                    }`}
-                  >
-                    {kind}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {filteredExperiences.length === 0 ? (
-            <div className="tuyu-sheet mt-8 rounded-2xl p-8 text-center">
-              <p className="text-sm text-[#5c526e]">
-                {pick(
-                  "No timeline entries in this category yet.",
-                  "Belum ada riwayat pada kategori ini."
-                )}
-              </p>
-            </div>
-          ) : (
-            <div className="mt-8 space-y-4">
-              {filteredExperiences.map((exp) => {
-                const bullets =
-                  locale === "id" && exp.bullets.id.length > 0
-                    ? exp.bullets.id
-                    : exp.bullets.en;
-                return (
-                  <article
-                    key={exp.id}
-                    className="tuyu-sheet rounded-2xl p-5 sm:p-6"
-                  >
-                    <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
-                      <div className="flex items-start gap-3">
-                        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#e5dcfb]/80 text-[#7650f3]">
-                          {exp.kind === "EDUCATION" ? (
-                            <GraduationCap className="h-4 w-4" />
-                          ) : exp.kind === "ORGANIZATION" ? (
-                            <Users className="h-4 w-4" />
-                          ) : (
-                            <Briefcase className="h-4 w-4" />
-                          )}
-                        </span>
-                        <div>
-                          <h3 className="text-base font-semibold text-[#14100e]">
-                            {pick(exp.roleEn, exp.roleId)}
-                          </h3>
-                          <p className="text-sm text-[#7650f3]">
-                            {exp.organization}
-                          </p>
-                          <p className="mt-0.5 font-mono text-[11px] text-[#6d6188]">
-                            {exp.location}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 sm:shrink-0">
-                        {exp.isCurrent && (
-                          <span className="rounded-full bg-[#fad8e8] px-2.5 py-0.5 font-mono text-[10px] font-medium text-[#9e3168] uppercase">
-                            {pick("Current", "Aktif")}
-                          </span>
-                        )}
-                        <span className="font-mono text-xs text-[#5c526e]">
-                          {pick(exp.periodEn, exp.periodId)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <p className="mt-4 text-sm leading-relaxed text-[#423854]">
-                      {pick(exp.summaryEn, exp.summaryId)}
-                    </p>
-
-                    {bullets.length > 0 && (
-                      <ul className="mt-3 space-y-1.5">
-                        {bullets.map((b, i) => (
-                          <li
-                            key={i}
-                            className="flex items-start gap-2 text-xs leading-relaxed text-[#544a69] sm:text-sm"
-                          >
-                            <RaindropIcon className="mt-1 h-3 w-3 shrink-0 text-[#7650f3]" />
-                            <span>{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    {exp.tags.length > 0 && (
-                      <div className="mt-4 flex flex-wrap gap-1.5">
-                        {exp.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full border border-[#dfd4f8] bg-white px-2.5 py-0.5 font-mono text-[10px] text-[#514470]"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </article>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-        {/* Skills Matrix */}
-        {skillGroups.length > 0 && (
-          <section className="mt-14">
-            <div className="raindrop-dotted mb-12 w-full" />
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <h2 className="font-editorial text-[26px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[33px] md:tracking-[9px]">
-                {pick("TOOLKIT", "KEAHLIAN")}
-              </h2>
-              <Link
-                href="/certificates"
-                className="inline-flex items-center gap-1.5 font-mono text-xs text-[#7650f3] hover:underline"
-              >
-                {pick("View Certificates Vault", "Lihat Galeri Sertifikat")}
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-
-            <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {skillGroups.map((group) => (
-                <div key={group.id} className="tuyu-sheet rounded-2xl p-5">
-                  <h3 className="font-mono text-[11px] font-semibold tracking-[0.14em] text-[#7650f3] uppercase">
-                    {pick(group.nameEn, group.nameId)}
-                  </h3>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {group.items.map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-[#dfd4f8] bg-white px-2.5 py-0.5 font-mono text-[11px] text-[#3c3159]"
-                      >
-                        {item}
+                  <ul className="mt-3.5 list-disc space-y-2 pl-6 text-[17px] leading-[1.65] tracking-[0.02em] text-[#14100e]/90 sm:text-[18px]">
+                    <li>
+                      <span className="font-medium text-[#14100e]">
+                        {pick(exp.roleEn, exp.roleId)}
                       </span>
+                      {exp.location && (
+                        <>
+                          <Pipe />
+                          <span>{exp.location}</span>
+                        </>
+                      )}
+                    </li>
+                    {pick(exp.summaryEn, exp.summaryId) && (
+                      <li>{pick(exp.summaryEn, exp.summaryId)}</li>
+                    )}
+                    {bullets.map((b, i) => (
+                      <li key={i}>{b}</li>
                     ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+                    {exp.tags.length > 0 && (
+                      <li>
+                        {exp.tags.map((tag, i) => (
+                          <React.Fragment key={tag}>
+                            {i > 0 && <Pipe />}
+                            <span>{tag}</span>
+                          </React.Fragment>
+                        ))}
+                      </li>
+                    )}
+                  </ul>
+                </article>
+              );
+            })}
           </section>
-        )}
+
+          {/* Certificates (Pipe-Separated Interactive List) */}
+          {certificates.length > 0 && (
+            <section id="certificates" className="scroll-mt-24">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className="text-[19px] font-semibold tracking-[0.06em] text-[#14100e] uppercase sm:text-[21px]">
+                  <span>{pick("CERTIFICATES", "SERTIFIKAT")}</span>
+                  <Pipe />
+                  <span>{pick("CREDENTIALS", "KREDENSIAL")}</span>
+                </h2>
+                <Link
+                  href="/certificates"
+                  className="text-[14px] tracking-[0.12em] text-[#745bc7] uppercase transition hover:opacity-70"
+                >
+                  {pick("VIEW GALLERY →", "GALERI →")}
+                </Link>
+              </div>
+
+              <ul className="mt-4 list-disc space-y-2.5 pl-6 text-[17px] leading-[1.6] tracking-[0.02em] text-[#14100e]/90 sm:text-[18px]">
+                {certificates.map((cert) => (
+                  <li key={cert.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedCert(cert)}
+                      className="inline text-left transition hover:text-[#745bc7] focus:outline-none"
+                    >
+                      <span>{cert.issuedDate}</span>
+                      <Pipe />
+                      <span className="font-medium text-[#14100e] underline-offset-4 hover:text-[#745bc7] hover:underline">
+                        {pick(cert.titleEn, cert.titleId)}
+                      </span>
+                      <Pipe />
+                      <span>{cert.category}</span>
+                      <Pipe />
+                      <span>{cert.issuer}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Toolkit / Skills */}
+          {skillGroups.length > 0 && (
+            <section id="toolkit" className="scroll-mt-24">
+              <h2 className="text-[19px] font-semibold tracking-[0.06em] text-[#14100e] uppercase sm:text-[21px]">
+                <span>{pick("TOOLKIT", "KEAHLIAN")}</span>
+                <Pipe />
+                <span>{pick("SKILLS", "TEKNOLOGI")}</span>
+              </h2>
+
+              <ul className="mt-4 list-disc space-y-2.5 pl-6 text-[17px] leading-[1.6] tracking-[0.02em] text-[#14100e]/90 sm:text-[18px]">
+                {skillGroups.map((group) => (
+                  <li key={group.id}>
+                    <span className="font-medium text-[#14100e]">
+                      {pick(group.nameEn, group.nameId)}
+                    </span>
+                    {group.items.map((item) => (
+                      <React.Fragment key={item}>
+                        <Pipe />
+                        <span>{item}</span>
+                      </React.Fragment>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
       </main>
 
       <Footer profile={profile} />
+      <CertificateModal
+        certificate={selectedCert}
+        onClose={() => setSelectedCert(null)}
+      />
     </div>
   );
 }

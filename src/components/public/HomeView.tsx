@@ -111,29 +111,29 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
           <div className="mx-auto w-[90%] max-w-[920px]">
             <nav
               aria-label="Gallery navigation"
-              className="flex items-center justify-center gap-6 sm:gap-11 md:gap-14"
+              className="flex items-center justify-center gap-7 sm:gap-11 md:gap-14"
             >
               <a
                 href="#top"
-                className="text-[13px] font-normal tracking-[0.22em] text-[#14100e]/85 uppercase transition hover:text-[#745bc7] sm:text-[15px]"
+                className="font-condensed text-[17px] font-normal tracking-[0.14em] text-[#14100e] uppercase transition hover:text-[#745bc7] sm:text-[19px]"
               >
                 {pick("HOME", "BERANDA")}
               </a>
               <Link
                 href="/workspace"
-                className="text-[13px] font-normal tracking-[0.22em] text-[#14100e]/85 uppercase transition hover:text-[#745bc7] sm:text-[15px]"
+                className="font-condensed text-[17px] font-normal tracking-[0.14em] text-[#14100e] uppercase transition hover:text-[#745bc7] sm:text-[19px]"
               >
                 {pick("WORK", "WORK")}
               </Link>
               <Link
                 href="/projects"
-                className="text-[13px] font-normal tracking-[0.22em] text-[#14100e]/85 uppercase transition hover:text-[#745bc7] sm:text-[15px]"
+                className="font-condensed text-[17px] font-normal tracking-[0.14em] text-[#14100e] uppercase transition hover:text-[#745bc7] sm:text-[19px]"
               >
                 {pick("PROJECT", "PROYEK")}
               </Link>
               <Link
                 href="/about"
-                className="text-[13px] font-normal tracking-[0.22em] text-[#14100e]/85 uppercase transition hover:text-[#745bc7] sm:text-[15px]"
+                className="font-condensed text-[17px] font-normal tracking-[0.14em] text-[#14100e] uppercase transition hover:text-[#745bc7] sm:text-[19px]"
               >
                 {pick("ABOUT", "TENTANG")}
               </Link>

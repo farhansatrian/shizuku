@@ -37,6 +37,10 @@ body {
   font-family: var(--font-display);
 }
 
+.font-condensed {
+  font-family: var(--font-condensed), var(--font-jp), sans-serif;
+}
+
 /* ============================================================================
    Authentic tuyu.moe Fixed Watercolor Backdrop & Panning Keyframes
    ============================================================================ */

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import {
+  Barlow_Condensed,
   Cormorant_Garamond,
   JetBrains_Mono,
   Noto_Sans_JP,
@@ -36,6 +37,13 @@ const notoJp = Noto_Sans_JP({
   display: "swap",
 });
 
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-condensed",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "shizuku (雫)",
   description:
@@ -51,7 +59,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${jakarta.variable} ${cormorant.variable} ${jetbrains.variable} ${notoJp.variable}`}
+      className={`${jakarta.variable} ${cormorant.variable} ${jetbrains.variable} ${notoJp.variable} ${barlowCondensed.variable}`}
     >
       <body className="min-h-screen antialiased selection:bg-[#7650f3]/20 selection:text-[#1e172b]">
         <LocaleProvider>{children}</LocaleProvider>
