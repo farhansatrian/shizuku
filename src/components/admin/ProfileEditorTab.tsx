@@ -434,9 +434,10 @@ export function ProfileEditorTab({
             {(
               [
                 ["email", "Email Address", "farhansatria.07@gmail.com"],
+                ["instagramUrl", "Instagram URL", "https://www.instagram.com/..."],
+                ["youtubeUrl", "YouTube URL", "https://www.youtube.com/@..."],
                 ["linkedinUrl", "LinkedIn URL", "https://linkedin.com/in/..."],
                 ["githubUrl", "GitHub URL", "https://github.com/..."],
-                ["instagramUrl", "Instagram URL (optional)", "https://instagram.com/..."],
                 ["resumeUrl", "Resume / CV URL (optional)", "https://..."],
               ] as const
             ).map(([field, lbl, placeholder]) => (

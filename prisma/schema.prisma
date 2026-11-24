@@ -45,6 +45,7 @@ model SiteProfile {
   linkedinUrl     String   @default("")
   githubUrl       String   @default("")
   instagramUrl    String   @default("")
+  youtubeUrl      String   @default("")
   resumeUrl       String   @default("")
   statsJson       String
   pillarsJson     String

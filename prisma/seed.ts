@@ -87,7 +87,8 @@ async function main() {
         email: "farhansatria.07@gmail.com",
         linkedinUrl: "https://www.linkedin.com/in/farhansatrian/",
         githubUrl: "https://github.com/farhansatrian",
-        instagramUrl: "",
+        instagramUrl: "https://www.instagram.com/farhansatria_n/",
+        youtubeUrl: "https://www.youtube.com/@ahansn",
         resumeUrl: "",
         statsJson: JSON.stringify([
           {

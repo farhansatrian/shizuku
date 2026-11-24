@@ -41,6 +41,7 @@ export const profileUpdateSchema = z.object({
   linkedinUrl: z.string().trim().default(""),
   githubUrl: z.string().trim().default(""),
   instagramUrl: z.string().trim().default(""),
+  youtubeUrl: z.string().trim().default(""),
   resumeUrl: z.string().trim().default(""),
   stats: z
     .array(

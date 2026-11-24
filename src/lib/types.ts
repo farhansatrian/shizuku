@@ -59,6 +59,7 @@ export interface SerializedProfile {
   linkedinUrl: string;
   githubUrl: string;
   instagramUrl: string;
+  youtubeUrl: string;
   resumeUrl: string;
   stats: ProfileStat[];
   pillars: ProfilePillar[];
