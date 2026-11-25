@@ -169,26 +169,30 @@ model EcosystemUser {
 }
 
 model ShikasTransaction {
-  id         String
-  userId     String
-  user       EcosystemUser @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type       String
-  date       String
-  amountIdr  Int
-  categoryId String
-  note       String
-  merchant   String?
-  createdAt  String
+  id          String
+  userId      String
+  user        EcosystemUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String
+  date        String
+  amountIdr   Int
+  categoryId  String
+  note        String
+  merchant    String?
+  accountId   String?
+  toAccountId String?
+  feeIdr      Int           @default(0)
+  createdAt   String
 
   @@id([userId, id])
   @@index([userId, date])
 }
 
 model ShikasSettings {
-  userId      String        @id
-  user        EcosystemUser @relation(fields: [userId], references: [id], onDelete: Cascade)
-  locale      String        @default("en")
-  privacyMode Boolean       @default(false)
-  rainEnabled Boolean       @default(true)
-  updatedAt   DateTime      @updatedAt
+  userId       String        @id
+  user         EcosystemUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locale       String        @default("en")
+  privacyMode  Boolean       @default(false)
+  rainEnabled  Boolean       @default(true)
+  accountsJson String        @default("[]")
+  updatedAt    DateTime      @updatedAt
 }

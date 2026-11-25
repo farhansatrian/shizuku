@@ -1,8 +1,11 @@
 import "server-only";
 import { PrismaClient } from "@prisma/client";
 
+const PRISMA_SCHEMA_VERSION = 2;
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
+  prismaSchemaVersion?: number;
 };
 
 function createClient(): PrismaClient {
@@ -11,11 +14,12 @@ function createClient(): PrismaClient {
   });
 }
 
-// Recreate cached dev client automatically if Prisma schema added new models
+// Recreate cached dev client automatically if Prisma schema added new models or columns
 const existing = globalForPrisma.prisma;
 const rec = existing as unknown as Record<string, unknown> | undefined;
 const hasAllDelegates =
   rec !== undefined &&
+  globalForPrisma.prismaSchemaVersion === PRISMA_SCHEMA_VERSION &&
   typeof rec.workspaceApp === "object" &&
   typeof rec.ecosystemUser === "object" &&
   typeof rec.shikasTransaction === "object" &&
@@ -26,4 +30,5 @@ export const prisma: PrismaClient =
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
+  globalForPrisma.prismaSchemaVersion = PRISMA_SCHEMA_VERSION;
 }

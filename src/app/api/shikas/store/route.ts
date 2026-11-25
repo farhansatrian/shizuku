@@ -7,19 +7,32 @@ import {
   withEcosystemCors,
 } from "@/lib/ecosystem-auth";
 
+const accountSchema = z.object({
+  id: z.string().min(1).max(80),
+  name: z.string().min(1).max(60),
+  role: z.enum(["daily", "savings"]).default("daily"),
+  openingBalanceIdr: z.number().int().min(0),
+  color: z.string().min(3).max(32).default("#745bc7"),
+  isDefault: z.boolean().optional(),
+});
+
 const txSchema = z.object({
   id: z.string().min(1).max(80),
-  type: z.enum(["income", "expense"]),
+  type: z.enum(["income", "expense", "transfer"]),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   amountIdr: z.number().int().positive(),
   categoryId: z.string().min(1).max(60),
   note: z.string().max(240),
   merchant: z.string().max(120).optional(),
+  accountId: z.string().min(1).max(80).optional(),
+  toAccountId: z.string().min(1).max(80).optional(),
+  feeIdr: z.number().int().min(0).optional(),
   createdAt: z.string().min(1).max(64),
 });
 
 const storeSchema = z.object({
   version: z.number().int().optional(),
+  accounts: z.array(accountSchema).max(30).optional(),
   transactions: z.array(txSchema).max(5000),
   settings: z
     .object({
@@ -30,6 +43,17 @@ const storeSchema = z.object({
     })
     .optional(),
 });
+
+function parseStoredAccounts(raw: string | null | undefined) {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    const validated = z.array(accountSchema).safeParse(parsed);
+    return validated.success ? validated.data : [];
+  } catch {
+    return [];
+  }
+}
 
 export function OPTIONS(req: NextRequest) {
   return ecosystemPreflight(req);
@@ -58,15 +82,24 @@ export async function GET(req: NextRequest) {
     return withEcosystemCors(
       req,
       NextResponse.json({
-        version: 4,
+        version: 5,
+        accounts: parseStoredAccounts(settings?.accountsJson),
         transactions: rows.map((r) => ({
           id: r.id,
-          type: r.type === "income" ? "income" : "expense",
+          type:
+            r.type === "income"
+              ? "income"
+              : r.type === "transfer"
+                ? "transfer"
+                : "expense",
           date: r.date,
           amountIdr: r.amountIdr,
           categoryId: r.categoryId,
           note: r.note,
           merchant: r.merchant ?? undefined,
+          accountId: r.accountId ?? undefined,
+          toAccountId: r.toAccountId ?? undefined,
+          feeIdr: r.feeIdr > 0 ? r.feeIdr : undefined,
           createdAt: r.createdAt,
         })),
         settings: {
@@ -105,7 +138,9 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const { transactions, settings } = parsed.data;
+    const { accounts, transactions, settings } = parsed.data;
+    const serializedAccounts =
+      accounts !== undefined ? JSON.stringify(accounts) : undefined;
 
     await prisma.$transaction(async (tx) => {
       await tx.shikasTransaction.deleteMany({
@@ -123,24 +158,35 @@ export async function PUT(req: NextRequest) {
             categoryId: item.categoryId,
             note: item.note,
             merchant: item.merchant ?? null,
+            accountId: item.accountId ?? null,
+            toAccountId: item.toAccountId ?? null,
+            feeIdr: Math.max(0, Math.round(item.feeIdr ?? 0)),
             createdAt: item.createdAt,
           })),
         });
       }
 
-      if (settings) {
+      if (settings || serializedAccounts !== undefined) {
         await tx.shikasSettings.upsert({
           where: { userId: user.id },
           update: {
-            locale: settings.locale,
-            privacyMode: settings.privacyMode,
-            rainEnabled: settings.rainEnabled,
+            ...(settings
+              ? {
+                  locale: settings.locale,
+                  privacyMode: settings.privacyMode,
+                  rainEnabled: settings.rainEnabled,
+                }
+              : {}),
+            ...(serializedAccounts !== undefined
+              ? { accountsJson: serializedAccounts }
+              : {}),
           },
           create: {
             userId: user.id,
-            locale: settings.locale,
-            privacyMode: settings.privacyMode,
-            rainEnabled: settings.rainEnabled,
+            locale: settings?.locale ?? "en",
+            privacyMode: settings?.privacyMode ?? false,
+            rainEnabled: settings?.rainEnabled ?? true,
+            accountsJson: serializedAccounts ?? "[]",
           },
         });
       }
@@ -148,7 +194,11 @@ export async function PUT(req: NextRequest) {
 
     return withEcosystemCors(
       req,
-      NextResponse.json({ ok: true, count: transactions.length })
+      NextResponse.json({
+        ok: true,
+        count: transactions.length,
+        accountsCount: accounts?.length ?? 0,
+      })
     );
   } catch (err) {
     console.error("SHIKAS store PUT error:", err);
