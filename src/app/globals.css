@@ -447,3 +447,13 @@ body {
     animation: none;
   }
 }
+
+/* Keep Chrome/Safari autofill clean inside crisp white/lavender forms */
+.shizuku-input:-webkit-autofill,
+.shizuku-input:-webkit-autofill:hover,
+.shizuku-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #faf7ff inset;
+  -webkit-text-fill-color: #14100e;
+  caret-color: #14100e;
+  transition: background-color 5000s ease-in-out 0s;
+}

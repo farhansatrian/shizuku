@@ -6,10 +6,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowRight,
   ArrowUpRight,
+  CheckCircle2,
   Eye,
   EyeOff,
   Loader2,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
@@ -248,14 +250,19 @@ export function AccountView({
   }, [user, locale]);
 
   const errorMessage = resolveErrorMessage(errorCode);
+  const initialLetter = user
+    ? (user.displayName.trim() || user.email).slice(0, 1).toUpperCase()
+    : "";
 
   return (
-    <div className="tuyu-subpage-canvas relative flex min-h-screen flex-col text-[#14100e]">
-      <TuyuRainLayer />
+    <div className="relative flex min-h-screen flex-col text-[#14100e]">
+      {/* Consistent pink watercolor backdrop (/assets/bg-watercolor-pc.jpg) */}
+      <div className="shizuku-workspace-bg" aria-hidden="true" />
+      <TuyuRainLayer behindContent />
       <CinematicHeader profile={profile} />
 
-      <main className="relative z-10 mx-auto flex w-[90%] max-w-[760px] flex-1 flex-col pt-28 pb-24 md:pt-36 md:pb-28">
-        {/* Minimal Centered Gallery Navigation */}
+      <main className="relative z-10 mx-auto flex w-[92%] max-w-[760px] flex-1 flex-col pt-28 pb-24 md:pt-34 md:pb-28">
+        {/* Minimal Centered Navigation */}
         <nav
           aria-label="Section navigation"
           className="flex items-center justify-center gap-7 sm:gap-11 md:gap-14"
@@ -288,56 +295,85 @@ export function AccountView({
 
         {/* Loading State */}
         {loading ? (
-          <div className="mx-auto mt-20 flex flex-col items-center gap-3 text-[#745bc7]">
-            <Loader2 className="h-6 w-6 animate-spin" />
-            <p className="font-mono text-[11px] tracking-[0.2em] uppercase">
-              {pick("Checking SHIZUKU ID...", "Memeriksa SHIZUKU ID...")}
-            </p>
+          <div className="vn-frame mx-auto mt-12 w-full max-w-[440px] overflow-hidden">
+            <div className="flex flex-col items-center gap-3 bg-white/95 px-6 py-14 text-[#745bc7]">
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <p className="font-mono text-[11px] tracking-[0.18em] uppercase">
+                {pick("Checking SHIZUKU ID...", "Memeriksa SHIZUKU ID...")}
+              </p>
+            </div>
           </div>
         ) : user ? (
           /* ================================================================
-             SIGNED-IN VIEW: Pure Boxless SHIZUKU ID Hub
+             SIGNED-IN VIEW: Crisp SHIZUKU ID Account Hub (.vn-frame)
              ================================================================ */
-          <section className="mx-auto mt-14 w-full max-w-[560px] md:mt-16">
-            <div className="flex flex-col items-center text-center">
-              <UmbrellaMark className="h-9 w-9 text-[#745bc7]" />
-              <p className="mt-3 font-mono text-[11px] tracking-[0.26em] text-[#745bc7] uppercase">
-                {profile.brandName.toUpperCase()} ID · {profile.brandKanji}
-              </p>
-              <h1 className="mt-2 font-editorial text-[28px] font-normal leading-tight tracking-[5px] text-[#745bc7] uppercase md:text-[36px] md:tracking-[7px]">
-                {user.displayName}
-              </h1>
-              <p className="mt-2 font-mono text-xs tracking-[0.06em] text-[#5d5370]">
-                {user.email}
-                {memberSince && (
-                  <>
-                    <span className="mx-2 text-[#745bc7]/45">|</span>
-                    {pick(`Since ${memberSince}`, `Sejak ${memberSince}`)}
-                  </>
-                )}
-              </p>
+          <section className="vn-frame mx-auto mt-10 w-full max-w-[600px] overflow-hidden md:mt-12">
+            <div className="vn-band-strip flex flex-wrap items-center justify-between gap-2 px-5 py-2.5 text-white">
+              <span className="font-mono text-[10px] font-semibold tracking-[0.2em] uppercase drop-shadow-2xs">
+                {profile.brandName.toUpperCase()} {"ID //"} {profile.brandKanji}
+              </span>
+              <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-[0.14em] uppercase drop-shadow-2xs">
+                <span className="h-2 w-2 rounded-full bg-emerald-300" />
+                {pick("SIGNED IN", "AKTIF")}
+              </span>
             </div>
 
-            <div className="raindrop-dotted my-10 w-full" />
+            <div className="bg-white/96 p-6 sm:p-8">
+              {/* Identity Row */}
+              <div className="flex flex-col gap-4 border-b border-[#745bc7]/20 pb-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-3.5">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center border-[1.5px] border-[#745bc7] bg-gradient-to-b from-[#efe9fd] to-[#fde8f6] font-editorial text-xl font-bold text-[#745bc7]">
+                    {initialLetter}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <h1 className="truncate font-editorial text-xl font-bold tracking-[0.08em] text-[#14100e] uppercase sm:text-2xl">
+                        {user.displayName}
+                      </h1>
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                    </div>
+                    <p className="truncate font-mono text-xs text-[#5d5370]">
+                      {user.email}
+                    </p>
+                    {memberSince && (
+                      <p className="mt-0.5 font-mono text-[10px] tracking-[0.1em] text-[#7b6f94] uppercase">
+                        {pick(`Member since ${memberSince}`, `Bergabung ${memberSince}`)}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
-            <div>
-              <p className="font-mono text-[11px] tracking-[0.22em] text-[#745bc7] uppercase">
-                {pick("CONNECTED ECOSYSTEM", "EKOSISTEM TERHUBUNG")}
-              </p>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  disabled={signingOut}
+                  className="inline-flex shrink-0 items-center justify-center gap-1.5 border-[1.5px] border-rose-400 bg-white px-3.5 py-2 font-mono text-[10.5px] font-semibold tracking-[0.12em] text-rose-600 uppercase transition hover:bg-rose-600 hover:text-white disabled:opacity-50"
+                >
+                  {signingOut ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <LogOut className="h-3.5 w-3.5" />
+                  )}
+                  <span>{pick("SIGN OUT", "KELUAR")}</span>
+                </button>
+              </div>
 
-              <ul className="mt-4">
-                {/* 01 — SHIKAS Personal Cashflow */}
-                <li className="tuyu-raindrop-line py-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <span className="font-mono text-[12px] tracking-[2px] text-[#745bc7]">
-                          01
-                        </span>
-                        <span className="inline-block rounded-[5px] bg-[#745bc7] px-2 py-[2px] font-mono text-[10px] tracking-[0.8px] text-white uppercase">
+              {/* Connected Ecosystem Apps */}
+              <div className="mt-6">
+                <p className="font-mono text-[10.5px] font-semibold tracking-[0.18em] text-[#745bc7] uppercase">
+                  {pick("CONNECTED ECOSYSTEM", "EKOSISTEM TERHUBUNG")}
+                </p>
+
+                <div className="mt-3 space-y-3">
+                  {/* 01 — SHIKAS */}
+                  <div className="vn-cmd flex flex-col justify-between gap-3 p-4 sm:flex-row sm:items-center">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2 font-mono text-[10px]">
+                        <span className="font-bold text-[#745bc7]">01</span>
+                        <span className="border border-[#2276a8] px-1.5 py-0.5 text-[9.5px] font-bold text-[#2276a8] uppercase">
                           SHIKAS
                         </span>
-                        <span className="font-mono text-[11px] text-[#5d5370]">
+                        <span className="text-[#5d5370]">
                           {shikasSync.loading
                             ? pick("Syncing...", "Menyinkronkan...")
                             : shikasSync.txCount !== null
@@ -345,16 +381,19 @@ export function AccountView({
                                   `${shikasSync.txCount} entries synced`,
                                   `${shikasSync.txCount} transaksi tersinkron`
                                 )
-                              : pick("Isolated cloud store", "Database cloud terisolasi")}
+                              : pick("Isolated cloud store", "Database terisolasi")}
                         </span>
                       </div>
-                      <h2 className="mt-2 text-[17px] text-[#14100e]">
-                        {pick("SHIKAS — Personal Cashflow", "SHIKAS — Keuangan Pribadi")}
-                      </h2>
-                      <p className="mt-1 text-[12px] leading-relaxed text-[#5d5370]">
+                      <h2 className="mt-1.5 text-sm font-bold text-[#14100e]">
                         {pick(
-                          "Sign in to SHIKAS with this same email & password to sync your transactions privately.",
-                          "Masuk ke SHIKAS dengan email & kata sandi yang sama untuk sinkronisasi transaksi secara privat."
+                          "SHIKAS — Personal Cashflow",
+                          "SHIKAS — Keuangan Pribadi"
+                        )}
+                      </h2>
+                      <p className="mt-0.5 text-xs text-[#5d5370]">
+                        {pick(
+                          "Sign in to SHIKAS with this same email & password to sync privately.",
+                          "Masuk ke SHIKAS dengan email & kata sandi ini untuk sinkronisasi privat."
                         )}
                       </p>
                     </div>
@@ -365,241 +404,242 @@ export function AccountView({
                           href={shikasApp.url}
                           target="_blank"
                           rel="noreferrer"
-                          className="mt-1 inline-flex shrink-0 items-center gap-1 font-mono text-[11px] tracking-[0.14em] text-[#745bc7] uppercase transition hover:text-[#7650f3]"
+                          className="vn-btn-band shrink-0 px-3.5 py-2 text-[10px]"
                         >
-                          {pick("OPEN", "BUKA")}
+                          <span>{pick("OPEN", "BUKA")}</span>
                           <ArrowUpRight className="h-3.5 w-3.5" />
                         </a>
                       ) : (
                         <Link
                           href={shikasApp.url}
-                          className="mt-1 inline-flex shrink-0 items-center gap-1 font-mono text-[11px] tracking-[0.14em] text-[#745bc7] uppercase transition hover:text-[#7650f3]"
+                          className="vn-btn-band shrink-0 px-3.5 py-2 text-[10px]"
                         >
-                          {pick("OPEN", "BUKA")}
+                          <span>{pick("OPEN", "BUKA")}</span>
                           <ArrowRight className="h-3.5 w-3.5" />
                         </Link>
                       ))}
                   </div>
-                </li>
 
-                {/* 02 — SHIZUKU Workspace */}
-                <li className="tuyu-raindrop-line py-5">
+                  {/* 02 — WORK Hub */}
                   <Link
                     href="/workspace"
-                    className="group flex items-start justify-between gap-4 transition-opacity hover:opacity-75"
+                    className="vn-cmd group flex items-center justify-between gap-4 p-4"
                   >
-                    <div>
-                      <div className="flex items-center gap-2.5">
-                        <span className="font-mono text-[12px] tracking-[2px] text-[#745bc7]">
-                          02
-                        </span>
-                        <span className="inline-block rounded-[5px] bg-[#745bc7] px-2 py-[2px] font-mono text-[10px] tracking-[0.8px] text-white uppercase">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 font-mono text-[10px]">
+                        <span className="font-bold text-[#745bc7]">02</span>
+                        <span className="border border-[#745bc7] px-1.5 py-0.5 text-[9.5px] font-bold text-[#745bc7] uppercase">
                           WORK
                         </span>
                       </div>
-                      <h2 className="mt-2 text-[17px] text-[#14100e] transition-colors group-hover:text-[#7650f3]">
-                        {pick("SHIZUKU Workspace", "SHIZUKU Workspace")}
+                      <h2 className="mt-1.5 text-sm font-bold text-[#14100e] transition-colors group-hover:text-[#745bc7]">
+                        {pick("SHIZUKU Ecosystem Works", "Daftar Aplikasi Ekosistem")}
                       </h2>
-                      <p className="mt-1 text-[12px] leading-relaxed text-[#5d5370]">
+                      <p className="mt-0.5 text-xs text-[#5d5370]">
                         {pick(
-                          "Daily hub, shortcuts, and upcoming personal AI agents under your SHIZUKU ID.",
-                          "Pusat harian, pintasan aplikasi, dan AI agent mendatang di bawah SHIZUKU ID kamu."
+                          "Browse SHIZUKU, SHIKAS, SHIKOST, and upcoming companion apps.",
+                          "Lihat SHIZUKU, SHIKAS, SHIKOST, dan aplikasi ekosistem berikutnya."
                         )}
                       </p>
                     </div>
-                    <ArrowRight className="mt-1.5 h-4 w-4 shrink-0 text-[#745bc7] transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="h-4 w-4 shrink-0 text-[#745bc7] transition-transform group-hover:translate-x-1" />
                   </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="mt-12 flex justify-center">
-              <button
-                type="button"
-                onClick={handleSignOut}
-                disabled={signingOut}
-                className="tuyu-more-btn gap-2 disabled:opacity-50"
-              >
-                {signingOut ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <LogOut className="h-3.5 w-3.5" />
-                )}
-                <span>{pick("SIGN OUT", "KELUAR")}</span>
-              </button>
+                </div>
+              </div>
             </div>
           </section>
         ) : (
           /* ================================================================
-             SIGNED-OUT VIEW: Serene Minimalist TUYU Sign In / Register
+             SIGNED-OUT VIEW: Crisp SHIZUKU / SHIKAS Sign In & Register Card
              ================================================================ */
-          <section className="mx-auto mt-14 w-full max-w-[430px] md:mt-16">
-            <div className="flex flex-col items-center text-center">
-              <UmbrellaMark className="h-9 w-9 text-[#745bc7]" />
-              <p className="mt-3 font-mono text-[11px] tracking-[0.26em] text-[#745bc7] uppercase">
-                {profile.brandName.toUpperCase()} ID · {profile.brandKanji}
-              </p>
-              <h1 className="mt-2 font-editorial text-[28px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[34px] md:tracking-[9px]">
+          <section className="vn-frame mx-auto mt-10 w-full max-w-[460px] overflow-hidden md:mt-12">
+            {/* Signature Watercolor Band Strip */}
+            <div className="vn-band-strip flex items-center justify-between gap-2 px-5 py-2.5 text-white">
+              <span className="font-mono text-[10px] font-semibold tracking-[0.2em] uppercase drop-shadow-2xs">
+                {profile.brandName.toUpperCase()} {"ID //"} {profile.brandKanji}
+              </span>
+              <span className="font-mono text-[10px] font-semibold tracking-[0.14em] uppercase drop-shadow-2xs">
                 {mode === "login"
                   ? pick("SIGN IN", "MASUK")
                   : pick("REGISTER", "DAFTAR")}
-              </h1>
-              <p className="mt-3 text-[13px] leading-relaxed text-[#5d5370]">
-                {pick(
-                  "One account across shizuku, shikas, and future companion apps.",
-                  "Satu akun untuk shizuku, shikas, dan aplikasi ekosistem berikutnya."
+              </span>
+            </div>
+
+            <div className="bg-white/96 p-6 sm:p-8">
+              {/* Emblem & Title */}
+              <div className="flex flex-col items-center text-center">
+                <div className="flex h-12 w-12 items-center justify-center border border-[#745bc7]/45 bg-gradient-to-b from-[#efe9fd] to-[#fde8f6] text-[#745bc7] shadow-[2px_2px_0_0_rgba(116,91,199,0.14)]">
+                  <UmbrellaMark className="h-6 w-6" />
+                </div>
+                <h1 className="mt-4 font-editorial text-2xl font-bold tracking-[0.18em] text-[#14100e] uppercase sm:text-[26px]">
+                  {mode === "login"
+                    ? pick("SIGN IN", "MASUK")
+                    : pick("CREATE ACCOUNT", "BUAT AKUN")}
+                </h1>
+                <p className="mt-1.5 text-xs leading-relaxed text-[#5d5370]">
+                  {pick(
+                    "One SHIZUKU ID across SHIZUKU, SHIKAS, SHIKOST, and future apps.",
+                    "Satu SHIZUKU ID untuk SHIZUKU, SHIKAS, SHIKOST, dan aplikasi berikutnya."
+                  )}
+                </p>
+              </div>
+
+              {/* Clean Sharp 2-Tab Mode Switcher */}
+              <div
+                role="tablist"
+                aria-label="Authentication mode"
+                className="mt-6 grid grid-cols-2 border-[1.5px] border-[#745bc7] bg-[#fdfbff] font-mono text-[11px]"
+              >
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === "login"}
+                  onClick={() => {
+                    setManualMode("login");
+                    setErrorCode(null);
+                  }}
+                  className={`py-2.5 font-semibold tracking-[0.14em] uppercase transition ${
+                    mode === "login"
+                      ? "bg-[#745bc7] text-white"
+                      : "text-[#5d5370] hover:bg-[#efe9fd] hover:text-[#14100e]"
+                  }`}
+                >
+                  {pick("SIGN IN", "MASUK")}
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === "register"}
+                  onClick={() => {
+                    setManualMode("register");
+                    setErrorCode(null);
+                  }}
+                  className={`border-l border-[#745bc7] py-2.5 font-semibold tracking-[0.14em] uppercase transition ${
+                    mode === "register"
+                      ? "bg-[#745bc7] text-white"
+                      : "text-[#5d5370] hover:bg-[#efe9fd] hover:text-[#14100e]"
+                  }`}
+                >
+                  {pick("REGISTER", "DAFTAR")}
+                </button>
+              </div>
+
+              {/* Crisp Bordered Form */}
+              <form onSubmit={handleSubmit} className="mt-6 space-y-4" noValidate>
+                {mode === "register" && (
+                  <div>
+                    <label
+                      htmlFor="eco-display-name"
+                      className="block font-mono text-[10px] font-semibold tracking-[0.16em] text-[#5d5370] uppercase"
+                    >
+                      {pick("Display Name (optional)", "Nama Tampilan (opsional)")}
+                    </label>
+                    <input
+                      id="eco-display-name"
+                      type="text"
+                      autoComplete="name"
+                      maxLength={60}
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      placeholder={pick("e.g. Farhan", "mis. Farhan")}
+                      className="shizuku-input mt-1.5 w-full border border-[#745bc7]/45 bg-white px-3.5 py-2.5 text-sm text-[#14100e] outline-none transition placeholder:text-[#8b7fa6] focus:border-[#745bc7] focus:ring-2 focus:ring-[#745bc7]/15"
+                    />
+                  </div>
                 )}
-              </p>
-            </div>
 
-            {/* Exact tuyu.moe pipe-separated mode switcher */}
-            <div className="mt-8 flex justify-center">
-              <ul className="flex items-center">
-                <li className="border-x border-[#745bc7]">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setManualMode("login");
-                      setErrorCode(null);
-                    }}
-                    className={`px-5 py-0.5 font-editorial text-[13px] tracking-[3px] text-[#745bc7] uppercase transition hover:text-[#d749d5] ${
-                      mode === "login" ? "font-bold" : "font-normal opacity-75"
-                    }`}
-                  >
-                    {pick("SIGN IN", "MASUK")}
-                  </button>
-                </li>
-                <li className="border-r border-[#745bc7]">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setManualMode("register");
-                      setErrorCode(null);
-                    }}
-                    className={`px-5 py-0.5 font-editorial text-[13px] tracking-[3px] text-[#745bc7] uppercase transition hover:text-[#d749d5] ${
-                      mode === "register"
-                        ? "font-bold"
-                        : "font-normal opacity-75"
-                    }`}
-                  >
-                    {pick("REGISTER", "DAFTAR")}
-                  </button>
-                </li>
-              </ul>
-            </div>
-
-            <form onSubmit={handleSubmit} className="mt-10 space-y-6" noValidate>
-              {mode === "register" && (
                 <div>
                   <label
-                    htmlFor="eco-display-name"
-                    className="block font-mono text-[10px] tracking-[0.2em] text-[#745bc7] uppercase"
+                    htmlFor="eco-email"
+                    className="block font-mono text-[10px] font-semibold tracking-[0.16em] text-[#5d5370] uppercase"
                   >
-                    {pick("Display Name (optional)", "Nama Tampilan (opsional)")}
+                    {pick("Email", "Email")}
                   </label>
                   <input
-                    id="eco-display-name"
-                    type="text"
-                    autoComplete="name"
-                    maxLength={60}
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder={pick("e.g. Farhan", "mis. Farhan")}
-                    className="mt-1.5 w-full border-b border-[#745bc7]/50 bg-transparent py-2.5 text-[15px] text-[#14100e] outline-none transition placeholder:text-[#745bc7]/45 focus:border-[#7650f3]"
-                  />
-                </div>
-              )}
-
-              <div>
-                <label
-                  htmlFor="eco-email"
-                  className="block font-mono text-[10px] tracking-[0.2em] text-[#745bc7] uppercase"
-                >
-                  {pick("Email", "Email")}
-                </label>
-                <input
-                  id="eco-email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="mt-1.5 w-full border-b border-[#745bc7]/50 bg-transparent py-2.5 text-[15px] text-[#14100e] outline-none transition placeholder:text-[#745bc7]/45 focus:border-[#7650f3]"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="eco-password"
-                  className="block font-mono text-[10px] tracking-[0.2em] text-[#745bc7] uppercase"
-                >
-                  {pick("Password", "Kata Sandi")}
-                </label>
-                <div className="relative mt-1.5">
-                  <input
-                    id="eco-password"
-                    type={showPassword ? "text" : "password"}
+                    id="eco-email"
+                    type="email"
                     required
-                    minLength={6}
-                    autoComplete={
-                      mode === "register" ? "new-password" : "current-password"
-                    }
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder={pick("Minimum 6 characters", "Minimal 6 karakter")}
-                    className="w-full border-b border-[#745bc7]/50 bg-transparent py-2.5 pr-9 text-[15px] text-[#14100e] outline-none transition placeholder:text-[#745bc7]/45 focus:border-[#7650f3]"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="shizuku-input mt-1.5 w-full border border-[#745bc7]/45 bg-white px-3.5 py-2.5 text-sm text-[#14100e] outline-none transition placeholder:text-[#8b7fa6] focus:border-[#745bc7] focus:ring-2 focus:ring-[#745bc7]/15"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
-                    className="absolute top-1/2 right-1 -translate-y-1/2 p-1 text-[#745bc7]/70 transition hover:text-[#745bc7]"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
                 </div>
-              </div>
 
-              {errorMessage && (
-                <p
-                  role="alert"
-                  className="border-l-2 border-rose-500 pl-3 text-[13px] text-rose-700"
-                >
-                  {errorMessage}
-                </p>
-              )}
+                <div>
+                  <label
+                    htmlFor="eco-password"
+                    className="block font-mono text-[10px] font-semibold tracking-[0.16em] text-[#5d5370] uppercase"
+                  >
+                    {pick("Password", "Kata Sandi")}
+                  </label>
+                  <div className="relative mt-1.5">
+                    <input
+                      id="eco-password"
+                      type={showPassword ? "text" : "password"}
+                      required
+                      minLength={6}
+                      autoComplete={
+                        mode === "register" ? "new-password" : "current-password"
+                      }
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder={pick(
+                        "Minimum 6 characters",
+                        "Minimal 6 karakter"
+                      )}
+                      className="shizuku-input w-full border border-[#745bc7]/45 bg-white py-2.5 pr-10 pl-3.5 text-sm text-[#14100e] outline-none transition placeholder:text-[#8b7fa6] focus:border-[#745bc7] focus:ring-2 focus:ring-[#745bc7]/15"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                      className="absolute top-1/2 right-2.5 -translate-y-1/2 p-1 text-[#745bc7]/70 transition hover:text-[#745bc7]"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
 
-              <div className="flex justify-center pt-4">
+                {errorMessage && (
+                  <p
+                    role="alert"
+                    className="border border-rose-300 bg-rose-50 px-3.5 py-2.5 text-xs leading-relaxed text-rose-700"
+                  >
+                    {errorMessage}
+                  </p>
+                )}
+
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="inline-flex h-[40px] min-w-[210px] items-center justify-center gap-2 rounded-full border border-[#745bc7] bg-[#745bc7] px-7 font-editorial text-[14px] font-bold tracking-[0.22em] text-white uppercase transition hover:bg-[#7650f3] disabled:opacity-60"
+                  className="vn-btn-band mt-2 w-full py-3 text-[11px] disabled:opacity-60"
                 >
                   {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                   <span>
                     {mode === "login"
                       ? pick("SIGN IN", "MASUK")
-                      : pick("CREATE ID", "BUAT AKUN")}
+                      : pick("CREATE SHIZUKU ID", "BUAT SHIZUKU ID")}
                   </span>
                 </button>
+              </form>
+
+              <div className="mt-6 flex items-center justify-center gap-2 border-t border-[#745bc7]/18 pt-4 text-center font-mono text-[10px] leading-relaxed text-[#6a5e82]">
+                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-[#745bc7]" />
+                <span>
+                  {pick(
+                    "Isolated per-user ecosystem session · Separate from Admin Studio",
+                    "Sesi ekosistem terisolasi per pengguna · Terpisah dari Admin Studio"
+                  )}
+                </span>
               </div>
-            </form>
-
-            <div className="raindrop-dotted mt-12 mb-6 w-full" />
-
-            <p className="text-center font-mono text-[10px] leading-relaxed tracking-[0.12em] text-[#5d5370]">
-              {pick(
-                "Protected by isolated per-user sessions. Separate from portfolio Admin CMS.",
-                "Dilindungi sesi terisolasi per pengguna. Terpisah dari Admin CMS portofolio."
-              )}
-            </p>
+            </div>
           </section>
         )}
       </main>

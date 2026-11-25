@@ -118,13 +118,15 @@ export function CinematicHeader({
     { href: "/workspace", en: "WORK", id: "WORK" },
     { href: "/portfolio", en: "PORTFOLIO", id: "PORTFOLIO" },
     { href: "/about", en: "ABOUT", id: "TENTANG" },
-    {
-      href: "/account",
-      en: ecoUser ? "ACCOUNT" : "SHIZUKU ID",
-      id: ecoUser ? "AKUN" : "SHIZUKU ID",
-    },
     { href: "/admin", en: "ADMIN STUDIO", id: "ADMIN STUDIO" },
   ];
+
+  const shortUserName = ecoUser
+    ? ecoUser.displayName.trim().split(/\s+/)[0] ||
+      ecoUser.email.split("@")[0] ||
+      "ID"
+    : "";
+  const userInitial = shortUserName.slice(0, 1).toUpperCase();
 
   const isItemActive = (href: string): boolean => {
     if (href === "/") return pathname === "/";
@@ -205,13 +207,13 @@ export function CinematicHeader({
             <UmbrellaMark className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" />
           </Link>
 
-          {/* Right: Pure tuyu.moe Social Icons + Large EN | ID + Large 3-Raindrop Burger */}
-          <div className="flex items-center gap-4 sm:gap-5 md:gap-8">
+          {/* Right: Social Icons + EN | ID + Prominent SHIZUKU ID Status + 3-Raindrop Burger */}
+          <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
             {/* Desktop Social Media Icon Bar (hidden when full-screen drawer is open) */}
             {!drawerOpen && (
               <div
                 aria-label="Social links"
-                className="hidden items-center gap-5 md:flex lg:gap-7"
+                className="hidden items-center gap-5 lg:flex lg:gap-6"
               >
                 {socialLinks.map((sns) => (
                   <a
@@ -229,9 +231,56 @@ export function CinematicHeader({
               </div>
             )}
 
+            {/* Visible SHIZUKU ID / Live Logged-In Status Button */}
+            {!drawerOpen && (
+              <Link
+                href="/account"
+                title={
+                  ecoUser
+                    ? `${pick("Signed in as", "Masuk sebagai")} ${ecoUser.displayName} (${ecoUser.email})`
+                    : pick("Sign in with SHIZUKU ID", "Masuk dengan SHIZUKU ID")
+                }
+                aria-label={
+                  ecoUser
+                    ? `${pick("Signed in as", "Masuk sebagai")} ${ecoUser.displayName}`
+                    : "SHIZUKU ID"
+                }
+                className={`inline-flex shrink-0 items-center gap-1.5 border-[1.5px] px-2.5 py-1.5 font-mono text-[10.5px] font-semibold tracking-[0.12em] uppercase transition sm:px-3 ${
+                  ecoUser
+                    ? isHeroWhite
+                      ? "border-white/85 bg-white/18 text-white backdrop-blur-sm hover:bg-white hover:text-[#745bc7]"
+                      : "border-[#745bc7] bg-[#745bc7] text-white shadow-[2px_2px_0_0_rgba(116,91,199,0.22)] hover:bg-[#5f47a8]"
+                    : isHeroWhite
+                      ? "border-white/70 bg-white/10 text-white backdrop-blur-sm hover:bg-white hover:text-[#745bc7]"
+                      : "border-[#745bc7] bg-white/85 text-[#745bc7] shadow-[2px_2px_0_0_rgba(116,91,199,0.16)] hover:bg-[#745bc7] hover:text-white"
+                }`}
+              >
+                {ecoUser ? (
+                  <>
+                    <span
+                      className="h-2 w-2 shrink-0 rounded-full bg-emerald-400 ring-2 ring-emerald-400/35"
+                      aria-hidden="true"
+                    />
+                    <span className="max-w-[96px] truncate hidden sm:inline">
+                      {shortUserName}
+                    </span>
+                    <span className="sm:hidden">{userInitial}</span>
+                  </>
+                ) : (
+                  <>
+                    <User className="h-3.5 w-3.5 shrink-0" />
+                    <span className="hidden sm:inline">
+                      {pick("SHIZUKU ID", "SHIZUKU ID")}
+                    </span>
+                    <span className="sm:hidden">ID</span>
+                  </>
+                )}
+              </Link>
+            )}
+
             {/* Large tuyu.moe-scale JP | EN style language switcher */}
             <div
-              className="flex items-center gap-1.5 font-editorial text-[18px] font-bold tracking-[0.14em] sm:text-[20px] md:gap-2 md:text-[25px]"
+              className="flex items-center gap-1.5 font-editorial text-[16px] font-bold tracking-[0.12em] sm:text-[19px] md:gap-2 md:text-[23px]"
               role="group"
               aria-label="Language switcher"
             >
@@ -342,7 +391,6 @@ export function CinematicHeader({
                     active ? "font-bold text-[#d749d5]" : "font-normal text-[#745bc7]"
                   }`}
                 >
-                  {item.href === "/account" && <User className="h-4 w-4" />}
                   {item.href === "/admin" && <Lock className="h-4 w-4" />}
                   <span>{pick(item.en, item.id)}</span>
                 </Link>
