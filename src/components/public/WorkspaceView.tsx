@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Settings, User, UserPlus } from "lucide-react";
+import { ArrowRight, ArrowUpRight, LogOut, User, UserPlus } from "lucide-react";
 import { CinematicHeader } from "@/components/public/CinematicHeader";
 import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
 import { Footer } from "@/components/public/Footer";
@@ -63,10 +63,16 @@ function VnTypewriterBody({
   );
 }
 
-export function WorkspaceView({ data }: { data: PortfolioPayload }) {
+export function WorkspaceView({
+  data,
+  isAdmin = false,
+}: {
+  data: PortfolioPayload;
+  isAdmin?: boolean;
+}) {
   const { profile, workspaceApps } = data;
   const { locale, pick } = useLocale();
-  const { user: ecoUser } = useEcosystemAuth();
+  const { user: ecoUser, signOut } = useEcosystemAuth();
 
   const [clock, setClock] = useState<{ time: string; date: string }>({
     time: "--:--",
@@ -117,8 +123,8 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
           `Masuk sebagai ${ecoUser.displayName}. Satu SHIZUKU ID menghubungkan semua web app di ekosistem ini.`
         ),
         pick(
-          "Manage or add upcoming ecosystem apps anytime from Admin Studio.",
-          "Tambah atau ubah daftar aplikasi ekosistem kapan saja melalui Admin Studio."
+          "Launch any companion app below — your session stays connected via SHIZUKU ID.",
+          "Buka aplikasi di bawah ini — akunmu tetap terhubung lewat SHIZUKU ID."
         ),
       ];
     }
@@ -278,10 +284,14 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
                         <User className="h-3.5 w-3.5" />
                         <span>{pick("ACCOUNT", "AKUN SAYA")}</span>
                       </Link>
-                      <Link href="/admin" className="vn-btn-action px-4 py-2.5">
-                        <Settings className="h-3.5 w-3.5" />
-                        <span>{pick("MANAGE WORK", "KELOLA WORK")}</span>
-                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => void signOut()}
+                        className="vn-btn-action px-4 py-2.5"
+                      >
+                        <LogOut className="h-3.5 w-3.5" />
+                        <span>{pick("SIGN OUT", "KELUAR")}</span>
+                      </button>
                     </>
                   ) : (
                     <>
@@ -378,12 +388,14 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
                   {String(workspaceApps.length).padStart(2, "0")}{" "}
                   {pick("APPS", "APP")}
                 </span>
-                <Link
-                  href="/admin"
-                  className="border border-white/55 bg-white/15 px-2 py-0.5 text-[9.5px] font-semibold text-white transition hover:bg-white/30"
-                >
-                  {pick("EDIT", "ATUR")}
-                </Link>
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className="border border-white/55 bg-white/15 px-2 py-0.5 text-[9.5px] font-semibold text-white transition hover:bg-white/30"
+                  >
+                    {pick("EDIT", "ATUR")}
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -391,8 +403,8 @@ export function WorkspaceView({ data }: { data: PortfolioPayload }) {
               <div className="bg-white/95 px-6 py-12 text-center">
                 <p className="font-mono text-xs text-[#5d5370]">
                   {pick(
-                    "No ecosystem apps yet. Add them anytime in /admin.",
-                    "Belum ada aplikasi ekosistem. Tambahkan kapan saja di /admin."
+                    "No ecosystem apps published yet.",
+                    "Belum ada aplikasi ekosistem yang ditampilkan."
                   )}
                 </p>
               </div>
