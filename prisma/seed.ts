@@ -588,98 +588,50 @@ async function main() {
     console.log("✓ Seeded 4 initial skill groups");
   }
 
-  // 7. Seed Daily-Drive WorkspaceApps if empty
+  // 7. Seed SHIZUKU Ecosystem Works if empty
   const appCount = await prisma.workspaceApp.count();
   if (appCount === 0) {
     await prisma.workspaceApp.createMany({
       data: [
         {
-          name: "Agent Workspace",
-          category: "AGENT",
-          descriptionEn:
-            "Planned daily AI agent hub, task runners, and personal automations.",
-          descriptionId:
-            "Rencana ruang kerja AI agent harian, otomasi tugas, dan asisten pribadi.",
-          url: "/workspace",
-          icon: "bot",
-          badge: "PLANNED",
+          name: "SHIZUKU",
+          category: "INTERNAL",
+          descriptionEn: "Profile, portfolio, and shared ecosystem ID hub.",
+          descriptionId: "Profil, portofolio, dan pusat akun tunggal ekosistem.",
+          url: "/",
+          icon: "globe",
+          badge: "HUB",
           isExternal: false,
           published: true,
           sortOrder: 1,
         },
         {
-          name: "KostKas",
+          name: "SHIKAS",
           category: "APP",
-          descriptionEn:
-            "Shared finance ledger, monthly dues, and expense tracking.",
-          descriptionId:
-            "Buku besar kas bersama, iuran bulanan, dan pencatatan pengeluaran.",
-          url: "https://github.com/farhansatrian/kostkas",
+          descriptionEn: "Personal cashflow tracker synced with SHIZUKU ID.",
+          descriptionId: "Pencatat arus kas pribadi terhubung dengan SHIZUKU ID.",
+          url: "http://localhost:5173",
           icon: "wallet",
-          badge: "APP",
+          badge: "FINANCE",
           isExternal: true,
           published: true,
           sortOrder: 2,
         },
         {
-          name: "Projects & Specs",
-          category: "INTERNAL",
-          descriptionEn:
-            "Selected banking IT, applied AI, and full-stack engineering works.",
-          descriptionId:
-            "Pilihan karya IT perbankan, AI terapan, dan software engineering.",
-          url: "/projects",
+          name: "SHIKOST",
+          category: "APP",
+          descriptionEn: "Shared boarding-house ledger & dues (formerly KostKas).",
+          descriptionId: "Kas bersama & iuran kost (sebelumnya KostKas).",
+          url: "https://github.com/farhansatrian/kostkas",
           icon: "folder",
-          badge: "WORKS",
-          isExternal: false,
+          badge: "LEDGER",
+          isExternal: true,
           published: true,
           sortOrder: 3,
         },
-        {
-          name: "Profile & Journey",
-          category: "INTERNAL",
-          descriptionEn:
-            "About Farhan Satria Nugraha, ODP IT BNI journey, and toolkit.",
-          descriptionId:
-            "Tentang Farhan Satria Nugraha, perjalanan ODP IT BNI, dan keahlian.",
-          url: "/about",
-          icon: "user",
-          badge: "INFO",
-          isExternal: false,
-          published: true,
-          sortOrder: 4,
-        },
-        {
-          name: "Certificates Vault",
-          category: "INTERNAL",
-          descriptionEn:
-            "Verified certifications, awards, and credential archive.",
-          descriptionId:
-            "Arsip sertifikasi, penghargaan, dan kredensial terverifikasi.",
-          url: "/certificates",
-          icon: "award",
-          badge: "VAULT",
-          isExternal: false,
-          published: true,
-          sortOrder: 5,
-        },
-        {
-          name: "Admin Studio",
-          category: "INTERNAL",
-          descriptionEn:
-            "Manage hero artwork, daily workspace apps, projects, and profile.",
-          descriptionId:
-            "Kelola ilustrasi hero, aplikasi harian, proyek, dan profil live.",
-          url: "/admin",
-          icon: "settings",
-          badge: "CMS",
-          isExternal: false,
-          published: true,
-          sortOrder: 6,
-        },
       ],
     });
-    console.log("✓ Seeded 6 initial WorkspaceApps");
+    console.log("✓ Seeded 3 initial SHIZUKU Ecosystem works");
   }
 
   console.log("✨ shizuku (雫) seed complete!");
