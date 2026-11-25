@@ -45,7 +45,7 @@ function groupByOrganization(items: SerializedExperience[]): OrgGroup[] {
 }
 
 export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
-  const { profile, projects, experiences, certificates, skillGroups } = data;
+  const { profile, experiences, certificates } = data;
   const { locale, pick } = useLocale();
   const [selectedCert, setSelectedCert] =
     useState<SerializedCertificate | null>(null);
@@ -329,55 +329,7 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
                 </section>
               )}
 
-              {/* 5. Skills & Projects (CV Page 2 Rhythm + Interactive Links) */}
-              {(skillGroups.length > 0 || projects.length > 0) && (
-                <section id="skills-projects">
-                  <SectionHeading>
-                    {pick("Skills & Projects", "Keahlian & Proyek")}
-                  </SectionHeading>
-
-                  <ul className="mt-3.5 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.62] text-[#262033] sm:text-[13.5px]">
-                    {skillGroups.map((group) => (
-                      <li key={group.id}>
-                        <span className="font-bold text-[#14100e]">
-                          {pick(group.nameEn, group.nameId)}:
-                        </span>{" "}
-                        <span>{group.items.join(", ")}.</span>
-                      </li>
-                    ))}
-
-                    {projects.map((project) => (
-                      <li key={project.id}>
-                        <Link
-                          href={`/portfolio/${project.slug}`}
-                          className="font-bold text-[#14100e] underline-offset-4 transition hover:text-[#745bc7] hover:underline"
-                        >
-                          {project.title}
-                        </Link>{" "}
-                        <span className="text-[#4f4663]">({project.year})</span>
-                        {": "}
-                        <span>{pick(project.summaryEn, project.summaryId)}</span>
-                        {project.repoUrl && (
-                          <>
-                            {" "}
-                            <a
-                              href={project.repoUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-0.5 text-[12px] font-medium text-[#745bc7] underline-offset-2 hover:underline"
-                            >
-                              GitHub
-                              <ArrowUpRight className="h-3 w-3" />
-                            </a>
-                          </>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
-
-              {/* 6. Certificates (Shown cleanly once added in /admin) */}
+              {/* 5. Certificates (Shown cleanly once added in /admin) */}
               {certificates.length > 0 && (
                 <section id="certificates">
                   <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[#14100e]/28 pb-1.5">
