@@ -48,7 +48,7 @@ const barlowCondensed = Barlow_Condensed({
 export const metadata: Metadata = {
   title: "shizuku (雫)",
   description:
-    "Personal digital hub & portfolio of Farhan Satria Nugraha — Software Engineer, ODP IT Banking Systems, and Applied AI Enthusiast.",
+    "shizuku (雫) — Personal web hub, portfolio, and shared SHIZUKU ID ecosystem.",
 };
 
 export default function RootLayout({

@@ -24,13 +24,18 @@ export async function GET(
     if (!info.isFile()) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+    const isImmutableUpload = /^shizuku-[a-z0-9]+-[a-f0-9]+\./i.test(filename);
+    const cacheControl = isImmutableUpload
+      ? "public, max-age=31536000, immutable"
+      : "public, max-age=3600, stale-while-revalidate=86400";
+
     const etag = `"${info.size}-${Math.floor(info.mtimeMs)}"`;
     if (_req.headers.get("if-none-match") === etag) {
       return new NextResponse(null, {
         status: 304,
         headers: {
           ETag: etag,
-          "Cache-Control": "public, max-age=0, must-revalidate",
+          "Cache-Control": cacheControl,
         },
       });
     }
@@ -41,7 +46,7 @@ export async function GET(
         "Content-Type": getContentTypeFromFilename(filename),
         "Content-Length": String(data.length),
         ETag: etag,
-        "Cache-Control": "public, max-age=0, must-revalidate",
+        "Cache-Control": cacheControl,
       },
     });
   } catch {

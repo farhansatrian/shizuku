@@ -179,27 +179,29 @@ const FALLBACK_PROFILE: SerializedProfile = {
   brandKanji: "雫",
   fullName: "Farhan Satria Nugraha",
   headlineEn:
-    "Quiet engineering for banking systems, applied AI, and calm web software.",
+    "Software Engineer, ODP IT at Bank Negara Indonesia (BNI), and creator of the shizuku web ecosystem.",
   headlineId:
-    "Rekayasa tenang untuk sistem perbankan, AI terapan, dan perangkat lunak web yang berkesan.",
+    "Software Engineer, ODP IT di Bank Negara Indonesia (BNI), dan pembuat ekosistem web shizuku.",
   roles: {
-    en: ["Software Engineer", "ODP IT · Banking Systems", "AI Enthusiast"],
-    id: ["Software Engineer", "ODP IT · Sistem Perbankan", "Penggiat AI"],
+    en: ["Software Engineer", "ODP IT · BNI"],
+    id: ["Software Engineer", "ODP IT · BNI"],
   },
   bioEn:
-    "Software Engineer at Bank Negara Indonesia (ODP IT), exploring resilient systems, business impact, and applied AI.",
+    "Software engineer with a background in Informatics and Application Software Engineering, focused on backend and full-stack development.",
   bioId:
-    "Software Engineer di Bank Negara Indonesia (ODP IT), mendalami sistem andal, dampak bisnis, dan AI terapan.",
-  aboutStoryEn: "Welcome to shizuku — my personal digital hub.",
-  aboutStoryId: "Selamat datang di shizuku — ruang digital pribadi saya.",
+    "Software engineer dengan latar belakang Informatika dan Rekayasa Perangkat Lunak Aplikasi yang berfokus pada pengembangan backend dan full-stack.",
+  aboutStoryEn:
+    "shizuku (雫) is a personal web hub and digital ecosystem.\n\nBuilt around calm minimalism, shizuku brings together personal works, portfolio records, and a shared SHIZUKU ID across companion web apps like SHIKAS and SHIKOST.",
+  aboutStoryId:
+    "shizuku (雫) adalah ruang web personal dan ekosistem digital.\n\nDibangun dengan gaya minimalis yang tenang, shizuku menyatukan karya ekosistem, catatan portofolio, dan satu SHIZUKU ID untuk aplikasi seperti SHIKAS dan SHIKOST.",
   location: "Jakarta, Indonesia",
   currentRoleEn: "Officer Development Program (ODP) — IT",
   currentRoleId: "Officer Development Program (ODP) — IT",
-  currentOrg: "PT Bank Negara Indonesia (Persero) Tbk",
-  availabilityEn: "Personal Digital Hub",
-  availabilityId: "Ruang Digital Pribadi",
-  currentlyEn: "Exploring enterprise banking architecture and applied AI.",
-  currentlyId: "Mendalami arsitektur perbankan dan AI terapan.",
+  currentOrg: "PT Bank Negara Indonesia (Persero) Tbk (BNI)",
+  availabilityEn: "",
+  availabilityId: "",
+  currentlyEn: "",
+  currentlyId: "",
   heroImage: "",
   heroImageMobile: "",
   avatarImage: "",
