@@ -16,6 +16,23 @@ const accountSchema = z.object({
   isDefault: z.boolean().optional(),
 });
 
+const reimburseEntrySchema = z.object({
+  id: z.string().min(1).max(80),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  amountIdr: z.number().int().positive(),
+  accountId: z.string().min(1).max(80).optional(),
+  note: z.string().max(120).optional(),
+  createdAt: z.string().min(1).max(64),
+});
+
+const reimburseSchema = z.object({
+  status: z.enum(["pending", "settled"]),
+  expectedIdr: z.number().int().positive().optional(),
+  from: z.string().max(80).optional(),
+  settledAt: z.string().max(64).optional(),
+  entries: z.array(reimburseEntrySchema).max(50).default([]),
+});
+
 const txSchema = z.object({
   id: z.string().min(1).max(80),
   type: z.enum(["income", "expense", "transfer"]),
@@ -27,6 +44,7 @@ const txSchema = z.object({
   accountId: z.string().min(1).max(80).optional(),
   toAccountId: z.string().min(1).max(80).optional(),
   feeIdr: z.number().int().min(0).optional(),
+  reimburse: reimburseSchema.optional(),
   createdAt: z.string().min(1).max(64),
 });
 
@@ -53,6 +71,17 @@ function parseStoredAccounts(raw: string | null | undefined) {
     return validated.success ? validated.data : [];
   } catch {
     return [];
+  }
+}
+
+function parseStoredReimburse(raw: string | null | undefined) {
+  if (!raw) return undefined;
+  try {
+    const parsed = JSON.parse(raw);
+    const validated = reimburseSchema.safeParse(parsed);
+    return validated.success ? validated.data : undefined;
+  } catch {
+    return undefined;
   }
 }
 
@@ -101,6 +130,10 @@ export async function GET(req: NextRequest) {
           accountId: r.accountId ?? undefined,
           toAccountId: r.toAccountId ?? undefined,
           feeIdr: r.feeIdr > 0 ? r.feeIdr : undefined,
+          reimburse:
+            r.type === "expense"
+              ? parseStoredReimburse(r.reimburseJson)
+              : undefined,
           createdAt: r.createdAt,
         })),
         settings: {
@@ -166,6 +199,10 @@ export async function PUT(req: NextRequest) {
             accountId: item.accountId ?? null,
             toAccountId: item.toAccountId ?? null,
             feeIdr: Math.max(0, Math.round(item.feeIdr ?? 0)),
+            reimburseJson:
+              item.type === "expense" && item.reimburse
+                ? JSON.stringify(item.reimburse)
+                : null,
             createdAt: item.createdAt,
           })),
         });

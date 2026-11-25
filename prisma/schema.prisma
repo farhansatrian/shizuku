@@ -178,10 +178,11 @@ model ShikasTransaction {
   categoryId  String
   note        String
   merchant    String?
-  accountId   String?
-  toAccountId String?
-  feeIdr      Int           @default(0)
-  createdAt   String
+  accountId     String?
+  toAccountId   String?
+  feeIdr        Int           @default(0)
+  reimburseJson String?
+  createdAt     String
 
   @@id([userId, id])
   @@index([userId, date])
