@@ -28,13 +28,15 @@ const TUYU_RAINDROPS = [
 
 export function TuyuRainLayer({
   overSplash = false,
+  behindContent = false,
 }: {
   overSplash?: boolean;
+  behindContent?: boolean;
 }) {
   return (
     <div
       className={`pointer-events-none fixed inset-0 overflow-hidden ${
-        overSplash ? "z-30 md:z-[95]" : "z-30"
+        behindContent ? "z-0" : overSplash ? "z-30 md:z-[95]" : "z-30"
       }`}
       aria-hidden="true"
     >

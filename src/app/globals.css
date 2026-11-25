@@ -278,3 +278,172 @@ body {
   background: linear-gradient(145deg, #1b1530 0%, #2d2152 100%);
   border: 1px solid rgba(229, 220, 251, 0.2);
 }
+
+/* ============================================================================
+   SHIZUKU × SHIKAS Visual Novel / Anime RPG Workspace Design System
+   Sharp 0px geometry, iris double-border frames, vivid watercolor title strips
+   ============================================================================ */
+.shizuku-workspace-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-color: #fde8f6;
+  background-image:
+    linear-gradient(180deg, rgba(255, 252, 254, 0.22) 0%, rgba(255, 250, 254, 0.12) 55%, rgba(255, 248, 254, 0.2) 100%),
+    url("/assets/bg-watercolor-pc.jpg"),
+    url("/api/uploads/tuyu-watercolor-pc.jpg"),
+    linear-gradient(145deg, #fce0f1 0%, #eee4fc 55%, #e5dcfb 100%);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  pointer-events: none;
+}
+
+.vn-band-strip {
+  background-color: #c86ce8;
+  background-image:
+    linear-gradient(90deg, rgba(116, 91, 199, 0.22) 0%, rgba(215, 73, 213, 0.14) 60%, rgba(116, 91, 199, 0.32) 100%),
+    url("/api/uploads/tuyu-watercolor-band.jpg"),
+    linear-gradient(110deg, #ef85e8 0%, #c05ce6 52%, #745bc7 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.vn-frame {
+  position: relative;
+  background: rgba(253, 249, 255, 0.88);
+  border: 1.5px solid #745bc7;
+  box-shadow:
+    inset 0 0 0 3px rgba(255, 255, 255, 0.92),
+    inset 0 0 0 4px rgba(116, 91, 199, 0.28),
+    4px 4px 0 0 rgba(116, 91, 199, 0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.vn-dialogue {
+  position: relative;
+  background: rgba(252, 248, 255, 0.92);
+  border: 2px solid #745bc7;
+  box-shadow:
+    inset 0 0 0 3px rgba(255, 255, 255, 0.96),
+    inset 0 0 0 4.5px rgba(215, 73, 213, 0.34),
+    5px 5px 0 0 rgba(116, 91, 199, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.vn-cmd {
+  position: relative;
+  border: 1px solid rgba(116, 91, 199, 0.34);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--tuyu-ink);
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.vn-cmd:hover {
+  border-color: #745bc7;
+  background: rgba(229, 220, 251, 0.52);
+  transform: translateX(2px);
+  box-shadow: 3px 3px 0 0 rgba(116, 91, 199, 0.14);
+}
+
+.vn-btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1.5px solid #745bc7;
+  background: rgba(255, 255, 255, 0.88);
+  color: #745bc7;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 0 0 rgba(116, 91, 199, 0.22);
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.vn-btn-action:hover {
+  background: #745bc7;
+  color: #ffffff;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 0 rgba(116, 91, 199, 0.32);
+}
+
+.vn-btn-action:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 rgba(116, 91, 199, 0.22);
+}
+
+.vn-btn-band {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1.5px solid #745bc7;
+  background-color: #b752de;
+  background-image:
+    linear-gradient(105deg, rgba(116, 91, 199, 0.35) 0%, rgba(215, 73, 213, 0.32) 100%),
+    url("/api/uploads/tuyu-watercolor-band.jpg"),
+    linear-gradient(110deg, #ef85e8 0%, #c05ce6 52%, #745bc7 100%);
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(45, 18, 84, 0.45);
+  box-shadow: 3px 3px 0 0 rgba(116, 91, 199, 0.28);
+  transition: opacity 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.vn-btn-band:hover {
+  opacity: 0.94;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 0 rgba(116, 91, 199, 0.36);
+}
+
+.vn-btn-band:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 0 rgba(116, 91, 199, 0.28);
+}
+
+@keyframes vnNextPrompt {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateY(3px);
+    opacity: 0.45;
+  }
+}
+
+.animate-vn-next {
+  animation: vnNextPrompt 1.15s ease-in-out infinite;
+}
+
+@keyframes umbrellaFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+
+.animate-umbrella-float {
+  animation: umbrellaFloat 4.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-vn-next,
+  .animate-umbrella-float {
+    animation: none;
+  }
+}
