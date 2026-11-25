@@ -26,11 +26,12 @@ export function ProjectSpecView({
     .filter(Boolean);
 
   return (
-    <div className="tuyu-subpage-canvas relative min-h-screen text-[#14100e]">
-      <TuyuRainLayer />
+    <div className="relative flex min-h-screen flex-col text-[#14100e]">
+      <div className="shizuku-workspace-bg" aria-hidden="true" />
+      <TuyuRainLayer behindContent />
       <CinematicHeader profile={profile} />
 
-      <main className="relative z-10 mx-auto w-[90%] max-w-[960px] pt-28 pb-24 md:pt-36">
+      <main className="relative z-10 mx-auto w-[90%] max-w-[920px] flex-1 pt-28 pb-24 md:pt-36">
         <Link
           href="/portfolio"
           className="inline-flex items-center gap-2 font-mono text-xs text-[#745bc7] transition hover:text-[#7650f3]"

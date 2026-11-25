@@ -231,11 +231,11 @@ export function WorkspaceManagerTab({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-editorial text-2xl font-semibold text-[#1e172b]">
-            Daily-Drive Workspace Apps
+            Work &amp; Ecosystem Apps
           </h2>
           <p className="text-xs text-[#645882]">
-            Manage the launcher tiles shown on Home (`#workspace`) and
-            `/workspace` — add self-hosted apps, AI agents, or daily bookmarks.
+            Manage the apps shown on your Work (/workspace) page — add, edit,
+            reorder, or remove entries anytime.
           </p>
         </div>
         <button

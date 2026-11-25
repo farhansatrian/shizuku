@@ -12,10 +12,8 @@ import {
   Cpu,
   ExternalLink,
   FolderKanban,
-  LayoutDashboard,
   LayoutGrid,
   LogOut,
-  Sparkles,
   UserCircle2,
 } from "lucide-react";
 import { UmbrellaMark } from "@/components/icons/RainMotifs";
@@ -29,9 +27,8 @@ import type { PortfolioPayload } from "@/lib/types";
 import type { AdminSessionPayload } from "@/lib/auth";
 
 type SectionTab =
-  | "dashboard"
-  | "workspace"
   | "profile"
+  | "workspace"
   | "projects"
   | "experiences"
   | "certificates"
@@ -45,7 +42,7 @@ export function AdminStudioClient({
   adminUser: AdminSessionPayload;
 }) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<SectionTab>("dashboard");
+  const [activeTab, setActiveTab] = useState<SectionTab>("profile");
   const [profile, setProfile] = useState(initialData.profile);
   const [workspaceApps, setWorkspaceApps] = useState(initialData.workspaceApps);
   const [projects, setProjects] = useState(initialData.projects);
@@ -77,323 +74,193 @@ export function AdminStudioClient({
     count?: number;
   }[] = [
     {
-      id: "dashboard",
-      label: "Overview",
-      icon: <LayoutDashboard className="h-4 w-4" />,
+      id: "profile",
+      label: "Profile",
+      icon: <UserCircle2 className="h-3.5 w-3.5" />,
     },
     {
       id: "workspace",
-      label: "Workspace Apps",
-      icon: <LayoutGrid className="h-4 w-4" />,
+      label: "Work",
+      icon: <LayoutGrid className="h-3.5 w-3.5" />,
       count: workspaceApps.length,
-    },
-    {
-      id: "profile",
-      label: "Hero & Profile",
-      icon: <UserCircle2 className="h-4 w-4" />,
     },
     {
       id: "projects",
       label: "Projects",
-      icon: <FolderKanban className="h-4 w-4" />,
+      icon: <FolderKanban className="h-3.5 w-3.5" />,
       count: projects.length,
     },
     {
       id: "experiences",
-      label: "Experiences",
-      icon: <Briefcase className="h-4 w-4" />,
+      label: "Experience",
+      icon: <Briefcase className="h-3.5 w-3.5" />,
       count: experiences.length,
     },
     {
       id: "certificates",
       label: "Certificates",
-      icon: <Award className="h-4 w-4" />,
+      icon: <Award className="h-3.5 w-3.5" />,
       count: certificates.length,
     },
     {
       id: "skills",
-      label: "Skills & Security",
-      icon: <Cpu className="h-4 w-4" />,
+      label: "Skills",
+      icon: <Cpu className="h-3.5 w-3.5" />,
       count: skillGroups.length,
     },
   ];
 
   return (
-    <div className="shizuku-watercolor-bg min-h-screen overflow-x-hidden text-[#14100e]">
-      {/* Top Studio Bar */}
-      <header className="sticky top-0 z-40 border-b border-[#dfd4f8] bg-white/85 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#7650f3] text-white">
-              <UmbrellaMark className="h-5 w-5" />
+    <div className="relative min-h-screen overflow-x-hidden text-[#14100e]">
+      {/* Consistent calm watercolor backdrop */}
+      <div className="shizuku-workspace-bg" aria-hidden="true" />
+
+      {/* Clean Compact Studio Bar */}
+      <header className="sticky top-0 z-40 border-b border-[#745bc7]/25 bg-[#fdf9ff]/92 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-[960px] items-center justify-between px-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2">
+            <UmbrellaMark className="h-5 w-5 shrink-0 text-[#745bc7]" />
+            <span className="truncate font-editorial text-base font-bold tracking-[0.14em] text-[#745bc7] uppercase sm:text-lg sm:tracking-[0.2em]">
+              {profile.brandName}{" "}
+              <span className="hidden sm:inline">STUDIO</span>
             </span>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="truncate font-editorial text-lg font-medium tracking-[0.14em] text-[#14100e]">
-                  {profile.brandName}. studio
-                </span>
-                <span className="hidden rounded-full bg-emerald-50 px-2.5 py-0.5 font-mono text-[10px] font-medium text-emerald-700 sm:inline-flex">
-                  ● Live Sync
-                </span>
-              </div>
-              <p className="font-mono text-[10px] text-[#6d6188]">
-                @{adminUser.username}
-              </p>
-            </div>
+            <span className="hidden font-mono text-[10px] text-[#5d5370] sm:inline">
+              · @{adminUser.username}
+            </span>
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
             <Link
               href="/"
               target="_blank"
-              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-[#dfd4f8] bg-white px-3.5 py-1.5 text-xs font-medium text-[#14100e] transition hover:border-[#7650f3] hover:text-[#7650f3]"
+              className="vn-btn-action px-3 py-1.5 text-[10px]"
             >
-              View Site
-              <ExternalLink className="h-3.5 w-3.5" />
+              <span>View Site</span>
+              <ExternalLink className="h-3 w-3" />
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50/70 px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-100"
+              className="inline-flex items-center gap-1.5 border-[1.5px] border-rose-400 bg-white px-3 py-1.5 font-mono text-[10px] font-semibold tracking-[0.12em] text-rose-600 uppercase transition hover:bg-rose-600 hover:text-white"
             >
-              <LogOut className="h-3.5 w-3.5" />
+              <LogOut className="h-3 w-3" />
               <span className="hidden sm:inline">Sign Out</span>
             </button>
           </div>
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-4 py-6 sm:px-6 lg:grid-cols-[236px_minmax(0,1fr)] lg:gap-6">
-        {/* Mobile-friendly Horizontal Scroll / Desktop Sticky Sidebar */}
-        <aside className="pastel-glass h-fit w-full min-w-0 max-w-full overflow-hidden rounded-2xl p-2 lg:sticky lg:top-24">
-          <nav className="flex w-full flex-row gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-x-visible lg:pb-0">
-            {navItems.map((item) => {
-              const active = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex min-h-[40px] shrink-0 items-center justify-between gap-2.5 rounded-xl px-3.5 py-2 text-xs font-medium transition ${
-                    active
-                      ? "bg-[#7650f3] text-white"
-                      : "text-[#534674] hover:bg-white hover:text-[#7650f3]"
-                  }`}
-                >
-                  <span className="flex items-center gap-2.5">
-                    {item.icon}
-                    {item.label}
+      <div className="relative z-10 mx-auto max-w-[960px] px-4 py-6 sm:px-6 md:py-8">
+        {/* Clean Single-Row Sharp Tab Navigation (Zero Sidebar Clutter) */}
+        <nav
+          aria-label="Admin sections"
+          className="mb-6 flex max-w-full overflow-x-auto border-[1.5px] border-[#745bc7] bg-[#fdf9ff]/95 shadow-[3px_3px_0_0_rgba(116,91,199,0.16)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {navItems.map((item, idx) => {
+            const active = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id)}
+                className={`flex shrink-0 items-center justify-center gap-1.5 px-3 py-2.5 font-mono text-[11px] font-semibold tracking-[0.06em] uppercase transition md:flex-1 md:px-3.5 ${
+                  idx > 0 ? "border-l border-[#745bc7]/30" : ""
+                } ${
+                  active
+                    ? "bg-[#745bc7] text-white"
+                    : "text-[#5d5370] hover:bg-[#efe9fd] hover:text-[#14100e]"
+                }`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+                {item.count !== undefined && (
+                  <span
+                    className={`px-1.5 py-0.2 text-[10px] ${
+                      active
+                        ? "bg-white/20 text-white"
+                        : "bg-[#e5dcfb] text-[#745bc7]"
+                    }`}
+                  >
+                    {item.count}
                   </span>
-                  {item.count !== undefined && (
-                    <span
-                      className={`rounded-full px-2 py-0.5 font-mono text-[10px] ${
-                        active
-                          ? "bg-white/20 text-white"
-                          : "bg-[#f3ecff] text-[#7650f3]"
-                      }`}
-                    >
-                      {item.count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-        </aside>
+                )}
+              </button>
+            );
+          })}
+        </nav>
 
-        {/* Main Content Workspace */}
-        <main className="min-w-0">
-          {activeTab === "dashboard" && (
-            <div className="space-y-6">
-              <div className="twilight-card rounded-2xl p-6 text-white sm:p-7">
-                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                  <div>
-                    <p className="font-mono text-[11px] tracking-[0.2em] text-[#fad8e8] uppercase">
-                      <Sparkles className="mr-1 inline h-3.5 w-3.5" />
-                      shizuku Admin Studio · 雫
-                    </p>
-                    <h1 className="mt-2 font-editorial text-3xl font-normal tracking-wide">
-                      Welcome back, {profile.fullName.split(" ")[0]}.
-                    </h1>
-                    <p className="mt-1.5 max-w-xl text-xs leading-relaxed text-[#ddd4f5] sm:text-sm">
-                      Upload your official TUYU / Omutatsu Desktop & Mobile Hero
-                      art, manage daily-drive workspace shortcuts, and edit all
-                      projects, experiences & certificates live.
-                    </p>
-                  </div>
-                  {profile.avatarImage?.trim() ? (
-                    <img
-                      src={profile.avatarImage}
-                      alt={profile.fullName}
-                      className="h-14 w-14 shrink-0 rounded-xl border border-white/30 object-cover"
-                    />
-                  ) : (
-                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/10 text-[#fad8e8]">
-                      <UmbrellaMark className="h-7 w-7" />
-                    </span>
-                  )}
-                </div>
-              </div>
+        {/* Active Editor Sheet */}
+        <main className="vn-frame overflow-hidden">
+          <div className="bg-white/94 p-5 sm:p-7">
+            {activeTab === "profile" && (
+              <ProfileEditorTab
+                key={profile.updatedAt}
+                profile={profile}
+                onSaved={setProfile}
+                notify={notify}
+              />
+            )}
 
-              <div className="grid grid-cols-2 gap-3.5 xl:grid-cols-4">
-                {[
-                  {
-                    label: "Workspace Apps",
-                    value: workspaceApps.filter((a) => a.published).length,
-                    total: workspaceApps.length,
-                    tab: "workspace" as SectionTab,
-                    icon: <LayoutGrid className="h-4 w-4" />,
-                  },
-                  {
-                    label: "Projects",
-                    value: projects.filter((p) => p.published).length,
-                    total: projects.length,
-                    tab: "projects" as SectionTab,
-                    icon: <FolderKanban className="h-4 w-4" />,
-                  },
-                  {
-                    label: "Experiences",
-                    value: experiences.filter((e) => e.published).length,
-                    total: experiences.length,
-                    tab: "experiences" as SectionTab,
-                    icon: <Briefcase className="h-4 w-4" />,
-                  },
-                  {
-                    label: "Certificates",
-                    value: certificates.filter((c) => c.published).length,
-                    total: certificates.length,
-                    tab: "certificates" as SectionTab,
-                    icon: <Award className="h-4 w-4" />,
-                  },
-                ].map((card) => (
-                  <button
-                    key={card.label}
-                    type="button"
-                    onClick={() => setActiveTab(card.tab)}
-                    className="pastel-glass pastel-glass-hover rounded-2xl p-4 text-left sm:p-5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#e5dcfb] text-[#7650f3]">
-                        {card.icon}
-                      </span>
-                      <span className="font-mono text-[10px] text-[#6d6188]">
-                        {card.value}/{card.total} live
-                      </span>
-                    </div>
-                    <p className="mt-3 font-mono text-2xl font-semibold text-[#14100e]">
-                      {card.value}
-                    </p>
-                    <p className="mt-0.5 text-xs text-[#5c526e]">{card.label}</p>
-                  </button>
-                ))}
-              </div>
+            {activeTab === "workspace" && (
+              <WorkspaceManagerTab
+                apps={workspaceApps}
+                setApps={setWorkspaceApps}
+                notify={notify}
+              />
+            )}
 
-              <div className="pastel-glass rounded-2xl p-5 sm:p-6">
-                <p className="font-mono text-[11px] font-semibold tracking-[0.18em] text-[#7650f3] uppercase">
-                  Quick Studio Actions
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("profile")}
-                    className="min-h-[40px] rounded-full bg-[#7650f3] px-4 py-2 text-xs font-medium text-white hover:bg-[#5e38dc]"
-                  >
-                    Upload Hero Artwork (Desktop & Mobile)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("workspace")}
-                    className="min-h-[40px] rounded-full border border-[#dfd4f8] bg-white px-4 py-2 text-xs font-medium text-[#14100e] hover:border-[#7650f3] hover:text-[#7650f3]"
-                  >
-                    Edit Daily Workspace Apps
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("projects")}
-                    className="min-h-[40px] rounded-full border border-[#dfd4f8] bg-white px-4 py-2 text-xs font-medium text-[#14100e] hover:border-[#7650f3] hover:text-[#7650f3]"
-                  >
-                    Manage Projects
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("certificates")}
-                    className="min-h-[40px] rounded-full border border-[#dfd4f8] bg-white px-4 py-2 text-xs font-medium text-[#14100e] hover:border-[#7650f3] hover:text-[#7650f3]"
-                  >
-                    Upload Certificates
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+            {activeTab === "projects" && (
+              <ProjectsManagerTab
+                projects={projects}
+                setProjects={setProjects}
+                notify={notify}
+              />
+            )}
 
-          {activeTab === "workspace" && (
-            <WorkspaceManagerTab
-              apps={workspaceApps}
-              setApps={setWorkspaceApps}
-              notify={notify}
-            />
-          )}
+            {activeTab === "experiences" && (
+              <ExperiencesManagerTab
+                experiences={experiences}
+                setExperiences={setExperiences}
+                notify={notify}
+              />
+            )}
 
-          {activeTab === "profile" && (
-            <ProfileEditorTab
-              key={profile.updatedAt}
-              profile={profile}
-              onSaved={setProfile}
-              notify={notify}
-            />
-          )}
+            {activeTab === "certificates" && (
+              <CertificatesManagerTab
+                certificates={certificates}
+                setCertificates={setCertificates}
+                notify={notify}
+              />
+            )}
 
-          {activeTab === "projects" && (
-            <ProjectsManagerTab
-              projects={projects}
-              setProjects={setProjects}
-              notify={notify}
-            />
-          )}
-
-          {activeTab === "experiences" && (
-            <ExperiencesManagerTab
-              experiences={experiences}
-              setExperiences={setExperiences}
-              notify={notify}
-            />
-          )}
-
-          {activeTab === "certificates" && (
-            <CertificatesManagerTab
-              certificates={certificates}
-              setCertificates={setCertificates}
-              notify={notify}
-            />
-          )}
-
-          {activeTab === "skills" && (
-            <SkillsAndSecurityTab
-              skillGroups={skillGroups}
-              setSkillGroups={setSkillGroups}
-              notify={notify}
-            />
-          )}
+            {activeTab === "skills" && (
+              <SkillsAndSecurityTab
+                skillGroups={skillGroups}
+                setSkillGroups={setSkillGroups}
+                notify={notify}
+              />
+            )}
+          </div>
         </main>
       </div>
 
-      {/* Floating Pastel Toast */}
+      {/* Crisp Floating Toast */}
       <AnimatePresence>
         {toast && (
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 12 }}
-            className={`fixed right-5 bottom-5 z-[95] flex items-center gap-2.5 rounded-2xl border px-4 py-3 text-xs font-medium shadow-xl backdrop-blur-md ${
+            exit={{ opacity: 0, y: 10 }}
+            className={`fixed right-5 bottom-5 z-[95] flex items-center gap-2.5 border-[1.5px] px-4 py-2.5 font-mono text-[11px] font-medium shadow-[3px_3px_0_0_rgba(116,91,199,0.22)] backdrop-blur-md ${
               toast.tone === "err"
-                ? "border-rose-200 bg-rose-50/95 text-rose-800"
-                : "border-[#d8caf8] bg-white/95 text-[#14100e]"
+                ? "border-rose-500 bg-rose-50/95 text-rose-700"
+                : "border-[#745bc7] bg-[#fdf9ff]/95 text-[#14100e]"
             }`}
           >
             {toast.tone === "err" ? (
               <AlertCircle className="h-4 w-4 text-rose-600" />
             ) : (
-              <CheckCircle2 className="h-4 w-4 text-[#7650f3]" />
+              <CheckCircle2 className="h-4 w-4 text-[#745bc7]" />
             )}
             <span>{toast.message}</span>
           </motion.div>
