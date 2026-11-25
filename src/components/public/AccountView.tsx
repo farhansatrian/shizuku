@@ -31,12 +31,37 @@ function isSafeInternalRedirect(value: string | null): value is string {
   return value.startsWith("/") && !value.startsWith("//");
 }
 
+function GoogleColorIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M23.49 12.27c0-.79-.07-1.54-.2-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.54-5.17 3.54-8.87Z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.07 7.94-2.86l-3.88-3c-1.08.72-2.45 1.15-4.06 1.15-3.12 0-5.77-2.11-6.72-4.95H1.28v3.1A12 12 0 0 0 12 24Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.28 14.34a7.2 7.2 0 0 1 0-4.68v-3.1H1.28a12 12 0 0 0 0 10.88l4-3.1Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.71c1.76 0 3.34.61 4.59 1.8l3.44-3.44C17.95 1.18 15.24 0 12 0A12 12 0 0 0 1.28 6.56l4 3.1C6.23 6.82 8.88 4.71 12 4.71Z"
+      />
+    </svg>
+  );
+}
+
 export function AccountView({
   data,
   initialMode = "login",
+  googleEnabled = false,
 }: {
   data: PortfolioPayload;
   initialMode?: AuthMode;
+  googleEnabled?: boolean;
 }) {
   const { profile, workspaceApps } = data;
   const { locale, pick } = useLocale();
@@ -46,8 +71,10 @@ export function AccountView({
 
   const queryMode = searchParams.get("mode");
   const redirectTarget = searchParams.get("redirect");
+  const queryOAuthError = searchParams.get("oauthError");
 
   const [manualMode, setManualMode] = useState<AuthMode | null>(null);
+  const [oauthDismissed, setOauthDismissed] = useState(false);
   const mode: AuthMode =
     manualMode ??
     (queryMode === "register"
@@ -146,8 +173,28 @@ export function AccountView({
         );
       case "INVALID_CREDENTIALS":
         return pick(
-          "Incorrect email or password.",
-          "Email atau kata sandi tidak sesuai."
+          "Incorrect email or password. If you signed up with Google, use Continue with Google.",
+          "Email atau kata sandi tidak sesuai. Jika sebelumnya daftar pakai Google, gunakan Lanjutkan dengan Google."
+        );
+      case "GOOGLE_NOT_CONFIGURED":
+        return pick(
+          "Google Sign-In is not configured yet. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to your environment.",
+          "Login Google belum dikonfigurasi. Tambahkan GOOGLE_CLIENT_ID dan GOOGLE_CLIENT_SECRET di file .env terlebih dahulu."
+        );
+      case "GOOGLE_CANCELLED":
+        return pick(
+          "Google sign-in was cancelled.",
+          "Proses masuk dengan Google dibatalkan."
+        );
+      case "GOOGLE_EMAIL_UNVERIFIED":
+        return pick(
+          "Your Google account email must be verified before signing in.",
+          "Email akun Google kamu harus terverifikasi terlebih dahulu."
+        );
+      case "GOOGLE_AUTH_FAILED":
+        return pick(
+          "Could not complete Google sign-in. Please try again.",
+          "Gagal menyelesaikan masuk dengan Google. Silakan coba lagi."
         );
       case "NETWORK_ERROR":
         return pick(
@@ -165,6 +212,7 @@ export function AccountView({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorCode(null);
+    setOauthDismissed(true);
 
     const trimmedEmail = email.trim();
     if (!trimmedEmail || !trimmedEmail.includes("@")) {
@@ -249,7 +297,13 @@ export function AccountView({
     }
   }, [user, locale]);
 
-  const errorMessage = resolveErrorMessage(errorCode);
+  const activeErrorCode =
+    errorCode ?? (!oauthDismissed ? queryOAuthError : null);
+  const errorMessage = resolveErrorMessage(activeErrorCode);
+
+  const googleAuthHref = isSafeInternalRedirect(redirectTarget)
+    ? `/api/ecosystem/google?redirect=${encodeURIComponent(redirectTarget)}`
+    : "/api/ecosystem/google";
   const initialLetter = user
     ? (user.displayName.trim() || user.email).slice(0, 1).toUpperCase()
     : "";
@@ -497,6 +551,7 @@ export function AccountView({
                   onClick={() => {
                     setManualMode("login");
                     setErrorCode(null);
+                    setOauthDismissed(true);
                   }}
                   className={`py-2.5 font-semibold tracking-[0.14em] uppercase transition ${
                     mode === "login"
@@ -513,6 +568,7 @@ export function AccountView({
                   onClick={() => {
                     setManualMode("register");
                     setErrorCode(null);
+                    setOauthDismissed(true);
                   }}
                   className={`border-l border-[#745bc7] py-2.5 font-semibold tracking-[0.14em] uppercase transition ${
                     mode === "register"
@@ -524,8 +580,31 @@ export function AccountView({
                 </button>
               </div>
 
+              {/* Continue with Google OAuth Button */}
+              <div className="mt-5">
+                <a
+                  href={googleAuthHref}
+                  data-google-configured={googleEnabled ? "true" : "false"}
+                  className="flex w-full items-center justify-center gap-2.5 border-[1.5px] border-[#745bc7]/55 bg-white px-4 py-2.5 font-sans text-[13.5px] font-semibold text-[#14100e] shadow-[2px_2px_0_0_rgba(116,91,199,0.14)] transition hover:border-[#745bc7] hover:bg-[#f7f2ff] active:translate-x-[1px] active:translate-y-[1px]"
+                >
+                  <GoogleColorIcon className="h-4 w-4 shrink-0" />
+                  <span>
+                    {pick("Continue with Google", "Lanjutkan dengan Google")}
+                  </span>
+                </a>
+              </div>
+
+              {/* Hairline Divider */}
+              <div className="my-5 flex items-center gap-3">
+                <div className="h-px flex-1 bg-[#745bc7]/22" />
+                <span className="font-mono text-[10px] tracking-[0.18em] text-[#7b6f94] uppercase">
+                  {pick("or with email", "atau pakai email")}
+                </span>
+                <div className="h-px flex-1 bg-[#745bc7]/22" />
+              </div>
+
               {/* Crisp Bordered Form */}
-              <form onSubmit={handleSubmit} className="mt-6 space-y-4" noValidate>
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                 {mode === "register" && (
                   <div>
                     <label

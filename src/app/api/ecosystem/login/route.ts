@@ -42,6 +42,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (dbUser.passwordHash.startsWith("$oauth$")) {
+      return withEcosystemCors(
+        req,
+        NextResponse.json({ error: "INVALID_CREDENTIALS" }, { status: 401 })
+      );
+    }
+
     const ok = await bcrypt.compare(parsed.data.password, dbUser.passwordHash);
     if (!ok) {
       return withEcosystemCors(
