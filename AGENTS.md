@@ -15,7 +15,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 This repository (`shizuku`) serves as the **central identity & database hub** for the SHIZUKU ecosystem (including `../personal-cashflow` / `shikas` and future companion apps).
 
 ### Do Not Break or Delete When Editing Portfolio UI/CMS
-1. **Prisma Models (`prisma/schema.prisma`)**: Keep `EcosystemUser`, `ShikasTransaction` (`@@id([userId, id])`, including `accountId`, `toAccountId`, `feeIdr`), and `ShikasSettings` (including `accountsJson`) intact. Never run `db:reset` against production data.
+1. **Prisma Models (`prisma/schema.prisma`)**: Keep `EcosystemUser`, `ShikasTransaction` (`@@id([userId, id])`, including `accountId`, `toAccountId`, `feeIdr`), and `ShikasSettings` (including `accountsJson` and `cycleStartDay`) intact. Never run `db:reset` against production data.
 2. **Prisma Dev Delegate Check (`src/lib/db.ts`)**: Keep `ecosystemUser`, `shikasTransaction`, and `shikasSettings` in `hasAllDelegates`.
 3. **Ecosystem Auth Library (`src/lib/ecosystem-auth.ts`)**:
    - Uses cookie `shizuku_eco_session` (completely separate from `/admin`'s `shizuku_admin_session`) and supports `Authorization: Bearer <token>`.
@@ -26,7 +26,7 @@ This repository (`shizuku`) serves as the **central identity & database hub** fo
    - `POST /api/ecosystem/logout` ⇒ `200 { ok: true }`
    - `GET /api/ecosystem/me` ⇒ `200 { user | null }`
    - `GET /api/ecosystem/google?redirect=<internal_path_or_allowed_origin_url>` & `GET /api/ecosystem/google/callback` → Google OAuth 2.0 + PKCE SSO; sets `shizuku_eco_session` cookie and, when redirecting to an allowlisted external companion app (e.g. `shikas`), appends `#shizuku_token=<jwt>` in the URL fragment for Bearer storage.
-   - `GET /api/shikas/store` & `PUT /api/shikas/store` → strict per-`userId` isolation (`401` if unauthenticated); v5 payload stores `accounts[]` (`ShikasSettings.accountsJson`) and `transactions[]` supporting `income | expense | transfer`, `accountId`, `toAccountId`, and `feeIdr`.
+   - `GET /api/shikas/store` & `PUT /api/shikas/store` → strict per-`userId` isolation (`401` if unauthenticated); v5 payload stores `accounts[]` (`ShikasSettings.accountsJson`), `settings.cycleStartDay` (`1..28`, default `1`), and `transactions[]` supporting `income | expense | transfer`, `accountId`, `toAccountId`, and `feeIdr`.
 
 ### Production Deploy Checklist (VM 1 GB RAM)
 - Set `ECOSYSTEM_ALLOWED_ORIGINS="https://shikas.yourdomain.dev"` (comma-separated for multiple apps) in `shizuku`'s `.env.production`.

@@ -188,11 +188,12 @@ model ShikasTransaction {
 }
 
 model ShikasSettings {
-  userId       String        @id
-  user         EcosystemUser @relation(fields: [userId], references: [id], onDelete: Cascade)
-  locale       String        @default("en")
-  privacyMode  Boolean       @default(false)
-  rainEnabled  Boolean       @default(true)
-  accountsJson String        @default("[]")
-  updatedAt    DateTime      @updatedAt
+  userId        String        @id
+  user          EcosystemUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locale        String        @default("en")
+  privacyMode   Boolean       @default(false)
+  rainEnabled   Boolean       @default(true)
+  cycleStartDay Int           @default(1)
+  accountsJson  String        @default("[]")
+  updatedAt     DateTime      @updatedAt
 }

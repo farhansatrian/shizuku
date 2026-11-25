@@ -39,6 +39,7 @@ const storeSchema = z.object({
       locale: z.enum(["en", "id"]).default("en"),
       privacyMode: z.boolean().default(false),
       rainEnabled: z.boolean().default(true),
+      cycleStartDay: z.number().int().min(1).max(28).default(1),
       shizukuWebsiteUrl: z.string().optional(),
     })
     .optional(),
@@ -106,6 +107,10 @@ export async function GET(req: NextRequest) {
           locale: settings?.locale === "id" ? "id" : "en",
           privacyMode: settings?.privacyMode ?? false,
           rainEnabled: settings?.rainEnabled ?? true,
+          cycleStartDay: Math.min(
+            28,
+            Math.max(1, settings?.cycleStartDay ?? 1)
+          ),
           shizukuWebsiteUrl: "",
         },
       })
@@ -175,6 +180,7 @@ export async function PUT(req: NextRequest) {
                   locale: settings.locale,
                   privacyMode: settings.privacyMode,
                   rainEnabled: settings.rainEnabled,
+                  cycleStartDay: settings.cycleStartDay,
                 }
               : {}),
             ...(serializedAccounts !== undefined
@@ -186,6 +192,7 @@ export async function PUT(req: NextRequest) {
             locale: settings?.locale ?? "en",
             privacyMode: settings?.privacyMode ?? false,
             rainEnabled: settings?.rainEnabled ?? true,
+            cycleStartDay: settings?.cycleStartDay ?? 1,
             accountsJson: serializedAccounts ?? "[]",
           },
         });
