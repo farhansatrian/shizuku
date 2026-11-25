@@ -139,31 +139,41 @@ export function AdminStudioClient({
       </header>
 
       <div className="relative z-10 mx-auto max-w-[960px] px-4 py-6 sm:px-6 md:py-8">
-        {/* Clean 5-Tab Bar Matching Live Public Pages 1-to-1 */}
+        {/* Clean 5-Tab Bar: 100% Visible 2-Row Grid on Mobile, Single Row on Desktop */}
         <nav
           aria-label="Admin sections"
-          className="mb-6 flex max-w-full overflow-x-auto border-[1.5px] border-[#745bc7] bg-[#fdf9ff]/95 shadow-[3px_3px_0_0_rgba(116,91,199,0.16)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="mb-6 grid grid-cols-6 border-[1.5px] border-[#745bc7] bg-[#fdf9ff]/95 shadow-[3px_3px_0_0_rgba(116,91,199,0.16)] md:flex"
         >
-          {navItems.map((item, idx) => {
+          {navItems.map((item) => {
             const active = activeTab === item.id;
+            const layoutClass: Record<SectionTab, string> = {
+              profile: "order-1 col-span-2 md:order-none",
+              workspace:
+                "order-2 col-span-2 border-l border-[#745bc7]/30 md:order-none",
+              security:
+                "order-3 col-span-2 border-l border-[#745bc7]/30 md:order-none",
+              experiences:
+                "order-4 col-span-3 border-t border-[#745bc7]/30 md:order-none md:border-t-0 md:border-l",
+              certificates:
+                "order-5 col-span-3 border-t border-l border-[#745bc7]/30 md:order-none md:border-t-0",
+            };
+
             return (
               <button
                 key={item.id}
                 type="button"
                 onClick={() => setActiveTab(item.id)}
-                className={`flex shrink-0 items-center justify-center gap-1.5 px-3.5 py-2.5 font-mono text-[11px] font-semibold tracking-[0.08em] uppercase transition md:flex-1 ${
-                  idx > 0 ? "border-l border-[#745bc7]/30" : ""
-                } ${
+                className={`${layoutClass[item.id]} flex items-center justify-center gap-1.5 px-2 py-2.5 font-mono text-[10px] font-semibold tracking-[0.05em] uppercase transition sm:text-[10.5px] md:flex-1 md:px-3.5 md:text-[11px] md:tracking-[0.08em] ${
                   active
                     ? "bg-[#745bc7] text-white"
                     : "text-[#5d5370] hover:bg-[#efe9fd] hover:text-[#14100e]"
                 }`}
               >
                 {item.icon}
-                <span>{item.label}</span>
+                <span className="whitespace-nowrap">{item.label}</span>
                 {item.count !== undefined && (
                   <span
-                    className={`px-1.5 py-0.2 text-[10px] ${
+                    className={`shrink-0 px-1.5 py-0.2 text-[10px] ${
                       active
                         ? "bg-white/20 text-white"
                         : "bg-[#e5dcfb] text-[#745bc7]"

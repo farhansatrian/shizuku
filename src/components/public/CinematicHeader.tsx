@@ -194,21 +194,21 @@ export function CinematicHeader({
               : "bg-[#e5dcfb]/88 text-[#745bc7] backdrop-blur-md"
         }`}
       >
-        <div className="mx-auto flex h-[68px] w-full items-center justify-between px-[5%] md:h-[92px] md:px-[3%]">
-          {/* Left: Prominent TUYU-scale logo + umbrella */}
+        <div className="mx-auto flex h-[64px] w-full items-center justify-between px-4 sm:h-[72px] sm:px-[5%] md:h-[92px] md:px-[3%]">
+          {/* Left: Prominent TUYU-scale logo + umbrella (calibrated for 360px+ mobile breathing room) */}
           <Link
             href="/"
             onClick={() => setDrawerOpen(false)}
-            className="group flex items-center gap-2.5 py-2 transition-opacity hover:opacity-75 focus:outline-none md:gap-3"
+            className="group flex shrink-0 items-center gap-1.5 py-2 transition-opacity hover:opacity-75 focus:outline-none sm:gap-2.5 md:gap-3"
           >
-            <span className="font-editorial text-[22px] font-medium tracking-[0.32em] uppercase sm:text-[26px] md:text-[31px] md:tracking-[0.36em]">
+            <span className="font-editorial text-[16px] font-medium tracking-[0.22em] uppercase sm:text-[24px] sm:tracking-[0.3em] md:text-[31px] md:tracking-[0.36em]">
               {profile.brandName}
             </span>
-            <UmbrellaMark className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8" />
+            <UmbrellaMark className="h-5 w-5 shrink-0 sm:h-7 sm:w-7 md:h-8 md:w-8" />
           </Link>
 
-          {/* Right: Social Icons + EN | ID + Prominent SHIZUKU ID Status + 3-Raindrop Burger */}
-          <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
+          {/* Right: Social Icons + Prominent SHIZUKU ID Status + EN | ID + 3-Raindrop Burger */}
+          <div className="flex shrink-0 items-center gap-2 sm:gap-4 md:gap-6">
             {/* Desktop Social Media Icon Bar (hidden when full-screen drawer is open) */}
             {!drawerOpen && (
               <div
@@ -245,7 +245,7 @@ export function CinematicHeader({
                     ? `${pick("Signed in as", "Masuk sebagai")} ${ecoUser.displayName}`
                     : "SHIZUKU ID"
                 }
-                className={`inline-flex shrink-0 items-center gap-1.5 border-[1.5px] px-2.5 py-1.5 font-mono text-[10.5px] font-semibold tracking-[0.12em] uppercase transition sm:px-3 ${
+                className={`inline-flex shrink-0 items-center gap-1.5 border-[1.5px] px-2 py-1 font-mono text-[10px] font-semibold tracking-[0.08em] uppercase transition sm:px-3 sm:py-1.5 sm:text-[10.5px] sm:tracking-[0.12em] ${
                   ecoUser
                     ? isHeroWhite
                       ? "border-white/85 bg-white/18 text-white backdrop-blur-sm hover:bg-white hover:text-[#745bc7]"
@@ -261,14 +261,14 @@ export function CinematicHeader({
                       className="h-2 w-2 shrink-0 rounded-full bg-emerald-400 ring-2 ring-emerald-400/35"
                       aria-hidden="true"
                     />
-                    <span className="max-w-[96px] truncate hidden sm:inline">
+                    <span className="hidden max-w-[96px] truncate sm:inline">
                       {shortUserName}
                     </span>
                     <span className="sm:hidden">{userInitial}</span>
                   </>
                 ) : (
                   <>
-                    <User className="h-3.5 w-3.5 shrink-0" />
+                    <User className="h-3 w-3 shrink-0 sm:h-3.5 sm:w-3.5" />
                     <span className="hidden sm:inline">
                       {pick("SHIZUKU ID", "SHIZUKU ID")}
                     </span>
@@ -280,7 +280,7 @@ export function CinematicHeader({
 
             {/* Large tuyu.moe-scale JP | EN style language switcher */}
             <div
-              className="flex items-center gap-1.5 font-editorial text-[16px] font-bold tracking-[0.12em] sm:text-[19px] md:gap-2 md:text-[23px]"
+              className="flex shrink-0 items-center gap-1 font-editorial text-[14px] font-bold tracking-[0.08em] sm:gap-1.5 sm:text-[19px] sm:tracking-[0.14em] md:gap-2 md:text-[23px]"
               role="group"
               aria-label="Language switcher"
             >
@@ -311,7 +311,7 @@ export function CinematicHeader({
               onClick={() => setDrawerOpen((v) => !v)}
               aria-label={drawerOpen ? "Close menu" : "Open menu"}
               aria-expanded={drawerOpen}
-              className="flex h-11 w-11 items-center justify-center transition-opacity hover:opacity-75 md:h-12 md:w-12"
+              className="flex h-9 w-9 shrink-0 items-center justify-center transition-opacity hover:opacity-75 sm:h-11 sm:w-11 md:h-12 md:w-12"
             >
               {drawerOpen ? (
                 closeIconFailed ? (
@@ -321,7 +321,7 @@ export function CinematicHeader({
                     src="/api/uploads/tuyu-menu-close.png"
                     alt=""
                     onError={() => setCloseIconFailed(true)}
-                    className="h-8 w-8 object-contain md:h-10 md:w-10"
+                    className="h-7 w-7 object-contain sm:h-8 sm:w-8 md:h-10 md:w-10"
                   />
                 )
               ) : menuIconFailed ? (
@@ -331,7 +331,7 @@ export function CinematicHeader({
                   src="/api/uploads/tuyu-menu-open.png"
                   alt=""
                   onError={() => setMenuIconFailed(true)}
-                  className={`h-[24px] w-auto object-contain transition-all duration-300 md:h-[34px] ${
+                  className={`h-[20px] w-auto object-contain transition-all duration-300 sm:h-[24px] md:h-[34px] ${
                     isHeroWhite ? "brightness-0 invert" : ""
                   }`}
                 />
@@ -344,7 +344,7 @@ export function CinematicHeader({
       {/* Authentic tuyu.moe Full-Screen Panning Pink Watercolor Drawer (.dropdown_nav) */}
       <div
         aria-hidden={!drawerOpen}
-        className={`fixed inset-0 z-40 overflow-hidden transition-opacity duration-300 ease-out ${
+        className={`fixed inset-0 z-40 overflow-hidden bg-[#f9e4f5] transition-opacity duration-300 ease-out ${
           drawerOpen
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"

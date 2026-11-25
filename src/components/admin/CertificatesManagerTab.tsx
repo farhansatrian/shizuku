@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -61,6 +61,15 @@ export function CertificatesManagerTab({
 }) {
   const [editing, setEditing] = useState<CertDraft | null>(null);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!editing) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setEditing(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [editing]);
 
   const openEdit = (c: SerializedCertificate) => {
     setEditing({
@@ -256,7 +265,7 @@ export function CertificatesManagerTab({
                 </div>
               </div>
 
-              <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+              <div className="flex shrink-0 flex-nowrap items-center gap-1 sm:gap-1.5">
                 <button
                   type="button"
                   onClick={() => moveOrder(idx, -1)}
@@ -321,14 +330,14 @@ export function CertificatesManagerTab({
       {editing && (
         <div
           onClick={() => setEditing(null)}
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-[#19132b]/65 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-[#19132b]/65 p-2.5 backdrop-blur-sm sm:p-4"
         >
           <form
             onSubmit={handleSave}
             onClick={(e) => e.stopPropagation()}
-            className="vn-frame flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden"
+            className="vn-frame flex max-h-[92dvh] w-full max-w-xl flex-col overflow-hidden"
           >
-            <div className="vn-band-strip flex items-center justify-between px-5 py-3 text-white">
+            <div className="vn-band-strip flex shrink-0 items-center justify-between px-4 py-3 text-white sm:px-5">
               <h3 className="font-mono text-xs font-semibold tracking-[0.16em] uppercase drop-shadow-2xs">
                 {editing.id ? "Edit Certificate" : "Add Certificate"}
               </h3>
@@ -342,7 +351,7 @@ export function CertificatesManagerTab({
               </button>
             </div>
 
-            <div className="flex-1 space-y-4 overflow-y-auto bg-[#fdfbff] p-5 sm:p-6">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-[#fdfbff] p-4 sm:p-6">
               <div>
                 <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
                   Certificate Title (EN)
@@ -477,7 +486,7 @@ export function CertificatesManagerTab({
               </label>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 border-t border-[#745bc7]/20 bg-white px-5 py-3.5">
+            <div className="flex shrink-0 items-center justify-end gap-2.5 border-t border-[#745bc7]/20 bg-white px-4 py-3 sm:px-5 sm:py-3.5">
               <button
                 type="button"
                 onClick={() => setEditing(null)}

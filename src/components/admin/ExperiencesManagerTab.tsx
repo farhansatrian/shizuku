@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowDown,
@@ -157,6 +157,15 @@ export function ExperiencesManagerTab({
   const [editing, setEditing] = useState<ExpDraft | null>(null);
   const [langTab, setLangTab] = useState<"en" | "id">("en");
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!editing) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setEditing(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [editing]);
 
   const byKind = useMemo(() => {
     const grouped: Record<ExpKind, SerializedExperience[]> = {
@@ -465,7 +474,7 @@ export function ExperiencesManagerTab({
                         )}
                       </div>
 
-                      <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+                      <div className="flex shrink-0 flex-nowrap items-center gap-1 sm:gap-1.5">
                         <button
                           type="button"
                           onClick={() => moveWithinSection(kind, idx, -1)}
@@ -534,15 +543,15 @@ export function ExperiencesManagerTab({
       {editing && activeMeta && (
         <div
           onClick={() => setEditing(null)}
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-[#19132b]/65 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-[#19132b]/65 p-2.5 backdrop-blur-sm sm:p-4"
         >
           <form
             onSubmit={handleSave}
             onClick={(e) => e.stopPropagation()}
-            className="vn-frame flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden"
+            className="vn-frame flex max-h-[92dvh] w-full max-w-2xl flex-col overflow-hidden"
           >
-            {/* Modal Band Header */}
-            <div className="vn-band-strip flex items-center justify-between gap-2 px-5 py-3 text-white">
+            {/* Modal Band Header (pinned) */}
+            <div className="vn-band-strip flex shrink-0 items-center justify-between gap-2 px-4 py-3 text-white sm:px-5">
               <div className="flex items-center gap-2">
                 {activeMeta.icon}
                 <h3 className="font-mono text-xs font-semibold tracking-[0.16em] uppercase drop-shadow-2xs">
@@ -589,7 +598,7 @@ export function ExperiencesManagerTab({
               </div>
             </div>
 
-            <div className="flex-1 space-y-4 overflow-y-auto bg-[#fdfbff] p-5 sm:p-6">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto bg-[#fdfbff] p-4 sm:p-6">
               {/* Section Switcher (in case user wants to move an entry between sections) */}
               <div className="grid grid-cols-3 border border-[#745bc7]/40 bg-white font-mono text-[10.5px]">
                 {SECTION_ORDER.map((k, idx) => (
@@ -722,11 +731,11 @@ export function ExperiencesManagerTab({
 
               {/* Easy Multiline Bullets (Paste or type 1 line per bullet!) */}
               <div>
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-start justify-between gap-2">
                   <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
                     {activeMeta.bulletsLabel} ({langTab.toUpperCase()})
                   </label>
-                  <span className="font-mono text-[10px] text-[#745bc7]">
+                  <span className="shrink-0 whitespace-nowrap font-mono text-[10px] font-semibold text-[#745bc7]">
                     {
                       parseLines(
                         langTab === "en"
@@ -738,7 +747,7 @@ export function ExperiencesManagerTab({
                   </span>
                 </div>
                 <textarea
-                  rows={5}
+                  rows={4}
                   placeholder={activeMeta.bulletsPlaceholder}
                   value={
                     langTab === "en"
@@ -776,7 +785,7 @@ export function ExperiencesManagerTab({
               </label>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 border-t border-[#745bc7]/20 bg-white px-5 py-3.5">
+            <div className="flex shrink-0 items-center justify-end gap-2.5 border-t border-[#745bc7]/20 bg-white px-4 py-3 sm:px-5 sm:py-3.5">
               <button
                 type="button"
                 onClick={() => setEditing(null)}
