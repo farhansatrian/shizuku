@@ -1,9 +1,5 @@
-import { getPublicPortfolio } from "@/lib/portfolio";
-import { ProjectsArchiveView } from "@/components/public/ProjectsArchiveView";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
-export default async function ProjectsPage() {
-  const data = await getPublicPortfolio();
-  return <ProjectsArchiveView data={data} />;
+export default function ProjectsRedirectPage() {
+  redirect("/portfolio");
 }

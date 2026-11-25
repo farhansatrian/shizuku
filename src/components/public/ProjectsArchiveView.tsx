@@ -47,7 +47,7 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
             ARCHIVE · {projects.length} {pick("WORKS", "KARYA")}
           </p>
           <h1 className="mt-2 font-editorial text-[28px] font-normal leading-none tracking-[7px] text-[#745bc7] uppercase md:text-[36px] md:tracking-[9px]">
-            PROJECTS
+            PORTFOLIO
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-[#5d5370]">
             {pick(
@@ -89,7 +89,7 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder={pick("Search works...", "Cari proyek...")}
+              placeholder={pick("Search portfolio...", "Cari portfolio...")}
               className="w-full rounded-full border border-[#745bc7]/40 bg-white/80 py-2 pr-4 pl-9 text-xs text-[#14100e] outline-none transition placeholder:text-[#7f719c] focus:border-[#745bc7] focus:bg-white"
             />
           </div>
@@ -100,7 +100,7 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
         {filtered.length === 0 ? (
           <div className="tuyu-sheet rounded-xl p-10 text-center">
             <p className="text-sm text-[#5d5370]">
-              {pick("No matching projects found.", "Belum ada proyek yang cocok.")}
+              {pick("No matching portfolio items found.", "Belum ada portfolio yang cocok.")}
             </p>
           </div>
         ) : (
@@ -108,7 +108,7 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
             {filtered.map((project) => (
               <Link
                 key={project.id}
-                href={`/projects/${project.slug}`}
+                href={`/portfolio/${project.slug}`}
                 className="tuyu-sheet tuyu-sheet-hover group flex flex-col overflow-hidden rounded-xl"
               >
                 {project.coverImage && (

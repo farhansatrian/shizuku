@@ -57,10 +57,10 @@ export function HomeView({ data }: { data: PortfolioPayload }) {
                 {pick("WORK", "WORK")}
               </Link>
               <Link
-                href="/projects"
+                href="/portfolio"
                 className="font-condensed text-[17px] font-normal tracking-[0.14em] text-[#14100e] uppercase transition hover:text-[#745bc7] sm:text-[19px]"
               >
-                {pick("PROJECT", "PROYEK")}
+                PORTFOLIO
               </Link>
               <Link
                 href="/about"

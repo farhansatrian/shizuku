@@ -51,10 +51,10 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
             WORK
           </Link>
           <Link
-            href="/projects"
+            href="/portfolio"
             className="pb-1 text-[17px] font-normal tracking-[0.14em] text-[#14100e] uppercase transition hover:text-[#745bc7] sm:text-[19px]"
           >
-            {pick("PROJECT", "PROYEK")}
+            PORTFOLIO
           </Link>
           <span className="border-b-[1.5px] border-[#14100e] pb-1 text-[17px] font-medium tracking-[0.14em] text-[#14100e] uppercase sm:text-[19px]">
             {pick("ABOUT", "TENTANG")}

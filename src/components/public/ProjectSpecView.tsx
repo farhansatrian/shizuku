@@ -32,11 +32,11 @@ export function ProjectSpecView({
 
       <main className="relative z-10 mx-auto w-[90%] max-w-[960px] pt-28 pb-24 md:pt-36">
         <Link
-          href="/projects"
+          href="/portfolio"
           className="inline-flex items-center gap-2 font-mono text-xs text-[#745bc7] transition hover:text-[#7650f3]"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          {pick("Back to Projects", "Kembali ke Proyek")}
+          {pick("Back to Portfolio", "Kembali ke Portfolio")}
         </Link>
 
         <div className="mt-6">
@@ -194,7 +194,7 @@ export function ProjectSpecView({
                 {pick("MORE WORKS", "KARYA LAIN")}
               </h2>
               <Link
-                href="/projects"
+                href="/portfolio"
                 className="font-mono text-xs text-[#7650f3] hover:underline"
               >
                 {pick("All →", "Semua →")}
@@ -204,7 +204,7 @@ export function ProjectSpecView({
               {related.map((item) => (
                 <Link
                   key={item.id}
-                  href={`/projects/${item.slug}`}
+                  href={`/portfolio/${item.slug}`}
                   className="tuyu-sheet tuyu-sheet-hover group rounded-2xl p-4"
                 >
                   <span className="font-mono text-[10px] text-[#7650f3] uppercase">

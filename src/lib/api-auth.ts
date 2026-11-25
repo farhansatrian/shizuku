@@ -19,6 +19,7 @@ export function revalidatePublicSite() {
   revalidatePath("/", "layout");
   revalidatePath("/");
   revalidatePath("/workspace");
+  revalidatePath("/portfolio");
   revalidatePath("/projects");
   revalidatePath("/about");
   revalidatePath("/certificates");

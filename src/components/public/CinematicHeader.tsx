@@ -116,7 +116,7 @@ export function CinematicHeader({
   const navItems = [
     { href: "/", en: "HOME", id: "BERANDA" },
     { href: "/workspace", en: "WORK", id: "WORK" },
-    { href: "/projects", en: "PROJECT", id: "PROYEK" },
+    { href: "/portfolio", en: "PORTFOLIO", id: "PORTFOLIO" },
     { href: "/about", en: "ABOUT", id: "TENTANG" },
     {
       href: "/account",

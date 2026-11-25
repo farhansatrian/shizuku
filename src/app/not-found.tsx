@@ -26,10 +26,10 @@ export default function NotFound() {
             Back to Home
           </Link>
           <Link
-            href="/projects"
+            href="/portfolio"
             className="rounded-full border border-[#dfd4f8] bg-white px-5 py-2.5 text-xs font-medium text-[#2c214a] transition hover:border-[#7650f3] hover:text-[#7650f3]"
           >
-            Explore Projects
+            Explore Portfolio
           </Link>
         </div>
       </div>
