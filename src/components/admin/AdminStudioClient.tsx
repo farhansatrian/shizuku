@@ -7,11 +7,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertCircle,
   Award,
-  Briefcase,
   CheckCircle2,
-  Cpu,
   ExternalLink,
-  FolderKanban,
+  FileText,
+  KeyRound,
   LayoutGrid,
   LogOut,
   UserCircle2,
@@ -19,7 +18,6 @@ import {
 import { UmbrellaMark } from "@/components/icons/RainMotifs";
 import { ProfileEditorTab } from "@/components/admin/ProfileEditorTab";
 import { WorkspaceManagerTab } from "@/components/admin/WorkspaceManagerTab";
-import { ProjectsManagerTab } from "@/components/admin/ProjectsManagerTab";
 import { ExperiencesManagerTab } from "@/components/admin/ExperiencesManagerTab";
 import { CertificatesManagerTab } from "@/components/admin/CertificatesManagerTab";
 import { SkillsAndSecurityTab } from "@/components/admin/SkillsAndSecurityTab";
@@ -29,10 +27,9 @@ import type { AdminSessionPayload } from "@/lib/auth";
 type SectionTab =
   | "profile"
   | "workspace"
-  | "projects"
   | "experiences"
   | "certificates"
-  | "skills";
+  | "security";
 
 export function AdminStudioClient({
   initialData,
@@ -45,10 +42,8 @@ export function AdminStudioClient({
   const [activeTab, setActiveTab] = useState<SectionTab>("profile");
   const [profile, setProfile] = useState(initialData.profile);
   const [workspaceApps, setWorkspaceApps] = useState(initialData.workspaceApps);
-  const [projects, setProjects] = useState(initialData.projects);
   const [experiences, setExperiences] = useState(initialData.experiences);
   const [certificates, setCertificates] = useState(initialData.certificates);
-  const [skillGroups, setSkillGroups] = useState(initialData.skillGroups);
   const [toast, setToast] = useState<{
     message: string;
     tone: "ok" | "err";
@@ -85,15 +80,9 @@ export function AdminStudioClient({
       count: workspaceApps.length,
     },
     {
-      id: "projects",
-      label: "Projects",
-      icon: <FolderKanban className="h-3.5 w-3.5" />,
-      count: projects.length,
-    },
-    {
       id: "experiences",
-      label: "Experience",
-      icon: <Briefcase className="h-3.5 w-3.5" />,
+      label: "Portfolio",
+      icon: <FileText className="h-3.5 w-3.5" />,
       count: experiences.length,
     },
     {
@@ -103,10 +92,9 @@ export function AdminStudioClient({
       count: certificates.length,
     },
     {
-      id: "skills",
-      label: "Skills",
-      icon: <Cpu className="h-3.5 w-3.5" />,
-      count: skillGroups.length,
+      id: "security",
+      label: "Security",
+      icon: <KeyRound className="h-3.5 w-3.5" />,
     },
   ];
 
@@ -151,7 +139,7 @@ export function AdminStudioClient({
       </header>
 
       <div className="relative z-10 mx-auto max-w-[960px] px-4 py-6 sm:px-6 md:py-8">
-        {/* Clean Single-Row Sharp Tab Navigation (Zero Sidebar Clutter) */}
+        {/* Clean 5-Tab Bar Matching Live Public Pages 1-to-1 */}
         <nav
           aria-label="Admin sections"
           className="mb-6 flex max-w-full overflow-x-auto border-[1.5px] border-[#745bc7] bg-[#fdf9ff]/95 shadow-[3px_3px_0_0_rgba(116,91,199,0.16)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -163,7 +151,7 @@ export function AdminStudioClient({
                 key={item.id}
                 type="button"
                 onClick={() => setActiveTab(item.id)}
-                className={`flex shrink-0 items-center justify-center gap-1.5 px-3 py-2.5 font-mono text-[11px] font-semibold tracking-[0.06em] uppercase transition md:flex-1 md:px-3.5 ${
+                className={`flex shrink-0 items-center justify-center gap-1.5 px-3.5 py-2.5 font-mono text-[11px] font-semibold tracking-[0.08em] uppercase transition md:flex-1 ${
                   idx > 0 ? "border-l border-[#745bc7]/30" : ""
                 } ${
                   active
@@ -191,7 +179,7 @@ export function AdminStudioClient({
 
         {/* Active Editor Sheet */}
         <main className="vn-frame overflow-hidden">
-          <div className="bg-white/94 p-5 sm:p-7">
+          <div className="bg-white/95 p-5 sm:p-7">
             {activeTab === "profile" && (
               <ProfileEditorTab
                 key={profile.updatedAt}
@@ -205,14 +193,6 @@ export function AdminStudioClient({
               <WorkspaceManagerTab
                 apps={workspaceApps}
                 setApps={setWorkspaceApps}
-                notify={notify}
-              />
-            )}
-
-            {activeTab === "projects" && (
-              <ProjectsManagerTab
-                projects={projects}
-                setProjects={setProjects}
                 notify={notify}
               />
             )}
@@ -233,12 +213,8 @@ export function AdminStudioClient({
               />
             )}
 
-            {activeTab === "skills" && (
-              <SkillsAndSecurityTab
-                skillGroups={skillGroups}
-                setSkillGroups={setSkillGroups}
-                notify={notify}
-              />
+            {activeTab === "security" && (
+              <SkillsAndSecurityTab notify={notify} />
             )}
           </div>
         </main>

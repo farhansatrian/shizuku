@@ -10,7 +10,7 @@ import {
   Loader2,
   Pencil,
   Plus,
-  Star,
+  Save,
   Trash2,
   X,
 } from "lucide-react";
@@ -86,7 +86,10 @@ export function CertificatesManagerTab({
     try {
       const payload = {
         ...editing,
-        titleId: editing.titleId || editing.titleEn,
+        titleEn: editing.titleEn.trim(),
+        titleId: editing.titleId.trim() || editing.titleEn.trim(),
+        issuer: editing.issuer.trim(),
+        issuedDate: editing.issuedDate.trim(),
       };
       const isUpdate = Boolean(editing.id);
       const res = await fetch(
@@ -116,24 +119,25 @@ export function CertificatesManagerTab({
     }
   };
 
-  const quickToggle = async (
-    c: SerializedCertificate,
-    field: "featured" | "published"
-  ) => {
+  const togglePublished = async (c: SerializedCertificate) => {
     try {
       const res = await fetch(`/api/admin/certificates/${c.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [field]: !c[field] }),
+        body: JSON.stringify({ published: !c.published }),
       });
       if (!res.ok) throw new Error();
       const json = await res.json();
       setCertificates((prev) =>
         prev.map((x) => (x.id === c.id ? json.certificate : x))
       );
-      notify("Certificate updated");
+      notify(
+        json.certificate.published
+          ? "Shown on /portfolio"
+          : "Hidden from /portfolio"
+      );
     } catch {
-      notify("Failed to update certificate", "err");
+      notify("Failed to update visibility", "err");
     }
   };
 
@@ -175,130 +179,145 @@ export function CertificatesManagerTab({
         )
       );
       if (responses.some((r) => !r.ok)) throw new Error();
-      notify("Certificate order updated");
+      notify("Order updated");
     } catch {
       setCertificates(previous);
-      notify("Failed to reorder certificates", "err");
+      notify("Failed to reorder", "err");
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* Top Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#745bc7]/20 pb-4">
         <div>
-          <h2 className="font-editorial text-2xl font-semibold text-[#1e172b]">
-            Certificates & Credentials Vault
+          <h2 className="font-editorial text-2xl font-bold tracking-[0.12em] text-[#14100e] uppercase">
+            Certificates
           </h2>
-          <p className="text-xs text-[#645882]">
-            Upload certificate images, verification URLs, and highlight key
-            credentials on Home.
+          <p className="mt-0.5 text-xs text-[#5d5370]">
+            Automatically appears at the bottom of /portfolio once you add a
+            certificate.
           </p>
         </div>
         <button
           type="button"
           onClick={() => setEditing(createEmptyCert(certificates.length + 1))}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[#7650f3] px-5 py-2.5 text-xs font-medium text-white shadow-sm transition hover:bg-[#5e38dc]"
+          className="vn-btn-band px-4 py-2 text-[10px]"
         >
-          <Plus className="h-4 w-4" />
-          Add Certificate
+          <Plus className="h-3.5 w-3.5" />
+          <span>Add Certificate</span>
         </button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {certificates.map((cert, idx) => (
-          <div
-            key={cert.id}
-            className="pastel-glass flex flex-col justify-between gap-4 rounded-3xl p-5"
-          >
-            <div className="flex items-start gap-3.5">
-              {cert.imageUrl ? (
-                <img
-                  src={cert.imageUrl}
-                  alt={cert.titleEn}
-                  className="h-16 w-24 shrink-0 rounded-xl border border-white object-cover"
-                />
-              ) : (
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f3ecff] text-[#7650f3]">
-                  <Award className="h-5 w-5" />
-                </span>
-              )}
-              <div className="min-w-0 flex-1">
-                <span className="font-mono text-[10px] text-[#7650f3] uppercase">
-                  {cert.category} · {cert.issuedDate}
-                </span>
-                <h3 className="mt-0.5 text-sm font-semibold text-[#1e172b]">
-                  {cert.titleEn}
-                </h3>
-                <p className="text-xs text-[#645882]">{cert.issuer}</p>
+      {certificates.length === 0 ? (
+        <div className="border border-dashed border-[#745bc7]/35 bg-[#faf7ff] px-5 py-10 text-center">
+          <Award className="mx-auto h-7 w-7 text-[#745bc7]/60" />
+          <p className="mt-2.5 text-xs font-medium text-[#14100e]">
+            No certificates yet
+          </p>
+          <p className="mt-1 text-xs text-[#5d5370]">
+            The Certificates section stays hidden on /portfolio until you add
+            your first credential here.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {certificates.map((cert, idx) => (
+            <div
+              key={cert.id}
+              className={`flex flex-col gap-3 border border-[#745bc7]/30 bg-[#fdfbff] p-4 transition hover:border-[#745bc7] sm:flex-row sm:items-center ${
+                cert.published ? "" : "opacity-60"
+              }`}
+            >
+              <div className="flex min-w-0 flex-1 items-center gap-3.5">
+                {cert.imageUrl ? (
+                  <img
+                    src={cert.imageUrl}
+                    alt={cert.titleEn}
+                    className="h-12 w-16 shrink-0 border border-[#745bc7]/30 object-cover"
+                  />
+                ) : (
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#745bc7]/30 bg-[#efe9fd] text-[#745bc7]">
+                    <Award className="h-4 w-4" />
+                  </span>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-baseline gap-x-2">
+                    <h3 className="text-sm font-bold text-[#14100e]">
+                      {cert.titleEn}
+                    </h3>
+                    <span className="font-mono text-[11px] text-[#745bc7]">
+                      ({cert.issuedDate})
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#5d5370]">
+                    {cert.issuer} · {cert.category}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => moveOrder(idx, -1)}
+                  disabled={idx === 0}
+                  title="Move up"
+                  className="border border-[#745bc7]/35 bg-white p-1.5 text-[#5d5370] transition hover:border-[#745bc7] hover:text-[#745bc7] disabled:opacity-30"
+                >
+                  <ArrowUp className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveOrder(idx, 1)}
+                  disabled={idx === certificates.length - 1}
+                  title="Move down"
+                  className="border border-[#745bc7]/35 bg-white p-1.5 text-[#5d5370] transition hover:border-[#745bc7] hover:text-[#745bc7] disabled:opacity-30"
+                >
+                  <ArrowDown className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => togglePublished(cert)}
+                  title={
+                    cert.published
+                      ? "Visible on /portfolio"
+                      : "Hidden from /portfolio"
+                  }
+                  className={`border p-1.5 transition ${
+                    cert.published
+                      ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                      : "border-[#745bc7]/35 bg-white text-[#8c7eb0]"
+                  }`}
+                >
+                  {cert.published ? (
+                    <Eye className="h-3.5 w-3.5" />
+                  ) : (
+                    <EyeOff className="h-3.5 w-3.5" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openEdit(cert)}
+                  className="inline-flex items-center gap-1 border border-[#745bc7]/45 bg-white px-2.5 py-1.5 font-mono text-[10.5px] font-semibold text-[#14100e] uppercase transition hover:bg-[#745bc7] hover:text-white"
+                >
+                  <Pencil className="h-3 w-3" />
+                  <span>Edit</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(cert)}
+                  title="Delete"
+                  className="border border-rose-300 bg-rose-50/80 p-1.5 text-rose-600 transition hover:bg-rose-600 hover:text-white"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
               </div>
             </div>
+          ))}
+        </div>
+      )}
 
-            <div className="flex items-center justify-end gap-1.5 border-t border-[#ece5fc] pt-3">
-              <button
-                type="button"
-                onClick={() => moveOrder(idx, -1)}
-                disabled={idx === 0}
-                title="Move earlier"
-                className="rounded-xl border border-[#dfd4f8] bg-white p-2 text-[#5f4f85] disabled:opacity-30"
-              >
-                <ArrowUp className="h-3.5 w-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => moveOrder(idx, 1)}
-                disabled={idx === certificates.length - 1}
-                title="Move later"
-                className="rounded-xl border border-[#dfd4f8] bg-white p-2 text-[#5f4f85] disabled:opacity-30"
-              >
-                <ArrowDown className="h-3.5 w-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => quickToggle(cert, "featured")}
-                title="Featured on Home"
-                className={`rounded-xl border p-2 ${
-                  cert.featured
-                    ? "border-amber-300 bg-amber-50 text-amber-600"
-                    : "border-[#dfd4f8] bg-white text-[#8c7eb0]"
-                }`}
-              >
-                <Star className="h-3.5 w-3.5 fill-current" />
-              </button>
-              <button
-                type="button"
-                onClick={() => quickToggle(cert, "published")}
-                title="Published"
-                className={`rounded-xl border p-2 ${
-                  cert.published
-                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                    : "border-[#dfd4f8] bg-white text-[#8c7eb0]"
-                }`}
-              >
-                {cert.published ? (
-                  <Eye className="h-3.5 w-3.5" />
-                ) : (
-                  <EyeOff className="h-3.5 w-3.5" />
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => openEdit(cert)}
-                className="inline-flex items-center gap-1 rounded-xl border border-[#dfd4f8] bg-white px-3 py-2 text-xs font-medium text-[#2c214a] hover:border-[#7650f3] hover:text-[#7650f3]"
-              >
-                <Pencil className="h-3.5 w-3.5" /> Edit
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDelete(cert)}
-                className="rounded-xl border border-rose-200 bg-rose-50/70 p-2 text-rose-600 hover:bg-rose-100"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
+      {/* Clean Sharp Add / Edit Modal */}
       {editing && (
         <div
           onClick={() => setEditing(null)}
@@ -307,24 +326,25 @@ export function CertificatesManagerTab({
           <form
             onSubmit={handleSave}
             onClick={(e) => e.stopPropagation()}
-            className="flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-[2rem] border border-[#dfd4f8] bg-[#faf7ff] shadow-2xl"
+            className="vn-frame flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden"
           >
-            <div className="flex items-center justify-between border-b border-[#e7dffb] bg-white px-6 py-4">
-              <h3 className="font-editorial text-xl font-semibold text-[#1e172b]">
+            <div className="vn-band-strip flex items-center justify-between px-5 py-3 text-white">
+              <h3 className="font-mono text-xs font-semibold tracking-[0.16em] uppercase drop-shadow-2xs">
                 {editing.id ? "Edit Certificate" : "Add Certificate"}
               </h3>
               <button
                 type="button"
                 onClick={() => setEditing(null)}
-                className="rounded-full border border-[#dfd4f8] bg-white p-1.5"
+                className="border border-white/55 bg-white/15 p-1 text-white transition hover:bg-white/30"
+                aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="flex-1 space-y-4 overflow-y-auto p-6">
+            <div className="flex-1 space-y-4 overflow-y-auto bg-[#fdfbff] p-5 sm:p-6">
               <div>
-                <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
+                <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
                   Certificate Title (EN)
                 </label>
                 <input
@@ -334,12 +354,13 @@ export function CertificatesManagerTab({
                   onChange={(e) =>
                     setEditing({ ...editing, titleEn: e.target.value })
                   }
-                  className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 text-sm outline-none focus:border-[#7650f3]"
+                  placeholder="e.g. AWS Certified Cloud Practitioner"
+                  className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 text-sm outline-none focus:border-[#745bc7]"
                 />
               </div>
 
               <div>
-                <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
+                <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
                   Certificate Title (ID — optional)
                 </label>
                 <input
@@ -349,13 +370,13 @@ export function CertificatesManagerTab({
                     setEditing({ ...editing, titleId: e.target.value })
                   }
                   placeholder="Defaults to English title if empty"
-                  className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 text-sm outline-none focus:border-[#7650f3]"
+                  className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 text-sm outline-none focus:border-[#745bc7]"
                 />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
+                  <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
                     Issuing Organization
                   </label>
                   <input
@@ -365,33 +386,12 @@ export function CertificatesManagerTab({
                     onChange={(e) =>
                       setEditing({ ...editing, issuer: e.target.value })
                     }
-                    className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 text-xs outline-none focus:border-[#7650f3]"
+                    placeholder="e.g. Amazon Web Services"
+                    className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 text-sm outline-none focus:border-[#745bc7]"
                   />
                 </div>
                 <div>
-                  <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
-                    Category
-                  </label>
-                  <select
-                    value={editing.category}
-                    onChange={(e) =>
-                      setEditing({ ...editing, category: e.target.value })
-                    }
-                    className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3 py-2 text-xs"
-                  >
-                    <option value="BANKING & LEADERSHIP">
-                      BANKING & LEADERSHIP
-                    </option>
-                    <option value="SOFTWARE ENG">SOFTWARE ENG</option>
-                    <option value="AI & DATA">AI & DATA</option>
-                    <option value="CLOUD & DEVOPS">CLOUD & DEVOPS</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
+                  <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
                     Issued Date
                   </label>
                   <input
@@ -402,11 +402,33 @@ export function CertificatesManagerTab({
                     onChange={(e) =>
                       setEditing({ ...editing, issuedDate: e.target.value })
                     }
-                    className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 font-mono text-xs outline-none focus:border-[#7650f3]"
+                    className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 font-mono text-xs outline-none focus:border-[#745bc7]"
                   />
                 </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
+                  <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
+                    Category
+                  </label>
+                  <select
+                    value={editing.category}
+                    onChange={(e) =>
+                      setEditing({ ...editing, category: e.target.value })
+                    }
+                    className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 text-xs outline-none focus:border-[#745bc7]"
+                  >
+                    <option value="SOFTWARE ENG">SOFTWARE ENG</option>
+                    <option value="BANKING & LEADERSHIP">
+                      BANKING &amp; LEADERSHIP
+                    </option>
+                    <option value="AI & DATA">AI &amp; DATA</option>
+                    <option value="CLOUD & DEVOPS">CLOUD &amp; DEVOPS</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
                     Credential ID (optional)
                   </label>
                   <input
@@ -415,13 +437,13 @@ export function CertificatesManagerTab({
                     onChange={(e) =>
                       setEditing({ ...editing, credentialId: e.target.value })
                     }
-                    className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 font-mono text-xs outline-none focus:border-[#7650f3]"
+                    className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 font-mono text-xs outline-none focus:border-[#745bc7]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
+                <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
                   Verification URL (optional)
                 </label>
                 <input
@@ -431,58 +453,49 @@ export function CertificatesManagerTab({
                     setEditing({ ...editing, credentialUrl: e.target.value })
                   }
                   placeholder="https://..."
-                  className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 text-xs outline-none focus:border-[#7650f3]"
+                  className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 text-xs outline-none focus:border-[#745bc7]"
                 />
               </div>
 
               <MediaUploader
-                label="Certificate Image (optional — uploaded persistently)"
+                label="Certificate Image (optional)"
                 value={editing.imageUrl}
                 onChange={(url) => setEditing({ ...editing, imageUrl: url })}
                 allowClear
               />
 
-              <div className="flex flex-wrap gap-5 pt-1 text-xs text-[#4a3f66]">
-                <label className="inline-flex cursor-pointer items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={editing.featured}
-                    onChange={(e) =>
-                      setEditing({ ...editing, featured: e.target.checked })
-                    }
-                    className="h-4 w-4 accent-[#7650f3]"
-                  />
-                  Featured on Home
-                </label>
-                <label className="inline-flex cursor-pointer items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={editing.published}
-                    onChange={(e) =>
-                      setEditing({ ...editing, published: e.target.checked })
-                    }
-                    className="h-4 w-4 accent-[#7650f3]"
-                  />
-                  Published
-                </label>
-              </div>
+              <label className="inline-flex cursor-pointer items-center gap-2 text-xs text-[#3b3150]">
+                <input
+                  type="checkbox"
+                  checked={editing.published}
+                  onChange={(e) =>
+                    setEditing({ ...editing, published: e.target.checked })
+                  }
+                  className="h-4 w-4 accent-[#745bc7]"
+                />
+                Show on public /portfolio page
+              </label>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 border-t border-[#e7dffb] bg-white px-6 py-4">
+            <div className="flex items-center justify-end gap-2.5 border-t border-[#745bc7]/20 bg-white px-5 py-3.5">
               <button
                 type="button"
                 onClick={() => setEditing(null)}
-                className="rounded-full border border-[#dfd4f8] px-4 py-2 text-xs text-[#5f4f85]"
+                className="vn-btn-action px-4 py-2 text-[10px]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#7650f3] px-5 py-2 text-xs font-medium text-white hover:bg-[#5e38dc] disabled:opacity-60"
+                className="vn-btn-band px-4 py-2 text-[10px] disabled:opacity-60"
               >
-                {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                Save Certificate
+                {saving ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Save className="h-3.5 w-3.5" />
+                )}
+                <span>Save Certificate</span>
               </button>
             </div>
           </form>

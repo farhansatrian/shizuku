@@ -1,54 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   ArrowDown,
   ArrowUp,
-  Award,
-  Bot,
-  Code2,
+  ExternalLink,
   Eye,
   EyeOff,
-  ExternalLink,
-  FolderKanban,
-  Globe,
   Loader2,
   Pencil,
   Plus,
-  Settings,
-  Sparkles,
-  Terminal,
+  Save,
   Trash2,
-  User,
-  Wallet,
   X,
 } from "lucide-react";
 import type { SerializedWorkspaceApp } from "@/lib/types";
-
-function renderWorkspaceIcon(icon: string, className = "h-4 w-4") {
-  switch (icon) {
-    case "bot":
-      return <Bot className={className} />;
-    case "wallet":
-      return <Wallet className={className} />;
-    case "folder":
-      return <FolderKanban className={className} />;
-    case "award":
-      return <Award className={className} />;
-    case "user":
-      return <User className={className} />;
-    case "settings":
-      return <Settings className={className} />;
-    case "globe":
-      return <Globe className={className} />;
-    case "code":
-      return <Code2 className={className} />;
-    case "terminal":
-      return <Terminal className={className} />;
-    default:
-      return <Sparkles className={className} />;
-  }
-}
 
 interface WorkspaceDraft {
   id?: string;
@@ -64,28 +31,15 @@ interface WorkspaceDraft {
   sortOrder: number;
 }
 
-const ICON_OPTIONS = [
-  "bot",
-  "wallet",
-  "folder",
-  "user",
-  "award",
-  "settings",
-  "globe",
-  "code",
-  "terminal",
-  "sparkles",
-] as const;
-
 function createEmptyApp(nextOrder: number): WorkspaceDraft {
   return {
     name: "",
     category: "APP",
     descriptionEn: "",
     descriptionId: "",
-    url: "",
+    url: "https://",
     icon: "globe",
-    badge: "DAILY",
+    badge: "APP",
     isExternal: true,
     published: true,
     sortOrder: nextOrder,
@@ -108,7 +62,7 @@ export function WorkspaceManagerTab({
     setEditing({
       id: a.id,
       name: a.name,
-      category: (a.category as WorkspaceDraft["category"]) || "APP",
+      category: a.category as WorkspaceDraft["category"],
       descriptionEn: a.descriptionEn,
       descriptionId: a.descriptionId,
       url: a.url,
@@ -127,14 +81,16 @@ export function WorkspaceManagerTab({
     try {
       const payload = {
         ...editing,
+        name: editing.name.trim(),
+        badge: editing.badge.trim().toUpperCase(),
+        url: editing.url.trim(),
+        descriptionEn: editing.descriptionEn.trim(),
         descriptionId:
           editing.descriptionId.trim() || editing.descriptionEn.trim(),
       };
       const isUpdate = Boolean(editing.id);
       const res = await fetch(
-        isUpdate
-          ? `/api/admin/workspace/${editing.id}`
-          : "/api/admin/workspace",
+        isUpdate ? `/api/admin/workspace/${editing.id}` : "/api/admin/workspace",
         {
           method: isUpdate ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
@@ -142,8 +98,7 @@ export function WorkspaceManagerTab({
         }
       );
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Save failed");
-
+      if (!res.ok) throw new Error(json.error || "Failed to save work item");
       const saved: SerializedWorkspaceApp = json.workspaceApp;
       setApps((prev) =>
         isUpdate
@@ -151,11 +106,7 @@ export function WorkspaceManagerTab({
           : [...prev, saved]
       );
       setEditing(null);
-      notify(
-        isUpdate
-          ? `Updated "${saved.name}" in Workspace!`
-          : `Added "${saved.name}" to Workspace!`
-      );
+      notify(isUpdate ? `Updated "${saved.name}"` : `Added "${saved.name}"!`);
     } catch (err) {
       notify(err instanceof Error ? err.message : "Save failed", "err");
     } finally {
@@ -175,14 +126,18 @@ export function WorkspaceManagerTab({
       setApps((prev) =>
         prev.map((x) => (x.id === a.id ? json.workspaceApp : x))
       );
-      notify(`Updated visibility for "${a.name}"`);
+      notify(
+        json.workspaceApp.published
+          ? `Shown "${a.name}" on /workspace`
+          : `Hidden "${a.name}"`
+      );
     } catch {
       notify("Failed to update visibility", "err");
     }
   };
 
   const handleDelete = async (a: SerializedWorkspaceApp) => {
-    if (!window.confirm(`Remove "${a.name}" from Workspace launcher?`)) return;
+    if (!window.confirm(`Remove "${a.name}" from Work (/workspace)?`)) return;
     try {
       const res = await fetch(`/api/admin/workspace/${a.id}`, {
         method: "DELETE",
@@ -191,7 +146,7 @@ export function WorkspaceManagerTab({
       setApps((prev) => prev.filter((x) => x.id !== a.id));
       notify(`Removed "${a.name}"`);
     } catch {
-      notify("Failed to delete workspace app", "err");
+      notify("Failed to delete item", "err");
     }
   };
 
@@ -219,136 +174,150 @@ export function WorkspaceManagerTab({
         )
       );
       if (responses.some((r) => !r.ok)) throw new Error();
-      notify("Workspace order updated");
+      notify("Order updated");
     } catch {
       setApps(previous);
-      notify("Failed to reorder workspace apps", "err");
+      notify("Failed to reorder", "err");
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* Top Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#745bc7]/20 pb-4">
         <div>
-          <h2 className="font-editorial text-2xl font-semibold text-[#1e172b]">
+          <h2 className="font-editorial text-2xl font-bold tracking-[0.12em] text-[#14100e] uppercase">
             Work &amp; Ecosystem Apps
           </h2>
-          <p className="text-xs text-[#645882]">
-            Manage the apps shown on your Work (/workspace) page — add, edit,
-            reorder, or remove entries anytime.
+          <p className="mt-0.5 text-xs text-[#5d5370]">
+            Manage the ecosystem apps displayed on /workspace — add, edit,
+            reorder, or remove anytime.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setEditing(createEmptyApp(apps.length + 1))}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[#7650f3] px-5 py-2.5 text-xs font-medium text-white shadow-sm transition hover:bg-[#5e38dc]"
-        >
-          <Plus className="h-4 w-4" />
-          Add App / Shortcut
-        </button>
-      </div>
-
-      <div className="space-y-3">
-        {apps.map((app, idx) => (
-          <div
-            key={app.id}
-            className="pastel-glass flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center"
+        <div className="flex items-center gap-2">
+          <Link
+            href="/workspace"
+            target="_blank"
+            className="vn-btn-action px-3.5 py-2 text-[10px]"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e5dcfb] text-[#7650f3]">
-              {renderWorkspaceIcon(app.icon, "h-4 w-4")}
-            </span>
-
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-sm font-semibold text-[#14100e]">
-                  {app.name}
-                </h3>
-                <span className="rounded-full bg-[#f4effd] px-2 py-0.5 font-mono text-[10px] text-[#7650f3]">
-                  {app.category}
-                </span>
-                {app.badge && (
-                  <span className="rounded-full border border-[#dfd4f8] bg-white px-2 py-0.5 font-mono text-[10px] text-[#5c526e]">
-                    {app.badge}
-                  </span>
-                )}
-                {!app.published && (
-                  <span className="rounded-full bg-amber-100 px-2 py-0.5 font-mono text-[10px] text-amber-800">
-                    HIDDEN
-                  </span>
-                )}
-              </div>
-              <p className="mt-0.5 truncate text-xs text-[#5c526e]">
-                {app.descriptionEn}
-              </p>
-              <p className="mt-0.5 truncate font-mono text-[10px] text-[#7c6e9c]">
-                {app.url} {app.isExternal ? "(external)" : "(internal)"}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => moveOrder(idx, -1)}
-                disabled={idx === 0}
-                title="Move up"
-                className="rounded-xl border border-[#dfd4f8] bg-white p-2 text-[#5f4f85] disabled:opacity-30"
-              >
-                <ArrowUp className="h-3.5 w-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => moveOrder(idx, 1)}
-                disabled={idx === apps.length - 1}
-                title="Move down"
-                className="rounded-xl border border-[#dfd4f8] bg-white p-2 text-[#5f4f85] disabled:opacity-30"
-              >
-                <ArrowDown className="h-3.5 w-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => togglePublished(app)}
-                title="Toggle visibility"
-                className={`rounded-xl border p-2 ${
-                  app.published
-                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                    : "border-[#dfd4f8] bg-white text-[#8c7eb0]"
-                }`}
-              >
-                {app.published ? (
-                  <Eye className="h-3.5 w-3.5" />
-                ) : (
-                  <EyeOff className="h-3.5 w-3.5" />
-                )}
-              </button>
-              <a
-                href={app.url}
-                target={app.isExternal ? "_blank" : undefined}
-                rel={app.isExternal ? "noreferrer" : undefined}
-                title="Open link"
-                className="rounded-xl border border-[#dfd4f8] bg-white p-2 text-[#5f4f85] hover:border-[#7650f3] hover:text-[#7650f3]"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-              <button
-                type="button"
-                onClick={() => openEdit(app)}
-                className="inline-flex items-center gap-1 rounded-xl border border-[#dfd4f8] bg-white px-3 py-2 text-xs font-medium text-[#2c214a] hover:border-[#7650f3] hover:text-[#7650f3]"
-              >
-                <Pencil className="h-3.5 w-3.5" /> Edit
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDelete(app)}
-                title="Delete"
-                className="rounded-xl border border-rose-200 bg-rose-50/70 p-2 text-rose-600 hover:bg-rose-100"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
-        ))}
+            <span>Preview /workspace</span>
+            <ExternalLink className="h-3 w-3" />
+          </Link>
+          <button
+            type="button"
+            onClick={() => setEditing(createEmptyApp(apps.length + 1))}
+            className="vn-btn-band px-4 py-2 text-[10px]"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            <span>Add Work App</span>
+          </button>
+        </div>
       </div>
 
+      {/* Sharp Card List */}
+      {apps.length === 0 ? (
+        <div className="border border-dashed border-[#745bc7]/35 bg-[#faf7ff] px-5 py-10 text-center text-xs text-[#5d5370]">
+          No ecosystem works yet. Click &ldquo;Add Work App&rdquo; to publish
+          your first app on /workspace.
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {apps.map((app, idx) => (
+            <div
+              key={app.id}
+              className={`flex flex-col gap-3 border border-[#745bc7]/30 bg-[#fdfbff] p-4 transition hover:border-[#745bc7] sm:flex-row sm:items-center ${
+                app.published ? "" : "opacity-60"
+              }`}
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[10.5px] font-bold text-[#745bc7]">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="font-editorial text-base font-bold tracking-[0.1em] text-[#14100e] uppercase">
+                    {app.name}
+                  </h3>
+                  {app.badge && (
+                    <span className="border border-[#745bc7]/45 bg-[#efe9fd] px-1.5 py-0.5 font-mono text-[9.5px] font-semibold text-[#745bc7] uppercase">
+                      {app.badge}
+                    </span>
+                  )}
+                  {!app.published && (
+                    <span className="bg-amber-100 px-1.5 py-0.5 font-mono text-[9.5px] font-semibold text-amber-800 uppercase">
+                      HIDDEN
+                    </span>
+                  )}
+                </div>
+                <p className="mt-1 text-xs text-[#5d5370]">
+                  {app.descriptionEn}
+                </p>
+                <p className="mt-0.5 truncate font-mono text-[10.5px] text-[#7b6f94]">
+                  {app.url} {app.isExternal ? "(new tab)" : "(internal)"}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 flex-wrap items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => moveOrder(idx, -1)}
+                  disabled={idx === 0}
+                  title="Move up"
+                  className="border border-[#745bc7]/35 bg-white p-1.5 text-[#5d5370] transition hover:border-[#745bc7] hover:text-[#745bc7] disabled:opacity-30"
+                >
+                  <ArrowUp className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveOrder(idx, 1)}
+                  disabled={idx === apps.length - 1}
+                  title="Move down"
+                  className="border border-[#745bc7]/35 bg-white p-1.5 text-[#5d5370] transition hover:border-[#745bc7] hover:text-[#745bc7] disabled:opacity-30"
+                >
+                  <ArrowDown className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => togglePublished(app)}
+                  title={
+                    app.published
+                      ? "Visible on /workspace"
+                      : "Hidden from /workspace"
+                  }
+                  className={`border p-1.5 transition ${
+                    app.published
+                      ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                      : "border-[#745bc7]/35 bg-white text-[#8c7eb0]"
+                  }`}
+                >
+                  {app.published ? (
+                    <Eye className="h-3.5 w-3.5" />
+                  ) : (
+                    <EyeOff className="h-3.5 w-3.5" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openEdit(app)}
+                  className="inline-flex items-center gap-1 border border-[#745bc7]/45 bg-white px-2.5 py-1.5 font-mono text-[10.5px] font-semibold text-[#14100e] uppercase transition hover:bg-[#745bc7] hover:text-white"
+                >
+                  <Pencil className="h-3 w-3" />
+                  <span>Edit</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(app)}
+                  title="Delete"
+                  className="border border-rose-300 bg-rose-50/80 p-1.5 text-rose-600 transition hover:bg-rose-600 hover:text-white"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Clean Minimal Add / Edit Modal (Only Active Fields Shown on /workspace) */}
       {editing && (
         <div
           onClick={() => setEditing(null)}
@@ -357,25 +326,26 @@ export function WorkspaceManagerTab({
           <form
             onSubmit={handleSave}
             onClick={(e) => e.stopPropagation()}
-            className="flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-3xl border border-[#dfd4f8] bg-[#faf7ff] shadow-2xl"
+            className="vn-frame flex max-h-[90vh] w-full max-w-xl flex-col overflow-hidden"
           >
-            <div className="flex items-center justify-between border-b border-[#e7dffb] bg-white px-6 py-4">
-              <h3 className="font-editorial text-xl font-semibold text-[#1e172b]">
-                {editing.id ? "Edit Workspace App" : "Add Workspace App"}
+            <div className="vn-band-strip flex items-center justify-between px-5 py-3 text-white">
+              <h3 className="font-mono text-xs font-semibold tracking-[0.16em] uppercase drop-shadow-2xs">
+                {editing.id ? "Edit Work App" : "Add Work App"}
               </h3>
               <button
                 type="button"
                 onClick={() => setEditing(null)}
-                className="rounded-full border border-[#dfd4f8] bg-white p-1.5"
+                className="border border-white/55 bg-white/15 p-1 text-white transition hover:bg-white/30"
+                aria-label="Close modal"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="flex-1 space-y-4 overflow-y-auto p-6">
-              <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex-1 space-y-4 overflow-y-auto bg-[#fdfbff] p-5 sm:p-6">
+              <div className="grid gap-4 sm:grid-cols-[1fr_140px]">
                 <div>
-                  <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
+                  <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
                     App Name
                   </label>
                   <input
@@ -385,56 +355,13 @@ export function WorkspaceManagerTab({
                     onChange={(e) =>
                       setEditing({ ...editing, name: e.target.value })
                     }
-                    placeholder="e.g. KostKas / Agent Hub"
-                    className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 text-sm outline-none focus:border-[#7650f3]"
+                    placeholder="e.g. SHIKAS / SHIKOST"
+                    className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 text-sm outline-none focus:border-[#745bc7]"
                   />
                 </div>
                 <div>
-                  <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
-                    Category
-                  </label>
-                  <select
-                    value={editing.category}
-                    onChange={(e) =>
-                      setEditing({
-                        ...editing,
-                        category: e.target.value as WorkspaceDraft["category"],
-                      })
-                    }
-                    className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3 py-2 text-xs"
-                  >
-                    <option value="AGENT">AGENT</option>
-                    <option value="APP">APP</option>
-                    <option value="INTERNAL">INTERNAL</option>
-                    <option value="BOOKMARK">BOOKMARK</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-[1fr_140px]">
-                <div>
-                  <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
-                    Target URL (internal /path or https://...)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={editing.url}
-                    onChange={(e) => {
-                      const nextUrl = e.target.value;
-                      setEditing({
-                        ...editing,
-                        url: nextUrl,
-                        isExternal: nextUrl.startsWith("http"),
-                      });
-                    }}
-                    placeholder="/workspace or https://..."
-                    className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 font-mono text-xs outline-none focus:border-[#7650f3]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
-                    Short Badge
+                  <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
+                    Badge Label
                   </label>
                   <input
                     type="text"
@@ -442,38 +369,37 @@ export function WorkspaceManagerTab({
                     onChange={(e) =>
                       setEditing({ ...editing, badge: e.target.value })
                     }
-                    placeholder="APP / SOON"
-                    className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3 py-2 font-mono text-xs uppercase outline-none focus:border-[#7650f3]"
+                    placeholder="HUB / FINANCE"
+                    className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 font-mono text-xs uppercase outline-none focus:border-[#745bc7]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
-                  Icon
+                <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
+                  Target URL (https://... or internal /path)
                 </label>
-                <div className="mt-1.5 flex flex-wrap gap-2">
-                  {ICON_OPTIONS.map((ic) => (
-                    <button
-                      key={ic}
-                      type="button"
-                      onClick={() => setEditing({ ...editing, icon: ic })}
-                      className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 font-mono text-[11px] transition ${
-                        editing.icon === ic
-                          ? "border-[#7650f3] bg-[#7650f3] text-white"
-                          : "border-[#dfd4f8] bg-white text-[#5c526e] hover:border-[#7650f3]"
-                      }`}
-                    >
-                      {renderWorkspaceIcon(ic, "h-3.5 w-3.5")}
-                      <span>{ic}</span>
-                    </button>
-                  ))}
-                </div>
+                <input
+                  type="text"
+                  required
+                  value={editing.url}
+                  onChange={(e) => {
+                    const nextUrl = e.target.value;
+                    setEditing({
+                      ...editing,
+                      url: nextUrl,
+                      isExternal: nextUrl.startsWith("http"),
+                      category: nextUrl.startsWith("http") ? "APP" : "INTERNAL",
+                    });
+                  }}
+                  placeholder="https://shikas.yourdomain.dev"
+                  className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 font-mono text-xs outline-none focus:border-[#745bc7]"
+                />
               </div>
 
               <div>
-                <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
-                  Description (EN)
+                <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
+                  Short Description (EN)
                 </label>
                 <input
                   type="text"
@@ -482,13 +408,14 @@ export function WorkspaceManagerTab({
                   onChange={(e) =>
                     setEditing({ ...editing, descriptionEn: e.target.value })
                   }
-                  className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 text-xs outline-none focus:border-[#7650f3]"
+                  placeholder="1-line summary shown on the Work card"
+                  className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 text-sm outline-none focus:border-[#745bc7]"
                 />
               </div>
 
               <div>
-                <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
-                  Description (ID — optional)
+                <label className="block font-mono text-[10px] tracking-[0.14em] text-[#5d5370] uppercase">
+                  Short Description (ID — optional)
                 </label>
                 <input
                   type="text"
@@ -497,11 +424,11 @@ export function WorkspaceManagerTab({
                     setEditing({ ...editing, descriptionId: e.target.value })
                   }
                   placeholder="Defaults to English if left blank"
-                  className="mt-1 w-full rounded-xl border border-[#dfd4f8] bg-white px-3.5 py-2 text-xs outline-none focus:border-[#7650f3]"
+                  className="mt-1 w-full border border-[#745bc7]/40 bg-white px-3 py-2 text-sm outline-none focus:border-[#745bc7]"
                 />
               </div>
 
-              <div className="flex flex-wrap gap-5 pt-1 text-xs text-[#4a3f66]">
+              <div className="flex flex-wrap gap-5 pt-1 text-xs text-[#3b3150]">
                 <label className="inline-flex cursor-pointer items-center gap-2">
                   <input
                     type="checkbox"
@@ -509,9 +436,9 @@ export function WorkspaceManagerTab({
                     onChange={(e) =>
                       setEditing({ ...editing, isExternal: e.target.checked })
                     }
-                    className="h-4 w-4 accent-[#7650f3]"
+                    className="h-4 w-4 accent-[#745bc7]"
                   />
-                  Open in new tab (External)
+                  Open in new tab
                 </label>
                 <label className="inline-flex cursor-pointer items-center gap-2">
                   <input
@@ -520,28 +447,32 @@ export function WorkspaceManagerTab({
                     onChange={(e) =>
                       setEditing({ ...editing, published: e.target.checked })
                     }
-                    className="h-4 w-4 accent-[#7650f3]"
+                    className="h-4 w-4 accent-[#745bc7]"
                   />
-                  Published on Home & Workspace
+                  Show on /workspace
                 </label>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2.5 border-t border-[#e7dffb] bg-white px-6 py-4">
+            <div className="flex items-center justify-end gap-2.5 border-t border-[#745bc7]/20 bg-white px-5 py-3.5">
               <button
                 type="button"
                 onClick={() => setEditing(null)}
-                className="rounded-full border border-[#dfd4f8] px-4 py-2 text-xs text-[#5f4f85]"
+                className="vn-btn-action px-4 py-2 text-[10px]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#7650f3] px-5 py-2 text-xs font-medium text-white hover:bg-[#5e38dc] disabled:opacity-60"
+                className="vn-btn-band px-4 py-2 text-[10px] disabled:opacity-60"
               >
-                {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                Save App
+                {saving ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Save className="h-3.5 w-3.5" />
+                )}
+                <span>Save App</span>
               </button>
             </div>
           </form>
