@@ -8,12 +8,40 @@ import { TuyuRainLayer } from "@/components/public/TuyuRainLayer";
 import { Footer } from "@/components/public/Footer";
 import { CertificateModal } from "@/components/public/CertificateModal";
 import { useLocale } from "@/components/providers/LocaleProvider";
-import type { PortfolioPayload, SerializedCertificate } from "@/lib/types";
+import type {
+  PortfolioPayload,
+  SerializedCertificate,
+  SerializedExperience,
+} from "@/lib/types";
 
-function Pipe() {
+function DividerPipe() {
+  return <span className="mx-1.5 text-[#14100e]/30 select-none">|</span>;
+}
+
+function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <span className="mx-2 font-normal text-[#14100e]/35 select-none">|</span>
+    <h2 className="border-b border-[#14100e]/28 pb-1.5 text-[16px] font-bold tracking-[0.01em] text-[#14100e] sm:text-[17px]">
+      {children}
+    </h2>
   );
+}
+
+interface OrgGroup {
+  organization: string;
+  entries: SerializedExperience[];
+}
+
+function groupByOrganization(items: SerializedExperience[]): OrgGroup[] {
+  const groups: OrgGroup[] = [];
+  for (const item of items) {
+    const last = groups[groups.length - 1];
+    if (last && last.organization === item.organization) {
+      last.entries.push(item);
+    } else {
+      groups.push({ organization: item.organization, entries: [item] });
+    }
+  }
+  return groups;
 }
 
 export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
@@ -22,20 +50,36 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
   const [selectedCert, setSelectedCert] =
     useState<SerializedCertificate | null>(null);
 
-  const contactLinks = [
+  const educationList = experiences.filter((e) => e.kind === "EDUCATION");
+  const workList = experiences.filter((e) => e.kind === "WORK");
+  const orgGroups = groupByOrganization(
+    experiences.filter((e) => e.kind === "ORGANIZATION")
+  );
+
+  const contactItems = [
+    profile.email
+      ? { label: profile.email, href: `mailto:${profile.email}`, external: false }
+      : null,
+    profile.location ? { label: profile.location, href: null, external: false } : null,
     profile.linkedinUrl
       ? { label: "LinkedIn", href: profile.linkedinUrl, external: true }
       : null,
     profile.githubUrl
       ? { label: "GitHub", href: profile.githubUrl, external: true }
       : null,
-    profile.email
-      ? { label: profile.email, href: `mailto:${profile.email}`, external: false }
-      : null,
     profile.resumeUrl
       ? { label: pick("Resume", "CV"), href: profile.resumeUrl, external: true }
       : null,
-  ].filter(Boolean) as { label: string; href: string; external: boolean }[];
+  ].filter(Boolean) as {
+    label: string;
+    href: string | null;
+    external: boolean;
+  }[];
+
+  const getBullets = (exp: SerializedExperience) =>
+    locale === "id" && exp.bullets.id.length > 0
+      ? exp.bullets.id
+      : exp.bullets.en;
 
   return (
     <div className="relative flex min-h-screen flex-col text-[#14100e]">
@@ -44,11 +88,11 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
       <TuyuRainLayer behindContent />
       <CinematicHeader profile={profile} />
 
-      <main className="font-condensed relative z-10 mx-auto w-[90%] max-w-[780px] flex-1 pt-28 pb-24 md:pt-34 md:pb-28">
+      <main className="relative z-10 mx-auto w-[92%] max-w-[820px] flex-1 pt-28 pb-24 md:pt-34 md:pb-28">
         {/* Minimal Centered Navigation (HOME · WORK · PORTFOLIO · ABOUT) */}
         <nav
           aria-label="Section navigation"
-          className="flex items-center justify-center gap-7 sm:gap-11 md:gap-14"
+          className="font-condensed flex items-center justify-center gap-7 sm:gap-11 md:gap-14"
         >
           <Link
             href="/"
@@ -73,175 +117,282 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
           </Link>
         </nav>
 
-        {/* Clean Crisp Paper Frame for Comfortable Reading over Watercolor */}
-        <div className="vn-frame mt-10 overflow-hidden md:mt-12">
+        {/* Clean CV Paper Sheet inside SHIZUKU / SHIKAS Double-Border Frame */}
+        <article className="vn-frame mt-10 overflow-hidden md:mt-12">
           <div className="vn-band-strip flex flex-wrap items-center justify-between gap-2 px-5 py-2 text-white">
             <span className="font-mono text-[10px] font-semibold tracking-[0.2em] uppercase drop-shadow-2xs">
-              {"PORTFOLIO // PROFILE & WORKS"}
+              {"PORTFOLIO // CURRICULUM VITAE"}
             </span>
             <span className="font-mono text-[10px] tracking-[0.14em] uppercase drop-shadow-2xs">
               {profile.location}
             </span>
           </div>
 
-          <div className="bg-white/92 px-6 py-9 sm:px-10 sm:py-12">
-            {/* 1. Personal Profile Header */}
-            <header className="text-center">
-              <h1 className="text-[30px] font-semibold leading-tight tracking-[0.08em] text-[#14100e] uppercase sm:text-[36px]">
+          <div className="bg-white/96 px-6 py-8 font-sans text-[#1b1726] sm:px-11 sm:py-11">
+            {/* 1. CV Header & General Bio */}
+            <header>
+              <h1 className="text-[24px] font-bold tracking-[0.03em] text-[#14100e] uppercase sm:text-[28px]">
                 {profile.fullName}
               </h1>
-              <p className="mt-2 text-[17px] tracking-[0.04em] text-[#745bc7] sm:text-[19px]">
-                {pick(profile.currentRoleEn, profile.currentRoleId)}
-                <Pipe />
-                {profile.currentOrg}
-              </p>
 
-              <p className="mx-auto mt-5 max-w-[580px] text-[17px] leading-[1.72] tracking-[0.02em] text-[#14100e]/88 sm:text-[18.5px]">
-                {pick(profile.bioEn, profile.bioId)}
-              </p>
+              {(profile.currentRoleEn || profile.currentOrg) && (
+                <p className="mt-1 text-[13.5px] font-medium text-[#5f47a8] sm:text-[14px]">
+                  {pick(profile.currentRoleEn, profile.currentRoleId)}
+                  {profile.currentOrg ? ` · ${profile.currentOrg}` : ""}
+                </p>
+              )}
 
-              {contactLinks.length > 0 && (
-                <div className="mt-6 flex flex-wrap items-center justify-center text-[15px] tracking-[0.08em] text-[#14100e]/80 uppercase sm:text-[16px]">
-                  {contactLinks.map((item, idx) => (
+              {contactItems.length > 0 && (
+                <div className="mt-1.5 flex flex-wrap items-center text-[13px] leading-relaxed text-[#4f4663]">
+                  {contactItems.map((item, idx) => (
                     <React.Fragment key={item.label}>
-                      {idx > 0 && <Pipe />}
-                      <a
-                        href={item.href}
-                        target={item.external ? "_blank" : undefined}
-                        rel={item.external ? "noreferrer" : undefined}
-                        className="transition hover:text-[#745bc7]"
-                      >
-                        {item.label}
-                      </a>
+                      {idx > 0 && <DividerPipe />}
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          target={item.external ? "_blank" : undefined}
+                          rel={item.external ? "noreferrer" : undefined}
+                          className="inline-flex items-center gap-0.5 transition hover:text-[#745bc7] hover:underline"
+                        >
+                          {item.label}
+                          {item.external && (
+                            <ArrowUpRight className="h-3 w-3 opacity-70" />
+                          )}
+                        </a>
+                      ) : (
+                        <span>{item.label}</span>
+                      )}
                     </React.Fragment>
                   ))}
                 </div>
               )}
+
+              <p className="mt-4 text-[13.5px] leading-[1.68] text-[#262033] sm:text-[14px]">
+                {pick(profile.bioEn, profile.bioId)}
+              </p>
             </header>
 
-            <div className="raindrop-dotted my-10 w-full opacity-75" />
+            <div className="mt-7 space-y-7">
+              {/* 2. Education */}
+              {educationList.length > 0 && (
+                <section id="education">
+                  <SectionHeading>
+                    {pick("Education", "Pendidikan")}
+                  </SectionHeading>
 
-            {/* 2. Experience & Education */}
-            <div className="space-y-11">
-              {experiences.length > 0 && (
-                <section id="experience" className="space-y-7">
-                  {experiences.map((exp) => {
-                    const bullets =
-                      locale === "id" && exp.bullets.id.length > 0
-                        ? exp.bullets.id
-                        : exp.bullets.en;
-                    const summary = pick(exp.summaryEn, exp.summaryId);
-
-                    return (
-                      <article key={exp.id}>
-                        <h2 className="text-[19px] font-semibold tracking-[0.06em] text-[#14100e] uppercase sm:text-[21px]">
-                          <span>{exp.kind}</span>
-                          <Pipe />
-                          <span>{exp.organization}</span>
-                          <Pipe />
-                          <span>{pick(exp.periodEn, exp.periodId)}</span>
-                        </h2>
-
-                        <ul className="mt-3 list-disc space-y-1.5 pl-6 text-[17px] leading-[1.6] tracking-[0.02em] text-[#14100e]/88 sm:text-[18px]">
-                          <li>
-                            <span className="font-medium text-[#14100e]">
-                              {pick(exp.roleEn, exp.roleId)}
+                  <div className="mt-3.5 space-y-3.5">
+                    {educationList.map((edu) => {
+                      const summary = pick(edu.summaryEn, edu.summaryId);
+                      const bullets = getBullets(edu);
+                      return (
+                        <div key={edu.id}>
+                          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-[13.5px] leading-snug sm:text-[14px]">
+                            <p className="text-[#14100e]">
+                              <span className="font-bold">
+                                {pick(edu.roleEn, edu.roleId)}
+                              </span>
+                              {", "}
+                              <span>{edu.organization}</span>
+                            </p>
+                            <span className="text-[13px] text-[#4f4663]">
+                              {pick(edu.periodEn, edu.periodId)}
                             </span>
-                            {exp.location && (
-                              <>
-                                <Pipe />
-                                <span>{exp.location}</span>
-                              </>
-                            )}
-                          </li>
-                          {summary && <li>{summary}</li>}
-                          {bullets.map((b, i) => (
-                            <li key={i}>{b}</li>
-                          ))}
-                          {exp.tags.length > 0 && (
-                            <li className="text-[#5d5370]">
-                              {exp.tags.map((tag, i) => (
-                                <React.Fragment key={tag}>
-                                  {i > 0 && <Pipe />}
-                                  <span>{tag}</span>
-                                </React.Fragment>
-                              ))}
-                            </li>
+                          </div>
+                          {summary && (
+                            <p className="mt-1 text-[13px] leading-[1.58] text-[#3a324a] sm:text-[13.5px]">
+                              {summary}
+                            </p>
                           )}
-                        </ul>
-                      </article>
-                    );
-                  })}
+                          {bullets.length > 0 && (
+                            <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[13px] leading-[1.58] text-[#2d263b] sm:text-[13.5px]">
+                              {bullets.map((b, i) => (
+                                <li key={i}>{b}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </section>
               )}
 
-              {/* 3. Selected Projects */}
-              {projects.length > 0 && (
-                <section id="projects">
-                  <h2 className="text-[19px] font-semibold tracking-[0.06em] text-[#14100e] uppercase sm:text-[21px]">
-                    <span>{pick("PROJECTS", "PROYEK")}</span>
-                    <Pipe />
-                    <span>{pick("SELECTED WORKS", "KARYA PILIHAN")}</span>
-                  </h2>
+              {/* 3. Work Experience */}
+              {workList.length > 0 && (
+                <section id="work-experience">
+                  <SectionHeading>
+                    {pick("Work Experience", "Pengalaman Kerja")}
+                  </SectionHeading>
 
-                  <ul className="mt-4 list-disc space-y-3 pl-6 text-[17px] leading-[1.6] tracking-[0.02em] text-[#14100e]/90 sm:text-[18px]">
-                    {projects.map((project) => (
-                      <li key={project.id}>
-                        <div className="inline">
-                          <span>{project.year}</span>
-                          <Pipe />
-                          <Link
-                            href={`/portfolio/${project.slug}`}
-                            className="font-medium text-[#14100e] underline-offset-4 transition hover:text-[#745bc7] hover:underline"
-                          >
-                            {project.title}
-                          </Link>
-                          <Pipe />
-                          <span className="text-[#745bc7] uppercase">
-                            {project.category}
-                          </span>
-                          {project.repoUrl && (
-                            <>
-                              <Pipe />
-                              <a
-                                href={project.repoUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-0.5 text-[15px] text-[#5d5370] transition hover:text-[#745bc7]"
-                              >
-                                GitHub
-                                <ArrowUpRight className="h-3.5 w-3.5" />
-                              </a>
-                            </>
+                  <div className="mt-3.5 space-y-5">
+                    {workList.map((work) => {
+                      const summary = pick(work.summaryEn, work.summaryId);
+                      const bullets = getBullets(work);
+                      return (
+                        <div key={work.id}>
+                          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-[13.5px] sm:text-[14px]">
+                            <h3 className="font-bold text-[#14100e]">
+                              {pick(work.roleEn, work.roleId)}
+                            </h3>
+                            <span className="text-[13px] text-[#4f4663]">
+                              ({pick(work.periodEn, work.periodId)})
+                            </span>
+                          </div>
+                          <p className="mt-0.5 text-[13px] font-medium text-[#524669] sm:text-[13.5px]">
+                            {work.organization}
+                          </p>
+                          {summary && (
+                            <p className="mt-1.5 text-[13px] leading-[1.6] text-[#2d263b] sm:text-[13.5px]">
+                              {summary}
+                            </p>
+                          )}
+                          {bullets.length > 0 && (
+                            <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[13px] leading-[1.6] text-[#2d263b] sm:text-[13.5px]">
+                              {bullets.map((b, i) => (
+                                <li key={i}>{b}</li>
+                              ))}
+                            </ul>
                           )}
                         </div>
-                        <p className="mt-0.5 font-sans text-[12.5px] leading-relaxed text-[#5d5370]">
-                          {pick(project.summaryEn, project.summaryId)}
-                        </p>
+                      );
+                    })}
+                  </div>
+                </section>
+              )}
+
+              {/* 4. Organizational Experience */}
+              {orgGroups.length > 0 && (
+                <section id="organizational-experience">
+                  <SectionHeading>
+                    {pick(
+                      "Organizational Experience",
+                      "Pengalaman Organisasi & Mengajar"
+                    )}
+                  </SectionHeading>
+
+                  <div className="mt-3.5 space-y-5">
+                    {orgGroups.map((group) => (
+                      <div key={group.organization} className="space-y-3.5">
+                        {group.entries.map((entry, idx) => {
+                          const summary = pick(
+                            entry.summaryEn,
+                            entry.summaryId
+                          );
+                          const bullets = getBullets(entry);
+                          const isFirst = idx === 0;
+
+                          return (
+                            <div key={entry.id}>
+                              {isFirst ? (
+                                <>
+                                  <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-[13.5px] sm:text-[14px]">
+                                    <h3 className="font-bold text-[#14100e]">
+                                      {group.organization}
+                                    </h3>
+                                    <span className="text-[13px] text-[#4f4663]">
+                                      ({pick(entry.periodEn, entry.periodId)})
+                                    </span>
+                                  </div>
+                                  <p className="mt-0.5 text-[13px] font-medium text-[#524669] sm:text-[13.5px]">
+                                    {pick(entry.roleEn, entry.roleId)}
+                                  </p>
+                                </>
+                              ) : (
+                                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 text-[13px] sm:text-[13.5px]">
+                                  <p className="font-medium text-[#3b3150]">
+                                    {pick(entry.roleEn, entry.roleId)}
+                                  </p>
+                                  <span className="text-[13px] text-[#4f4663]">
+                                    ({pick(entry.periodEn, entry.periodId)})
+                                  </span>
+                                </div>
+                              )}
+
+                              {summary && (
+                                <p className="mt-1.5 text-[13px] leading-[1.6] text-[#2d263b] sm:text-[13.5px]">
+                                  {summary}
+                                </p>
+                              )}
+                              {bullets.length > 0 && (
+                                <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[13px] leading-[1.6] text-[#2d263b] sm:text-[13.5px]">
+                                  {bullets.map((b, i) => (
+                                    <li key={i}>{b}</li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* 5. Skills & Projects (CV Page 2 Rhythm + Interactive Links) */}
+              {(skillGroups.length > 0 || projects.length > 0) && (
+                <section id="skills-projects">
+                  <SectionHeading>
+                    {pick("Skills & Projects", "Keahlian & Proyek")}
+                  </SectionHeading>
+
+                  <ul className="mt-3.5 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.62] text-[#262033] sm:text-[13.5px]">
+                    {skillGroups.map((group) => (
+                      <li key={group.id}>
+                        <span className="font-bold text-[#14100e]">
+                          {pick(group.nameEn, group.nameId)}:
+                        </span>{" "}
+                        <span>{group.items.join(", ")}.</span>
+                      </li>
+                    ))}
+
+                    {projects.map((project) => (
+                      <li key={project.id}>
+                        <Link
+                          href={`/portfolio/${project.slug}`}
+                          className="font-bold text-[#14100e] underline-offset-4 transition hover:text-[#745bc7] hover:underline"
+                        >
+                          {project.title}
+                        </Link>{" "}
+                        <span className="text-[#4f4663]">({project.year})</span>
+                        {": "}
+                        <span>{pick(project.summaryEn, project.summaryId)}</span>
+                        {project.repoUrl && (
+                          <>
+                            {" "}
+                            <a
+                              href={project.repoUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-0.5 text-[12px] font-medium text-[#745bc7] underline-offset-2 hover:underline"
+                            >
+                              GitHub
+                              <ArrowUpRight className="h-3 w-3" />
+                            </a>
+                          </>
+                        )}
                       </li>
                     ))}
                   </ul>
                 </section>
               )}
 
-              {/* 4. Certificates (Shown cleanly once added in /admin) */}
+              {/* 6. Certificates (Shown cleanly once added in /admin) */}
               {certificates.length > 0 && (
                 <section id="certificates">
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <h2 className="text-[19px] font-semibold tracking-[0.06em] text-[#14100e] uppercase sm:text-[21px]">
-                      <span>{pick("CERTIFICATES", "SERTIFIKAT")}</span>
-                      <Pipe />
-                      <span>{pick("CREDENTIALS", "KREDENSIAL")}</span>
+                  <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-[#14100e]/28 pb-1.5">
+                    <h2 className="text-[16px] font-bold tracking-[0.01em] text-[#14100e] sm:text-[17px]">
+                      {pick("Certificates", "Sertifikat")}
                     </h2>
                     <Link
                       href="/certificates"
-                      className="text-[14px] tracking-[0.12em] text-[#745bc7] uppercase transition hover:opacity-70"
+                      className="font-mono text-[11px] tracking-[0.12em] text-[#745bc7] uppercase transition hover:opacity-75"
                     >
-                      {pick("GALLERY →", "GALERI →")}
+                      {pick("Gallery →", "Galeri →")}
                     </Link>
                   </div>
 
-                  <ul className="mt-4 list-disc space-y-2 pl-6 text-[17px] leading-[1.6] tracking-[0.02em] text-[#14100e]/90 sm:text-[18px]">
+                  <ul className="mt-3.5 list-disc space-y-1.5 pl-5 text-[13px] leading-[1.6] text-[#262033] sm:text-[13.5px]">
                     {certificates.map((cert) => (
                       <li key={cert.id}>
                         <button
@@ -249,14 +400,13 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
                           onClick={() => setSelectedCert(cert)}
                           className="inline text-left transition hover:text-[#745bc7] focus:outline-none"
                         >
-                          <span>{cert.issuedDate}</span>
-                          <Pipe />
-                          <span className="font-medium text-[#14100e] underline-offset-4 hover:text-[#745bc7] hover:underline">
+                          <span className="font-bold text-[#14100e] underline-offset-4 hover:text-[#745bc7] hover:underline">
                             {pick(cert.titleEn, cert.titleId)}
+                          </span>{" "}
+                          <span className="text-[#4f4663]">
+                            ({cert.issuedDate})
                           </span>
-                          <Pipe />
-                          <span>{cert.category}</span>
-                          <Pipe />
+                          {" — "}
                           <span>{cert.issuer}</span>
                         </button>
                       </li>
@@ -264,36 +414,9 @@ export function ProjectsArchiveView({ data }: { data: PortfolioPayload }) {
                   </ul>
                 </section>
               )}
-
-              {/* 5. Skills */}
-              {skillGroups.length > 0 && (
-                <section id="skills">
-                  <h2 className="text-[19px] font-semibold tracking-[0.06em] text-[#14100e] uppercase sm:text-[21px]">
-                    <span>{pick("SKILLS", "KEAHLIAN")}</span>
-                    <Pipe />
-                    <span>{pick("STACK", "TEKNOLOGI")}</span>
-                  </h2>
-
-                  <ul className="mt-4 list-disc space-y-2 pl-6 text-[17px] leading-[1.6] tracking-[0.02em] text-[#14100e]/90 sm:text-[18px]">
-                    {skillGroups.map((group) => (
-                      <li key={group.id}>
-                        <span className="font-medium text-[#14100e]">
-                          {pick(group.nameEn, group.nameId)}
-                        </span>
-                        {group.items.map((item) => (
-                          <React.Fragment key={item}>
-                            <Pipe />
-                            <span>{item}</span>
-                          </React.Fragment>
-                        ))}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
             </div>
           </div>
-        </div>
+        </article>
       </main>
 
       <Footer profile={profile} />

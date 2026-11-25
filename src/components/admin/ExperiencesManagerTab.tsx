@@ -95,14 +95,10 @@ export function ExperiencesManagerTab({
   const handleSave = async (ev: React.FormEvent) => {
     ev.preventDefault();
     if (!editing) return;
-    if (
-      !editing.roleEn.trim() ||
-      !editing.periodEn.trim() ||
-      !editing.summaryEn.trim()
-    ) {
+    if (!editing.roleEn.trim() || !editing.periodEn.trim()) {
       setLangTab("en");
       notify(
-        "Please fill in Role (EN), Period (EN), and Summary (EN) before saving.",
+        "Please fill in Role (EN) and Period (EN) before saving.",
         "err"
       );
       return;
@@ -487,11 +483,10 @@ export function ExperiencesManagerTab({
 
               <div>
                 <label className="block font-mono text-[10px] text-[#5f4f85] uppercase">
-                  Summary ({langTab.toUpperCase()})
+                  Summary / Coursework ({langTab.toUpperCase()}) — optional
                 </label>
                 <textarea
                   rows={2}
-                  required={langTab === "en"}
                   value={
                     langTab === "en" ? editing.summaryEn : editing.summaryId
                   }

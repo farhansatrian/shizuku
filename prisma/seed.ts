@@ -54,13 +54,13 @@ async function main() {
           id: ["Software Engineer", "ODP IT · BNI"],
         }),
         bioEn:
-          "Software Engineer in the Officer Development Program (ODP IT) at PT Bank Negara Indonesia (Persero) Tbk. Applied Software Engineering graduate from Telkom University, focused on web engineering, banking systems, and building personal web apps.",
+          "Software engineer with a background in Informatics and Application Software Engineering, focused on backend and full-stack development. Experienced across web, mobile, and data-driven projects, continuously learning and building clean, reliable, and sustainable software solutions.",
         bioId:
-          "Software Engineer di Officer Development Program (ODP IT) PT Bank Negara Indonesia (Persero) Tbk. Lulusan Rekayasa Perangkat Lunak Aplikasi Telkom University yang fokus pada rekayasa web, sistem perbankan, dan pengembangan aplikasi web pribadi.",
+          "Software engineer dengan latar belakang Informatika dan Rekayasa Perangkat Lunak Aplikasi yang berfokus pada pengembangan backend dan full-stack. Berpengalaman membangun aplikasi web, mobile, serta proyek berbasis data yang bersih, andal, dan berkelanjutan.",
         aboutStoryEn:
-          "shizuku (雫) is a personal web hub and digital ecosystem by Farhan Satria Nugraha.\n\nBuilt around calm minimalism, shizuku brings together personal works, portfolio records, and a shared SHIZUKU ID across companion web apps like SHIKAS and SHIKOST.",
+          "shizuku (雫) is a personal web hub and digital ecosystem.\n\nBuilt around calm minimalism, shizuku brings together personal works, portfolio records, and a shared SHIZUKU ID across companion web apps like SHIKAS and SHIKOST.",
         aboutStoryId:
-          "shizuku (雫) adalah ruang web pribadi dan ekosistem digital buatan Farhan Satria Nugraha.\n\nDibangun dengan gaya minimalis yang tenang, shizuku menyatukan karya ekosistem, catatan portofolio, dan satu SHIZUKU ID untuk aplikasi seperti SHIKAS dan SHIKOST.",
+          "shizuku (雫) adalah ruang web personal dan ekosistem digital.\n\nDibangun dengan gaya minimalis yang tenang, shizuku menyatukan karya ekosistem, catatan portofolio, dan satu SHIZUKU ID untuk aplikasi seperti SHIKAS dan SHIKOST.",
         location: "Jakarta, Indonesia",
         currentRoleEn: "Officer Development Program (ODP) — IT",
         currentRoleId: "Officer Development Program (ODP) — IT",
@@ -92,16 +92,16 @@ async function main() {
       data: [
         {
           slug: "shizuku-hub",
-          title: "shizuku (雫) — Personal Hub & Ecosystem ID",
+          title: "SHIZUKU (雫) — Personal Hub & Ecosystem ID",
           category: "WEB",
           year: "2026",
           status: "ACTIVE",
           roleEn: "Creator & Full-Stack Engineer",
           roleId: "Pembuat & Full-Stack Engineer",
           summaryEn:
-            "Personal web portal, portfolio, custom CMS, and central SHIZUKU ID authentication hub.",
+            "Personal web portal, portfolio, custom CMS studio, and shared SHIZUKU ID authentication hub built with Next.js, TypeScript, Prisma, and SQLite.",
           summaryId:
-            "Portal web pribadi, portofolio, CMS mandiri, dan pusat autentikasi SHIZUKU ID.",
+            "Portal web pribadi, portofolio, CMS studio, dan pusat autentikasi SHIZUKU ID dibangun dengan Next.js, TypeScript, Prisma, dan SQLite.",
           descriptionEn:
             "Central portal and identity hub for the SHIZUKU ecosystem, built with Next.js App Router, Prisma, SQLite, and containerized Docker deployment.",
           descriptionId:
@@ -133,9 +133,9 @@ async function main() {
           roleEn: "Creator & Full-Stack Engineer",
           roleId: "Pembuat & Full-Stack Engineer",
           summaryEn:
-            "Personal cashflow tracker with IDR/USD support and per-user cloud sync via SHIZUKU ID.",
+            "Personal cashflow tracker with IDR/USD support and per-user cloud sync via SHIZUKU ID, built with React and TypeScript.",
           summaryId:
-            "Pencatat arus kas pribadi dengan dukungan IDR/USD dan sinkronisasi cloud per pengguna via SHIZUKU ID.",
+            "Pencatat arus kas pribadi dengan dukungan IDR/USD dan sinkronisasi cloud per pengguna via SHIZUKU ID, dibangun dengan React dan TypeScript.",
           descriptionEn:
             "Personal cashflow web app connected to the SHIZUKU ecosystem backend with isolated per-user storage and real-time currency conversion.",
           descriptionId:
@@ -165,9 +165,9 @@ async function main() {
           roleEn: "Creator & Full-Stack Engineer",
           roleId: "Pembuat & Full-Stack Engineer",
           summaryEn:
-            "Shared boarding-house finance ledger for monthly dues, expenses, and reimbursements.",
+            "Shared boarding-house finance ledger for monthly dues, expenses, and reimbursements built with Next.js, Prisma, and PostgreSQL.",
           summaryId:
-            "Sistem pencatatan kas bersama untuk iuran bulanan, pengeluaran, dan reimbursement kost.",
+            "Sistem pencatatan kas bersama untuk iuran bulanan, pengeluaran, dan reimbursement kost dibangun dengan Next.js, Prisma, dan PostgreSQL.",
           descriptionEn:
             "Full-stack shared finance ledger built with Next.js, Prisma, and PostgreSQL, containerized for low-memory Alpine Linux VMs.",
           descriptionId:
@@ -188,6 +188,71 @@ async function main() {
           featured: true,
           published: true,
           sortOrder: 3,
+        },
+        {
+          slug: "process-mining-learning-behavior",
+          title: "Process Mining — Student Learning Behavior",
+          category: "DATA",
+          year: "2026",
+          status: "RESEARCH",
+          roleEn: "Researcher & Developer",
+          roleId: "Peneliti & Pengembang",
+          summaryEn:
+            "Analyzed student learning behavior patterns from LMS data using Directly-Follows Graphs and Process Trees with Inductive Miner.",
+          summaryId:
+            "Menganalisis pola perilaku belajar mahasiswa dari data LMS menggunakan Directly-Follows Graphs dan Process Trees dengan Inductive Miner.",
+          descriptionEn:
+            "Explores student learning event logs from LMS data using Directly-Follows Graphs, Process Trees, and Petri Nets via Inductive Miner in Python and Jupyter Notebook.",
+          descriptionId:
+            "Eksplorasi log aktivitas belajar mahasiswa dari data LMS menggunakan Directly-Follows Graphs, Process Trees, dan Petri Nets dengan Inductive Miner di Python dan Jupyter Notebook.",
+          highlightsJson: "[]",
+          impactMetricEn: "",
+          impactMetricId: "",
+          techStackJson: JSON.stringify([
+            "Python",
+            "Process Mining",
+            "Inductive Miner",
+            "Jupyter Notebook",
+          ]),
+          coverImage: "",
+          liveUrl: "",
+          repoUrl:
+            "https://github.com/farhansatrian/Analisis-Proses-Belajar-Mahasiswa-Menggunakan-PM-dan-ML",
+          featured: false,
+          published: true,
+          sortOrder: 4,
+        },
+        {
+          slug: "machine-learning-academic-performance",
+          title: "Machine Learning — Student Academic Performance",
+          category: "DATA",
+          year: "2025",
+          status: "COMPLETED",
+          roleEn: "Researcher & Developer",
+          roleId: "Peneliti & Pengembang",
+          summaryEn:
+            "Classified student academic performance using Logistic Regression and Random Forest.",
+          summaryId:
+            "Klasifikasi performa akademik mahasiswa menggunakan Logistic Regression dan Random Forest.",
+          descriptionEn:
+            "Built and evaluated supervised classification models (Logistic Regression and Random Forest) in Python to predict student academic performance.",
+          descriptionId:
+            "Membangun dan mengevaluasi model klasifikasi terawasi (Logistic Regression dan Random Forest) dengan Python untuk memprediksi performa akademik mahasiswa.",
+          highlightsJson: "[]",
+          impactMetricEn: "",
+          impactMetricId: "",
+          techStackJson: JSON.stringify([
+            "Python",
+            "Machine Learning",
+            "Logistic Regression",
+            "Random Forest",
+          ]),
+          coverImage: "",
+          liveUrl: "",
+          repoUrl: "",
+          featured: false,
+          published: true,
+          sortOrder: 5,
         },
         {
           slug: "yanbuul-ulum-admission",
@@ -215,161 +280,396 @@ async function main() {
             "https://github.com/farhansatrian/yanbuul-ulum-student-admission",
           featured: false,
           published: true,
-          sortOrder: 4,
+          sortOrder: 6,
         },
         {
-          slug: "student-learning-process-mining",
-          title: "Student Learning Process Analysis (Process Mining & ML)",
-          category: "DATA",
-          year: "2026",
-          status: "RESEARCH",
-          roleEn: "Researcher & Developer",
-          roleId: "Peneliti & Pengembang",
+          slug: "hasjrat-website",
+          title: "Hasjrat Website",
+          category: "FULLSTACK",
+          year: "2024",
+          status: "COMPLETED",
+          roleEn: "Full-Stack Developer Intern",
+          roleId: "Full-Stack Developer Intern",
           summaryEn:
-            "Process mining (Inductive Miner, Process Tree, Petri Net) and machine learning study of student learning behavior.",
+            "Developed using Java Spring Boot and Angular with TypeScript, Bootstrap, and PostgreSQL.",
           summaryId:
-            "Analisis proses belajar mahasiswa menggunakan Process Mining (Inductive Miner, Process Tree, Petri Net) dan Machine Learning.",
+            "Dikembangkan menggunakan Java Spring Boot dan Angular dengan TypeScript, Bootstrap, dan PostgreSQL.",
           descriptionEn:
-            "Explores student learning event logs using Inductive Miner (Process Tree and Petri Net) combined with machine learning models in Jupyter Notebook.",
+            "Full-stack enterprise web application built during internship at PT. Tabel Data Informatika using Java Spring Boot microservices, Angular, TypeScript, and PostgreSQL.",
           descriptionId:
-            "Eksplorasi log aktivitas belajar mahasiswa menggunakan Inductive Miner (Process Tree dan Petri Net) dikombinasikan dengan model machine learning di Jupyter Notebook.",
+            "Aplikasi web full-stack yang dibangun saat magang di PT. Tabel Data Informatika menggunakan microservices Java Spring Boot, Angular, TypeScript, dan PostgreSQL.",
           highlightsJson: "[]",
           impactMetricEn: "",
           impactMetricId: "",
           techStackJson: JSON.stringify([
-            "Python",
-            "Jupyter Notebook",
-            "Process Mining",
-            "Machine Learning",
+            "Java",
+            "Spring Boot",
+            "Angular",
+            "TypeScript",
+            "Bootstrap",
+            "PostgreSQL",
           ]),
           coverImage: "",
           liveUrl: "",
-          repoUrl:
-            "https://github.com/farhansatrian/Analisis-Proses-Belajar-Mahasiswa-Menggunakan-PM-dan-ML",
+          repoUrl: "",
           featured: false,
           published: true,
-          sortOrder: 5,
+          sortOrder: 7,
+        },
+        {
+          slug: "kostanku-mobile",
+          title: "Kostanku Mobile Application",
+          category: "MOBILE",
+          year: "2023",
+          status: "COMPLETED",
+          roleEn: "Android Developer",
+          roleId: "Android Developer",
+          summaryEn: "Developed using Kotlin.",
+          summaryId: "Dikembangkan menggunakan Kotlin.",
+          descriptionEn:
+            "Android mobile application built with Kotlin for boarding-house discovery and management.",
+          descriptionId:
+            "Aplikasi mobile Android dibangun menggunakan Kotlin untuk pencarian dan pengelolaan kost.",
+          highlightsJson: "[]",
+          impactMetricEn: "",
+          impactMetricId: "",
+          techStackJson: JSON.stringify(["Kotlin", "Android"]),
+          coverImage: "",
+          liveUrl: "",
+          repoUrl: "",
+          featured: false,
+          published: true,
+          sortOrder: 8,
+        },
+        {
+          slug: "lavar-website",
+          title: "Lavar Website",
+          category: "WEB",
+          year: "2022",
+          status: "COMPLETED",
+          roleEn: "Web Developer",
+          roleId: "Web Developer",
+          summaryEn: "Developed using Laravel and Tailwind CSS.",
+          summaryId: "Dikembangkan menggunakan Laravel dan Tailwind CSS.",
+          descriptionEn:
+            "Web application built with Laravel and Tailwind CSS.",
+          descriptionId:
+            "Aplikasi web dibangun menggunakan Laravel dan Tailwind CSS.",
+          highlightsJson: "[]",
+          impactMetricEn: "",
+          impactMetricId: "",
+          techStackJson: JSON.stringify(["Laravel", "Tailwind CSS"]),
+          coverImage: "",
+          liveUrl: "",
+          repoUrl: "",
+          featured: false,
+          published: true,
+          sortOrder: 9,
+        },
+        {
+          slug: "clinz-desktop",
+          title: "Clinz Desktop Application",
+          category: "DESKTOP",
+          year: "2022",
+          status: "COMPLETED",
+          roleEn: "Java Developer",
+          roleId: "Java Developer",
+          summaryEn: "Developed using Java.",
+          summaryId: "Dikembangkan menggunakan Java.",
+          descriptionEn: "Desktop application built with Java.",
+          descriptionId: "Aplikasi desktop dibangun menggunakan Java.",
+          highlightsJson: "[]",
+          impactMetricEn: "",
+          impactMetricId: "",
+          techStackJson: JSON.stringify(["Java"]),
+          coverImage: "",
+          liveUrl: "",
+          repoUrl: "",
+          featured: false,
+          published: true,
+          sortOrder: 10,
+        },
+        {
+          slug: "noyuapp-mobile",
+          title: "NoyuApp Mobile Application",
+          category: "MOBILE",
+          year: "2021",
+          status: "COMPLETED",
+          roleEn: "Android Developer",
+          roleId: "Android Developer",
+          summaryEn: "Developed using Kotlin.",
+          summaryId: "Dikembangkan menggunakan Kotlin.",
+          descriptionEn:
+            "Android mobile application developed using Kotlin with the Android Division at Chevalier LAB, Telkom University.",
+          descriptionId:
+            "Aplikasi mobile Android dikembangkan menggunakan Kotlin bersama Divisi Android Chevalier LAB, Telkom University.",
+          highlightsJson: "[]",
+          impactMetricEn: "",
+          impactMetricId: "",
+          techStackJson: JSON.stringify(["Kotlin", "Android"]),
+          coverImage: "",
+          liveUrl: "",
+          repoUrl: "",
+          featured: false,
+          published: true,
+          sortOrder: 11,
         },
       ],
     });
-    console.log("✓ Seeded 5 factual Projects");
+    console.log("✓ Seeded 11 factual Projects");
   }
 
-  // 4. Seed factual Experiences if empty
+  // 4. Seed CV-aligned Experiences (Education, Work, Organization) if empty
   const expCount = await prisma.experience.count();
   if (expCount === 0) {
     await prisma.experience.createMany({
       data: [
+        // Education
+        {
+          kind: "EDUCATION",
+          organization: "Telkom University",
+          roleEn: "Diploma (D3) in Application Software Engineering",
+          roleId: "Diploma (D3) Rekayasa Perangkat Lunak Aplikasi",
+          location: "Bandung, Indonesia",
+          periodEn: "2024 | GPA: 3.89 / 4.0",
+          periodId: "2024 | IPK: 3.89 / 4.0",
+          isCurrent: false,
+          summaryEn:
+            "Relevant Coursework: Algorithms, Data Structures, Databases, Web Programming, Mobile Programming, OOP",
+          summaryId:
+            "Mata Kuliah Relevan: Algoritma, Struktur Data, Basis Data, Pemrograman Web, Pemrograman Mobile, OOP",
+          bulletsJson: JSON.stringify({ en: [], id: [] }),
+          tagsJson: JSON.stringify([]),
+          published: true,
+          sortOrder: 1,
+        },
+        {
+          kind: "EDUCATION",
+          organization: "Telkom University",
+          roleEn: "Bachelor's Degree (S1) in Informatics",
+          roleId: "Sarjana (S1) Informatika",
+          location: "Bandung, Indonesia",
+          periodEn: "2026 | GPA: 3.68 / 4.0",
+          periodId: "2026 | IPK: 3.68 / 4.0",
+          isCurrent: false,
+          summaryEn: "Relevant Coursework: Machine Learning, Process Mining",
+          summaryId: "Mata Kuliah Relevan: Machine Learning, Process Mining",
+          bulletsJson: JSON.stringify({ en: [], id: [] }),
+          tagsJson: JSON.stringify([]),
+          published: true,
+          sortOrder: 2,
+        },
+
+        // Work Experience
         {
           kind: "WORK",
           organization: "PT Bank Negara Indonesia (Persero) Tbk (BNI)",
-          roleEn: "Officer Development Program (ODP) — Information Technology",
-          roleId: "Officer Development Program (ODP) — Information Technology",
+          roleEn: "Officer Development Program (ODP) — IT",
+          roleId: "Officer Development Program (ODP) — IT",
           location: "Jakarta, Indonesia",
           periodEn: "Present",
           periodId: "Saat ini",
           isCurrent: true,
           summaryEn:
-            "Banking technology track in BNI Officer Development Program (IT).",
+            "Banking technology track in BNI's Officer Development Program (IT), focusing on software engineering and enterprise systems.",
           summaryId:
-            "Jalur teknologi informasi dalam Officer Development Program (ODP IT) BNI.",
+            "Jalur teknologi informasi pada Officer Development Program (ODP IT) BNI, berfokus pada rekayasa perangkat lunak dan sistem enterprise.",
           bulletsJson: JSON.stringify({ en: [], id: [] }),
-          tagsJson: JSON.stringify(["Banking IT", "Software Engineering"]),
-          published: true,
-          sortOrder: 1,
-        },
-        {
-          kind: "WORK",
-          organization: "PT Tabel Data Informatika",
-          roleEn: "Software Developer Intern (Java & Frontend Bootcamp)",
-          roleId: "Software Developer Intern (Bootcamp Java & Frontend)",
-          location: "Bandung, Indonesia",
-          periodEn: "2023",
-          periodId: "2023",
-          isCurrent: false,
-          summaryEn:
-            "Completed Java backend and Angular frontend internship training and application projects.",
-          summaryId:
-            "Mengikuti bootcamp dan proyek magang pengembangan backend Java serta frontend Angular.",
-          bulletsJson: JSON.stringify({ en: [], id: [] }),
-          tagsJson: JSON.stringify(["Java", "Angular", "Web Development"]),
-          published: true,
-          sortOrder: 2,
-        },
-        {
-          kind: "EDUCATION",
-          organization: "Telkom University",
-          roleEn:
-            "Applied Software Engineering (Rekayasa Perangkat Lunak Aplikasi)",
-          roleId: "Rekayasa Perangkat Lunak Aplikasi",
-          location: "Bandung, Indonesia",
-          periodEn: "Graduated",
-          periodId: "Lulus",
-          isCurrent: false,
-          summaryEn:
-            "Focused on software engineering, web & mobile development, databases, and applied computing.",
-          summaryId:
-            "Berfokus pada rekayasa perangkat lunak, pengembangan web & mobile, basis data, dan komputasi terapan.",
-          bulletsJson: JSON.stringify({ en: [], id: [] }),
-          tagsJson: JSON.stringify([
-            "Software Engineering",
-            "Web",
-            "Mobile",
-            "Databases",
-          ]),
+          tagsJson: JSON.stringify([]),
           published: true,
           sortOrder: 3,
         },
+        {
+          kind: "WORK",
+          organization: "PT. Tabel Data Informatika",
+          roleEn: "Full-Stack Developer Intern",
+          roleId: "Full-Stack Developer Intern",
+          location: "Bandung, Indonesia",
+          periodEn: "Jul 2023 - Jun 2024",
+          periodId: "Jul 2023 - Jun 2024",
+          isCurrent: false,
+          summaryEn: "",
+          summaryId: "",
+          bulletsJson: JSON.stringify({
+            en: [
+              "Developed the Hasjrat application using Java Spring Boot for the backend and Angular, Bootstrap, and TypeScript for the frontend.",
+              "Developed and integrated APIs with the user interface, connecting backend services to the frontend.",
+              "Managed PostgreSQL databases and implemented CRUD operations for data management.",
+              "Participated in application deployment using a microservices architecture.",
+            ],
+            id: [
+              "Mengembangkan aplikasi Hasjrat menggunakan Java Spring Boot untuk backend serta Angular, Bootstrap, dan TypeScript untuk frontend.",
+              "Mengembangkan dan mengintegrasikan API dengan antarmuka pengguna untuk menghubungkan layanan backend ke frontend.",
+              "Mengelola basis data PostgreSQL dan mengimplementasikan operasi CRUD untuk manajemen data.",
+              "Berpartisipasi dalam deployment aplikasi menggunakan arsitektur microservices.",
+            ],
+          }),
+          tagsJson: JSON.stringify([]),
+          published: true,
+          sortOrder: 4,
+        },
+
+        // Organizational Experience
+        {
+          kind: "ORGANIZATION",
+          organization: "Chevalier LAB - Telkom University",
+          roleEn: "Android Division - Participant",
+          roleId: "Divisi Android - Peserta",
+          location: "Bandung, Indonesia",
+          periodEn: "Sep 2021 - Aug 2022",
+          periodId: "Sep 2021 - Agu 2022",
+          isCurrent: false,
+          summaryEn: "",
+          summaryId: "",
+          bulletsJson: JSON.stringify({
+            en: [
+              "Contributed to the development of the Noyu App Android application using Kotlin.",
+              "Participated in study groups and discussions on Android fundamentals.",
+              "Participated in laboratory events, including seminars and webinars.",
+            ],
+            id: [
+              "Berkontribusi dalam pengembangan aplikasi Android Noyu App menggunakan Kotlin.",
+              "Berpartisipasi dalam study group dan diskusi fundamental Android.",
+              "Berpartisipasi dalam kegiatan laboratorium termasuk seminar dan webinar.",
+            ],
+          }),
+          tagsJson: JSON.stringify([]),
+          published: true,
+          sortOrder: 5,
+        },
+        {
+          kind: "ORGANIZATION",
+          organization: "Chevalier LAB - Telkom University",
+          roleEn: "Laboratory Assistant - Android Division Mentor",
+          roleId: "Asisten Laboratorium - Mentor Divisi Android",
+          location: "Bandung, Indonesia",
+          periodEn: "Sep 2022 - Oct 2023",
+          periodId: "Sep 2022 - Okt 2023",
+          isCurrent: false,
+          summaryEn: "",
+          summaryId: "",
+          bulletsJson: JSON.stringify({
+            en: [
+              "Coordinated Android Division study group activities.",
+              "Created the syllabus and mentored participants in Android application development.",
+              "Supported and took responsibility for various laboratory events.",
+            ],
+            id: [
+              "Mengoordinasikan kegiatan study group Divisi Android.",
+              "Menyusun silabus dan membimbing peserta dalam pengembangan aplikasi Android.",
+              "Mendukung dan bertanggung jawab atas berbagai acara laboratorium.",
+            ],
+          }),
+          tagsJson: JSON.stringify([]),
+          published: true,
+          sortOrder: 6,
+        },
+        {
+          kind: "ORGANIZATION",
+          organization: "Teaching Assistant - STMIK AMIK Bandung",
+          roleEn: "Object-Oriented Programming (Java)",
+          roleId: "Pemrograman Berorientasi Objek (Java)",
+          location: "Bandung, Indonesia",
+          periodEn: "Feb 2024 - Jul 2024",
+          periodId: "Feb 2024 - Jul 2024",
+          isCurrent: false,
+          summaryEn: "",
+          summaryId: "",
+          bulletsJson: JSON.stringify({
+            en: [
+              "Led and guided students in completing their OOP final projects.",
+              "Taught OOP concepts: Encapsulation, Abstraction, Inheritance, and Polymorphism.",
+            ],
+            id: [
+              "Membimbing mahasiswa dalam menyelesaikan proyek akhir OOP.",
+              "Mengajarkan konsep OOP: Encapsulation, Abstraction, Inheritance, dan Polymorphism.",
+            ],
+          }),
+          tagsJson: JSON.stringify([]),
+          published: true,
+          sortOrder: 7,
+        },
+        {
+          kind: "ORGANIZATION",
+          organization: "Teaching Assistant - STMIK AMIK Bandung",
+          roleEn: "Algorithms and Programming (Java)",
+          roleId: "Algoritma dan Pemrograman (Java)",
+          location: "Bandung, Indonesia",
+          periodEn: "Jul 2024 - Jan 2025",
+          periodId: "Jul 2024 - Jan 2025",
+          isCurrent: false,
+          summaryEn: "",
+          summaryId: "",
+          bulletsJson: JSON.stringify({
+            en: [
+              "Facilitated discussions and practical sessions on Java fundamentals.",
+              "Taught Java fundamentals: Control Flow, Loops, Methods, and Arrays.",
+            ],
+            id: [
+              "Memfasilitasi diskusi dan sesi praktikum fundamental Java.",
+              "Mengajarkan dasar Java: Control Flow, Loops, Methods, dan Arrays.",
+            ],
+          }),
+          tagsJson: JSON.stringify([]),
+          published: true,
+          sortOrder: 8,
+        },
       ],
     });
-    console.log("✓ Seeded 3 factual Experiences");
+    console.log("✓ Seeded 8 CV-aligned Experiences");
   }
 
-  // 5. Seed factual SkillGroups if empty (Certificates intentionally left empty for manual upload in /admin)
+  // 5. Seed CV-aligned SkillGroups if empty (Certificates intentionally left empty for manual upload in /admin)
   const skillCount = await prisma.skillGroup.count();
   if (skillCount === 0) {
     await prisma.skillGroup.createMany({
       data: [
         {
-          nameEn: "Languages & Web",
-          nameId: "Bahasa & Web",
+          nameEn: "Programming Languages",
+          nameId: "Bahasa Pemrograman",
           itemsJson: JSON.stringify([
+            "Python",
             "TypeScript",
+            "JavaScript",
             "Java",
             "Kotlin",
-            "Python",
-            "Next.js",
-            "React",
-            "Tailwind CSS",
           ]),
           sortOrder: 1,
         },
         {
-          nameEn: "Data & Infrastructure",
-          nameId: "Data & Infrastruktur",
+          nameEn: "Web Technologies",
+          nameId: "Teknologi Web",
           itemsJson: JSON.stringify([
+            "HTML",
+            "CSS",
+            "Next.js",
+            "React",
+            "Angular",
+            "Laravel",
+            "Tailwind CSS",
+            "Bootstrap",
+            "Spring Boot",
             "PostgreSQL",
             "SQLite",
             "Prisma ORM",
-            "Docker",
-            "Linux",
-            "GitHub Actions",
           ]),
           sortOrder: 2,
         },
         {
-          nameEn: "Data & Analysis",
-          nameId: "Data & Analisis",
+          nameEn: "Tools",
+          nameId: "Alat & Infrastruktur",
           itemsJson: JSON.stringify([
-            "Process Mining",
-            "Machine Learning",
-            "Jupyter Notebook",
+            "VS Code",
+            "Postman",
+            "Git",
+            "Docker",
+            "SSMS",
           ]),
           sortOrder: 3,
         },
       ],
     });
-    console.log("✓ Seeded 3 factual SkillGroups");
+    console.log("✓ Seeded 3 CV-aligned SkillGroups");
   }
 
   // 6. Seed SHIZUKU Ecosystem Works if empty

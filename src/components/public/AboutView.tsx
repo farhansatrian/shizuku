@@ -9,12 +9,6 @@ import { UmbrellaMark } from "@/components/icons/RainMotifs";
 import { useLocale } from "@/components/providers/LocaleProvider";
 import type { PortfolioPayload } from "@/lib/types";
 
-function Pipe() {
-  return (
-    <span className="mx-2 font-normal text-[#14100e]/35 select-none">|</span>
-  );
-}
-
 export function AboutView({ data }: { data: PortfolioPayload }) {
   const { profile } = data;
   const { pick } = useLocale();
@@ -27,19 +21,6 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
 
   const leadParagraph = paragraphs[0] ?? "";
   const bodyParagraphs = paragraphs.slice(1);
-
-  const links = [
-    profile.instagramUrl
-      ? { label: "Instagram", href: profile.instagramUrl }
-      : null,
-    profile.youtubeUrl
-      ? { label: "YouTube", href: profile.youtubeUrl }
-      : null,
-    profile.linkedinUrl
-      ? { label: "LinkedIn", href: profile.linkedinUrl }
-      : null,
-    profile.githubUrl ? { label: "GitHub", href: profile.githubUrl } : null,
-  ].filter(Boolean) as { label: string; href: string }[];
 
   return (
     <div className="relative flex min-h-screen flex-col text-[#14100e]">
@@ -113,24 +94,6 @@ export function AboutView({ data }: { data: PortfolioPayload }) {
               </p>
             ))}
           </div>
-
-          {links.length > 0 && (
-            <div className="font-condensed mt-8 flex flex-wrap items-center justify-center text-[16px] tracking-[0.1em] text-[#14100e]/80 uppercase sm:text-[17px]">
-              {links.map((item, idx) => (
-                <React.Fragment key={item.label}>
-                  {idx > 0 && <Pipe />}
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="transition hover:text-[#745bc7]"
-                  >
-                    {item.label}
-                  </a>
-                </React.Fragment>
-              ))}
-            </div>
-          )}
         </section>
       </main>
 

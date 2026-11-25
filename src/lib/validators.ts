@@ -81,8 +81,8 @@ export const projectInputSchema = z.object({
   status: z.string().trim().min(1).max(30),
   roleEn: z.string().trim().min(1).max(140),
   roleId: z.string().trim().min(1).max(140),
-  summaryEn: z.string().trim().min(1),
-  summaryId: z.string().trim().min(1),
+  summaryEn: z.string().trim().default(""),
+  summaryId: z.string().trim().default(""),
   descriptionEn: z.string().trim().default(""),
   descriptionId: z.string().trim().default(""),
   highlights: z
@@ -116,8 +116,8 @@ export const experienceInputSchema = z.object({
   periodEn: z.string().trim().min(1).max(80),
   periodId: z.string().trim().min(1).max(80),
   isCurrent: z.boolean().default(false),
-  summaryEn: z.string().trim().min(1),
-  summaryId: z.string().trim().min(1),
+  summaryEn: z.string().trim().default(""),
+  summaryId: z.string().trim().default(""),
   bullets: z
     .object({
       en: z.array(z.string().trim().min(1)).default([]),
