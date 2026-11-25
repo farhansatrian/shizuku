@@ -25,10 +25,12 @@ This repository (`shizuku`) serves as the **central identity & database hub** fo
    - `POST /api/ecosystem/login` → `{ email, password }` ⇒ `200 { user, token }` (errors: `ACCOUNT_NOT_FOUND`, `INVALID_CREDENTIALS`)
    - `POST /api/ecosystem/logout` ⇒ `200 { ok: true }`
    - `GET /api/ecosystem/me` ⇒ `200 { user | null }`
+   - `GET /api/ecosystem/google?redirect=<internal_path_or_allowed_origin_url>` & `GET /api/ecosystem/google/callback` → Google OAuth 2.0 + PKCE SSO; sets `shizuku_eco_session` cookie and, when redirecting to an allowlisted external companion app (e.g. `shikas`), appends `#shizuku_token=<jwt>` in the URL fragment for Bearer storage.
    - `GET /api/shikas/store` & `PUT /api/shikas/store` → strict per-`userId` isolation (`401` if unauthenticated)
 
 ### Production Deploy Checklist (VM 1 GB RAM)
 - Set `ECOSYSTEM_ALLOWED_ORIGINS="https://shikas.yourdomain.dev"` (comma-separated for multiple apps) in `shizuku`'s `.env.production`.
 - Optionally set `ECOSYSTEM_COOKIE_DOMAIN=".yourdomain.dev"` if all apps share a parent domain.
+- Set `PUBLIC_BASE_URL`, `GOOGLE_CLIENT_ID`, and `GOOGLE_CLIENT_SECRET` in `shizuku`'s `.env.production` for Sign in with Google across all ecosystem apps.
 - In `shikas` GitHub repo variables, set `VITE_SHIZUKU_URL` and `VITE_SHIZUKU_API_URL` to `shizuku`'s live public URL.
 

@@ -2,6 +2,7 @@ import "server-only";
 import crypto from "crypto";
 import { SignJWT, jwtVerify } from "jose";
 import type { NextRequest } from "next/server";
+import { isAllowedEcosystemOrigin } from "@/lib/ecosystem-auth";
 
 export const GOOGLE_OAUTH_COOKIE_NAME = "shizuku_google_oauth";
 export const GOOGLE_OAUTH_SENTINEL_PREFIX = "$oauth$google$";
@@ -59,10 +60,30 @@ export function resolvePublicBaseUrl(req: NextRequest): string {
 export function sanitizeRedirectPath(value: string | null): string {
   if (!value) return "/account";
   const trimmed = value.trim();
-  if (!trimmed.startsWith("/") || trimmed.startsWith("//")) {
-    return "/account";
+
+  // Internal relative path on shizuku
+  if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
+    return trimmed;
   }
-  return trimmed;
+
+  // External companion app URL strictly validated against ECOSYSTEM_ALLOWED_ORIGINS
+  try {
+    const parsed = new URL(trimmed);
+    if (
+      (parsed.protocol === "http:" || parsed.protocol === "https:") &&
+      isAllowedEcosystemOrigin(parsed.origin)
+    ) {
+      return `${parsed.origin}${parsed.pathname}${parsed.search}`;
+    }
+  } catch {
+    // Ignore malformed redirect URLs
+  }
+
+  return "/account";
+}
+
+export function isExternalRedirectTarget(target: string): boolean {
+  return target.startsWith("http://") || target.startsWith("https://");
 }
 
 export function createPkceChallenge(): {

@@ -10,6 +10,7 @@ import {
   createGoogleOAuthSentinelHash,
   getGoogleOAuthConfig,
   getGoogleOAuthCookieOptions,
+  isExternalRedirectTarget,
   resolvePublicBaseUrl,
   sanitizeRedirectPath,
   timingSafeStringsEqual,
@@ -143,7 +144,14 @@ export async function GET(req: NextRequest) {
     };
 
     const sessionToken = await createEcosystemToken(sessionUser);
-    const destination = new URL(sanitizeRedirectPath(stored.redirect), baseUrl);
+    const safeTarget = sanitizeRedirectPath(stored.redirect);
+    const destination = isExternalRedirectTarget(safeTarget)
+      ? new URL(safeTarget)
+      : new URL(safeTarget, baseUrl);
+
+    if (isExternalRedirectTarget(safeTarget)) {
+      destination.hash = `shizuku_token=${encodeURIComponent(sessionToken)}`;
+    }
 
     const res = NextResponse.redirect(destination);
     res.cookies.set(

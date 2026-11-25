@@ -108,10 +108,7 @@ export function getEcosystemCookieOptions() {
   };
 }
 
-function getAllowedOrigin(req: NextRequest): string | null {
-  const origin = req.headers.get("origin");
-  if (!origin) return null;
-
+export function isAllowedEcosystemOrigin(origin: string): boolean {
   const configured = (process.env.ECOSYSTEM_ALLOWED_ORIGINS || "")
     .split(",")
     .map((item) => item.trim())
@@ -122,7 +119,14 @@ function getAllowedOrigin(req: NextRequest): string | null {
       ? configured
       : [...DEV_DEFAULT_ORIGINS, ...configured];
 
-  if (allowed.includes("*") || allowed.includes(origin)) {
+  return allowed.includes("*") || allowed.includes(origin);
+}
+
+function getAllowedOrigin(req: NextRequest): string | null {
+  const origin = req.headers.get("origin");
+  if (!origin) return null;
+
+  if (isAllowedEcosystemOrigin(origin)) {
     return origin;
   }
   return null;
