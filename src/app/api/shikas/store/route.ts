@@ -69,6 +69,7 @@ const storeSchema = z.object({
       privacyMode: z.boolean().default(false),
       rainEnabled: z.boolean().default(true),
       cycleStartDay: z.number().int().min(1).max(28).default(1),
+      colorLabels: z.record(z.string(), z.string()).optional(),
       shizukuWebsiteUrl: z.string().optional(),
     })
     .optional(),
@@ -93,6 +94,35 @@ function parseStoredCategories(raw: string | null | undefined) {
     return validated.success ? validated.data : [];
   } catch {
     return [];
+  }
+}
+
+function sanitizeColorLabelsRecord(
+  raw: unknown
+): Record<string, string> {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const clean: Record<string, string> = {};
+  let count = 0;
+  for (const [key, val] of Object.entries(raw as Record<string, unknown>)) {
+    if (count >= 20) break;
+    let hex = key.trim().toLowerCase();
+    if (!/^#[0-9a-f]{3,8}$/.test(hex)) continue;
+    if (hex === "#8b5cf6") hex = "#745bc7";
+    else if (hex === "#5d5370") hex = "#4e5d78";
+    const label = String(val ?? "").trim().slice(0, 32);
+    if (!label) continue;
+    clean[hex] = label;
+    count += 1;
+  }
+  return clean;
+}
+
+function parseStoredColorLabels(raw: string | null | undefined) {
+  if (!raw) return {};
+  try {
+    return sanitizeColorLabelsRecord(JSON.parse(raw));
+  } catch {
+    return {};
   }
 }
 
@@ -167,6 +197,7 @@ export async function GET(req: NextRequest) {
             28,
             Math.max(1, settings?.cycleStartDay ?? 1)
           ),
+          colorLabels: parseStoredColorLabels(settings?.colorLabelsJson),
           shizukuWebsiteUrl: "",
         },
       })
@@ -204,6 +235,10 @@ export async function PUT(req: NextRequest) {
       accounts !== undefined ? JSON.stringify(accounts) : undefined;
     const serializedCategories =
       categories !== undefined ? JSON.stringify(categories) : undefined;
+    const serializedColorLabels =
+      settings && settings.colorLabels !== undefined
+        ? JSON.stringify(sanitizeColorLabelsRecord(settings.colorLabels))
+        : undefined;
 
     await prisma.$transaction(async (tx) => {
       await tx.shikasTransaction.deleteMany({
@@ -255,6 +290,9 @@ export async function PUT(req: NextRequest) {
             ...(serializedCategories !== undefined
               ? { categoriesJson: serializedCategories }
               : {}),
+            ...(serializedColorLabels !== undefined
+              ? { colorLabelsJson: serializedColorLabels }
+              : {}),
           },
           create: {
             userId: user.id,
@@ -264,6 +302,7 @@ export async function PUT(req: NextRequest) {
             cycleStartDay: settings?.cycleStartDay ?? 1,
             accountsJson: serializedAccounts ?? "[]",
             categoriesJson: serializedCategories ?? "[]",
+            colorLabelsJson: serializedColorLabels ?? "{}",
           },
         });
       }
