@@ -16,6 +16,16 @@ const accountSchema = z.object({
   isDefault: z.boolean().optional(),
 });
 
+const categorySchema = z.object({
+  id: z.string().min(1).max(60),
+  type: z.enum(["income", "expense", "transfer"]),
+  nameId: z.string().min(1).max(48),
+  nameEn: z.string().min(1).max(48),
+  color: z.string().min(3).max(32).default("#745bc7"),
+  icon: z.string().min(1).max(32).default("Receipt"),
+  isSystem: z.boolean().optional(),
+});
+
 const reimburseEntrySchema = z.object({
   id: z.string().min(1).max(80),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -51,6 +61,7 @@ const txSchema = z.object({
 const storeSchema = z.object({
   version: z.number().int().optional(),
   accounts: z.array(accountSchema).max(30).optional(),
+  categories: z.array(categorySchema).max(60).optional(),
   transactions: z.array(txSchema).max(5000),
   settings: z
     .object({
@@ -68,6 +79,17 @@ function parseStoredAccounts(raw: string | null | undefined) {
   try {
     const parsed = JSON.parse(raw);
     const validated = z.array(accountSchema).safeParse(parsed);
+    return validated.success ? validated.data : [];
+  } catch {
+    return [];
+  }
+}
+
+function parseStoredCategories(raw: string | null | undefined) {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    const validated = z.array(categorySchema).safeParse(parsed);
     return validated.success ? validated.data : [];
   } catch {
     return [];
@@ -114,6 +136,7 @@ export async function GET(req: NextRequest) {
       NextResponse.json({
         version: 5,
         accounts: parseStoredAccounts(settings?.accountsJson),
+        categories: parseStoredCategories(settings?.categoriesJson),
         transactions: rows.map((r) => ({
           id: r.id,
           type:
@@ -176,9 +199,11 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const { accounts, transactions, settings } = parsed.data;
+    const { accounts, categories, transactions, settings } = parsed.data;
     const serializedAccounts =
       accounts !== undefined ? JSON.stringify(accounts) : undefined;
+    const serializedCategories =
+      categories !== undefined ? JSON.stringify(categories) : undefined;
 
     await prisma.$transaction(async (tx) => {
       await tx.shikasTransaction.deleteMany({
@@ -208,7 +233,11 @@ export async function PUT(req: NextRequest) {
         });
       }
 
-      if (settings || serializedAccounts !== undefined) {
+      if (
+        settings ||
+        serializedAccounts !== undefined ||
+        serializedCategories !== undefined
+      ) {
         await tx.shikasSettings.upsert({
           where: { userId: user.id },
           update: {
@@ -223,6 +252,9 @@ export async function PUT(req: NextRequest) {
             ...(serializedAccounts !== undefined
               ? { accountsJson: serializedAccounts }
               : {}),
+            ...(serializedCategories !== undefined
+              ? { categoriesJson: serializedCategories }
+              : {}),
           },
           create: {
             userId: user.id,
@@ -231,6 +263,7 @@ export async function PUT(req: NextRequest) {
             rainEnabled: settings?.rainEnabled ?? true,
             cycleStartDay: settings?.cycleStartDay ?? 1,
             accountsJson: serializedAccounts ?? "[]",
+            categoriesJson: serializedCategories ?? "[]",
           },
         });
       }

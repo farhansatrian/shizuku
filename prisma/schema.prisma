@@ -194,7 +194,8 @@ model ShikasSettings {
   locale        String        @default("en")
   privacyMode   Boolean       @default(false)
   rainEnabled   Boolean       @default(true)
-  cycleStartDay Int           @default(1)
-  accountsJson  String        @default("[]")
-  updatedAt     DateTime      @updatedAt
+  cycleStartDay  Int           @default(1)
+  accountsJson   String        @default("[]")
+  categoriesJson String        @default("[]")
+  updatedAt      DateTime      @updatedAt
 }
