@@ -26,19 +26,30 @@ const categorySchema = z.object({
   isSystem: z.boolean().optional(),
 });
 
+const reimbursePayerSchema = z.object({
+  id: z.string().min(1).max(80),
+  name: z.string().min(1).max(48),
+  expectedIdr: z.number().int().positive().optional(),
+  status: z.enum(["pending", "settled"]),
+  settledAt: z.string().max(64).optional(),
+});
+
 const reimburseEntrySchema = z.object({
   id: z.string().min(1).max(80),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   amountIdr: z.number().int().positive(),
   accountId: z.string().min(1).max(80).optional(),
+  payerId: z.string().min(1).max(80).optional(),
   note: z.string().max(120).optional(),
   createdAt: z.string().min(1).max(64),
 });
 
 const reimburseSchema = z.object({
   status: z.enum(["pending", "settled"]),
+  includeFee: z.boolean().optional(),
   expectedIdr: z.number().int().positive().optional(),
   from: z.string().max(80).optional(),
+  payers: z.array(reimbursePayerSchema).max(20).optional(),
   settledAt: z.string().max(64).optional(),
   entries: z.array(reimburseEntrySchema).max(50).default([]),
 });
